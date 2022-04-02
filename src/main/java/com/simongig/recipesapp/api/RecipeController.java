@@ -1,10 +1,10 @@
 package com.simongig.recipesapp.api;
 
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simongig.recipesapp.model.Recipe;
 import com.simongig.recipesapp.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,10 +20,14 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    @PostMapping("/add")
-    public void addRecipe(@NonNull @RequestBody Recipe recipe, @RequestParam("file") MultipartFile file) {
-        System.out.println(file);
-        recipeService.addRecipe(recipe);
+    @RequestMapping(value = "/add", consumes = "multipart/form-data")
+    public void addRecipe(@RequestPart String data, @RequestPart MultipartFile[] images) throws Exception {
+        System.out.println("---------- new Request ----------");
+        System.out.println(images.length);
+        System.out.println(data);
+        // JSONObject jsonObject = new JSONObject(data);
+        // recipeService.addRecipe(new Recipe(name, duration, PreparationSteps,
+        // Ingredients, imagePaths)));
     }
 
     @GetMapping("/all")

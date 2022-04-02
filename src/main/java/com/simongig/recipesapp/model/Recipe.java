@@ -6,30 +6,33 @@ import org.springframework.data.annotation.Id;
 import java.util.Map;
 import java.util.Set;
 
-
 public class Recipe {
 
     @Id
     public String id;
 
-    private String name;
+    private String title;
     private int duration;
-    private Map<String, String> preparationSteps;
+    private Map<String, String> PreparationSteps;
     private Set<Ingredient> Ingredients;
     private String[] imagePaths;
     private Set<String> tags;
 
-
-
-    public Recipe(@JsonProperty("name") String name, @JsonProperty("duration") int duration, @JsonProperty("ingredients") Set<Ingredient> Ingredients, @JsonProperty String[] imagePaths) {
-        this.name = name;
+    public Recipe(
+            @JsonProperty("title") String title,
+            @JsonProperty("duration") int duration,
+            @JsonProperty("preparationSteps") Map<String, String> PreparationSteps,
+            @JsonProperty("ingredients") Set<Ingredient> Ingredients,
+            @JsonProperty String[] imagePaths) {
+        this.title = title;
         this.duration = duration;
+        this.PreparationSteps = PreparationSteps;
         this.Ingredients = Ingredients;
         this.imagePaths = imagePaths;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
     public int getDuration() {
@@ -40,9 +43,9 @@ public class Recipe {
         return Ingredients;
     }
 
-    public void setName(String newName) {
-        this.name = newName;
-    } 
+    public void setTitle(String newtitle) {
+        this.title = newtitle;
+    }
 
     public void setDuration(int newDuration) {
         this.duration = newDuration;
@@ -58,6 +61,6 @@ public class Recipe {
 
     @Override
     public String toString() {
-        return String.format("Recipe[id=%s, name='%s', ingredients='%s'", id, name, Ingredients);
+        return String.format("Recipe[id=%s, title='%s', ingredients='%s'", id, title, Ingredients);
     }
 }

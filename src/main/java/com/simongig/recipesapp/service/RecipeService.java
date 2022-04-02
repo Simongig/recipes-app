@@ -20,11 +20,6 @@ public class RecipeService {
     }
 
     public int addRecipe(Recipe recipe) {
-        // add Ingredient to Ingredients Database
-        // for (Ingredient ingredient : recipe.getIngredients()) {
-        //     recipeDao.addIngredientName(ingredient.getName());
-        // }
-
         return this.recipeDao.insertRecipe(recipe);
     }
 
