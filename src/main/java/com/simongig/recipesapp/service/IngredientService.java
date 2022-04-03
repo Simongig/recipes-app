@@ -25,7 +25,7 @@ public class IngredientService {
         return this.ingredientDao.insertIngredientName(ingredientName);
     }
 
-    public List<IngredientName> getAllRIngredientNames() {
+    public List<IngredientName> getAllIngredientNames() {
         for(IngredientName ingredient: this.ingredientDao.selectAllIngredientNames()) {
             System.out.println(ingredient);
         }

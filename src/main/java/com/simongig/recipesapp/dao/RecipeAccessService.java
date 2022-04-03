@@ -25,6 +25,8 @@ public class RecipeAccessService implements RecipeDao {
     public int insertRecipe(Recipe recipe) {
         System.out.println(recipe.getImagePaths());
         for (Ingredient ingredient : recipe.getIngredients()) {
+            System.out.println(ingredient);
+            System.out.print(ingredient.getName());
             Optional<IngredientName> foundIngredientName = ingredientAccessService
                     .selectIngredientNameById(ingredient.getName());
             if (foundIngredientName.isPresent()) {
@@ -60,7 +62,7 @@ public class RecipeAccessService implements RecipeDao {
 
     @Override
     public int updateRecipeById(String id, Recipe recipe) {
-        
+
         return 0;
     }
 

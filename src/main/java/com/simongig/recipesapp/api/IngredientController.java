@@ -20,11 +20,11 @@ public class IngredientController {
 
     @GetMapping("/all")
     public List<IngredientName> getAllRecipes() {
-        return ingredientService.getAllRIngredientNames();
+        return ingredientService.getAllIngredientNames();
     }
 
     @GetMapping("/{id}")
-    public IngredientName getIngredientName(@PathVariable("name") String id) {
+    public IngredientName getIngredientName(@PathVariable String id) {
         return ingredientService.getIngredientNameById(id)
                 .orElse(null);
     }

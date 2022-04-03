@@ -31,8 +31,14 @@ public class IngredientAccessService implements IngredientDao {
 
     @Override
     public Optional<IngredientName> selectIngredientNameById(String id) {
-        Optional<IngredientName> foundIngredientName = Optional.of(mongoOps.find(new Query(Criteria.where("name").is(id)), IngredientName.class).get(0));
-        return foundIngredientName;
+        IngredientName foundIngredientName = mongoOps.findById(id, IngredientName.class);
+        if(null == foundIngredientName) {
+            return Optional.empty();
+        } else {
+            System.out.println(foundIngredientName);
+            return Optional.of(foundIngredientName);
+        }
+
     }
 
     @Override
@@ -46,7 +52,8 @@ public class IngredientAccessService implements IngredientDao {
     public int updateIngredientNamePopularityById(String id, int popularity) {
         Optional<IngredientName> foundIngredientName = selectIngredientNameById(id);
         foundIngredientName.get().setPopularity(popularity);
-        mongoOps.updateFirst(new Query(Criteria.where("name").is(id)), Update.update("popularity", foundIngredientName.get().getPopularity()), IngredientName.class);
+        mongoOps.updateFirst(new Query(Criteria.where("name").is(id)),
+                Update.update("popularity", foundIngredientName.get().getPopularity()), IngredientName.class);
         return 1;
     }
 
@@ -54,7 +61,8 @@ public class IngredientAccessService implements IngredientDao {
     public int increaseIngredientNamePopularityById(String id, int popularityIncrease) {
         Optional<IngredientName> foundIngredientName = selectIngredientNameById(id);
         foundIngredientName.get().increasePopularity(popularityIncrease);
-        mongoOps.updateFirst(new Query(Criteria.where("name").is(id)), Update.update("popularity", foundIngredientName.get().getPopularity()), IngredientName.class);
+        mongoOps.updateFirst(new Query(Criteria.where("name").is(id)),
+                Update.update("popularity", foundIngredientName.get().getPopularity()), IngredientName.class);
         return 1;
     }
 
@@ -63,5 +71,5 @@ public class IngredientAccessService implements IngredientDao {
         increaseIngredientNamePopularityById(id, 1);
         return 1;
     }
-    
+
 }
