@@ -1,0 +1,14 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: github-client-id
+            clientSecret: github-client-secret

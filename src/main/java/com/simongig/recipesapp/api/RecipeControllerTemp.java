@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RequestMapping("api/v0/recipe")
 @RestController
