@@ -31,13 +31,7 @@ public class IngredientAccessService implements IngredientDao {
 
     @Override
     public Optional<IngredientName> selectIngredientNameById(String id) {
-        IngredientName foundIngredientName = mongoOps.findById(id, IngredientName.class);
-        if(null == foundIngredientName) {
-            return Optional.empty();
-        } else {
-            System.out.println(foundIngredientName);
-            return Optional.of(foundIngredientName);
-        }
+        return Optional.ofNullable(mongoOps.findById(id, IngredientName.class));
 
     }
 

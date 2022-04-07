@@ -1,15 +1,11 @@
 package com.simongig.recipesapp.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simongig.recipesapp.model.Recipe;
 import com.simongig.recipesapp.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 

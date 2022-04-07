@@ -32,7 +32,7 @@ public class Recipe {
         this.duration = duration;
         this.PreparationSteps = PreparationSteps;
         this.Ingredients = Ingredients;
-        this.setPortions(portions);
+        this.portions = portions;
         if(null == imagePaths  || 0 == imagePaths.size()) {
             this.imagePaths = new ArrayList<String>();
         } else {
