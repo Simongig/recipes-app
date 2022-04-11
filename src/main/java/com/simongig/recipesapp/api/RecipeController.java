@@ -36,8 +36,9 @@ public class RecipeController {
         return recipeService.getAllRecipes();
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/id/{id}")
     public Recipe getRecipe(@PathVariable("id") String id) {
+        System.out.println(recipeService.getRecipeById(id));
         return recipeService.getRecipeById(id)
                 .orElse(null);
     }

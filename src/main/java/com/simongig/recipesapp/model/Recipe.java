@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Set;
 
 public class Recipe {
@@ -14,7 +13,7 @@ public class Recipe {
 
     private String title;
     private int duration;
-    private Map<String, String> PreparationSteps;
+    private Set<PreparationStep> PreparationSteps;
     private Set<Ingredient> Ingredients;
     private ArrayList<String> imagePaths;
     private int portions;
@@ -24,7 +23,7 @@ public class Recipe {
     public Recipe(
             @JsonProperty("title") String title,
             @JsonProperty("duration") int duration,
-            @JsonProperty("preparationSteps") Map<String, String> PreparationSteps,
+            @JsonProperty("preparationSteps") Set<PreparationStep> PreparationSteps,
             @JsonProperty("ingredients") Set<Ingredient> Ingredients,
             @JsonProperty("portions") int portions,
             @JsonProperty("imagePaths") ArrayList<String> imagePaths) {
@@ -76,6 +75,10 @@ public class Recipe {
         this.duration = newDuration;
     }
 
+    public Set<PreparationStep> getPreparationSteps() {
+        return this.PreparationSteps;
+    }
+
     public void updateIngredients(Set<Ingredient> updatedIngredients) {
         this.Ingredients = updatedIngredients;
     }
@@ -90,7 +93,7 @@ public class Recipe {
 
     @Override
     public String toString() {
-        return String.format("Recipe[id=%s, title='%s', ingredients='%s', PreparationSteps:'%s'", id, title,
+        return String.format("\n Recipe: id=%s,\n title='%s',\n ingredients:'%s',\n PreparationSteps:'%s'", id, title,
                 Ingredients, PreparationSteps);
     }
 }

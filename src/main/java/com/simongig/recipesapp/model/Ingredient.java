@@ -7,10 +7,27 @@ public class Ingredient {
     private double quantity;
     private String unit;
 
-    public Ingredient(@JsonProperty("name") String name, @JsonProperty("quantity") double quantity, @JsonProperty("unit") String unit) {
+    public Ingredient(@JsonProperty("name") String name, @JsonProperty("quantity") double quantity,
+            @JsonProperty("unit") String unit) {
         this.name = name;
         this.quantity = quantity;
         this.unit = unit;
+    }
+
+    @Override
+    public boolean equals(Object comp) {
+        Ingredient compIngredient = (Ingredient) comp;
+        if (this.name == compIngredient.name) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        System.out.println(name.hashCode());
+        return name.hashCode();
     }
 
     public String getName() {
@@ -36,9 +53,9 @@ public class Ingredient {
     public void setUnit(String unit) {
         this.unit = unit;
     }
-    
+
     @Override
     public String toString() {
-        return String.format("%s, %s, %s", unit, quantity, name);
+        return String.format("%s - %s - %s", unit, quantity, name);
     }
 }

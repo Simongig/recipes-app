@@ -47,7 +47,7 @@ public class RecipeAccessService implements RecipeDao {
 
     @Override
     public Optional<Recipe> selectRecipeById(String id) {
-        return Optional.empty();
+        return Optional.ofNullable(mongoOps.findById(id, Recipe.class));
     }
 
     @Override
