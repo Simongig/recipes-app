@@ -1,0 +1,60 @@
+<template>
+  <nav>
+    <div class="nav-brand">
+      <router-link to="/">Home</router-link>
+    </div>
+    <div class="nav-links">
+      <router-link to="/recipe/all">All Recipes</router-link>
+      <router-link to="/createRecipe">Create</router-link>
+      <router-link to="/login">Login</router-link>
+    </div>
+  </nav>
+</template>
+
+<script>
+export default {
+  name: "Navbar",
+};
+</script>
+
+<style>
+nav {
+  padding: 30px;
+  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* background-color: #DAD0CE; */
+  background-color: white;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid #843619;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+nav a {
+  font-weight: bold;
+  text-decoration: none;
+  color: #843619;
+}
+nav a.router-link-exact-active {
+  color: #B87730;
+}
+
+
+nav a:hover {
+  color: #B87730;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: flex-start;
+}
+
+.nav-links {
+  display: flex;
+  justify-content: space-around;
+}
+
+
+</style>
