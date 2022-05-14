@@ -1,13 +1,15 @@
 <template>
   <section class="search">
-    <form id="form" role="search">
+    <form id="query-form" role="search">
       <div class="search-input-wrapper">
         <input
           type="search"
-          id="query-form"
+          id="search-input"
           name="q"
           placeholder="Search..."
+          :value="searchInput"
           aria-label="Search through site content"
+          @input="(event) => (searchInput = event.target.value)"
         />
         <span class="search-button-container">
           <svg viewBox="0 0 1024 1024">
@@ -18,10 +20,12 @@
         </span>
       </div>
       <div class="search-result-wrapper">
-        <ul>
-          <li>test 1</li>
-          <li>test 2</li>
-        </ul>
+        <ol class="results" v-if="searchResults.length > 0">
+          <li @click="(event) => $emit('ingredientSelected', event.target.attributes['ingredient-name'].value)" v-for="result in searchResults" :key="result.name" :ingredient-name="result.name">
+            {{ result.name }}
+          </li>
+        </ol>
+        <ul class="no-results" v-else><li>keine Ergebnisse gefunden</li></ul>
       </div>
     </form>
   </section>
@@ -35,17 +39,41 @@ export default {
   data() {
     return {
       elements: new Array(),
+      searchInput: "",
+      searchResults: [],
     };
   },
-  sendSearchQuery() {
-    axios.get("/api/v1/recipe/all").then((response) => {
-      console.log(response);
-    });
+  methods: {
+    sendSearchQuery() {
+      axios.get("/api/v1/recipe/all").then((response) => {
+        console.log(response);
+      });
+    },
   },
   mounted() {
     document.querySelector("#query-form").addEventListener("submit", (e) => {
       e.preventDefault();
     });
+  },
+  watch: {
+    searchInput() {
+      console.log(this.searchInput);
+      if (this.searchInput.length != 0) {
+        axios.get("api/v1/ingredient/all").then((results) => {
+          console.log(results.data);
+          this.searchResults = results.data.filter((ingredient) => {
+            return (
+              -1 <
+              ingredient.name
+                .toLowerCase()
+                .indexOf(this.searchInput.toLowerCase())
+            );
+          });
+        });
+      } else {
+        this.searchResults = []
+      }
+    },
   },
 };
 </script>
@@ -58,7 +86,6 @@ export default {
 
 .search form {
   width: 100%;
-  max-width: 584px;
   border-radius: 22px;
   box-shadow: 0px 0px 6px 0px rgba(116, 116, 116, 0.5);
   -webkit-box-shadow: 0px 0px 6px 0px rgba(116, 116, 116, 0.5);
@@ -86,11 +113,20 @@ export default {
   margin: 5px;
 }
 
+ol.results > li {
+  cursor: pointer;
+  padding: 0.25rem 0;
+}
+
+ol.results > li:hover {
+  text-decoration: underline;
+}
+
 ::placeholder {
   opacity: 0.4;
 }
 
-#form:focus-within {
+#query-form:focus-within {
   outline: 2px solid rgba(142, 142, 142, 0.142);
 }
 
@@ -101,12 +137,14 @@ export default {
   transition: height 0.3s ease-out;
 }
 
-.search-result-wrapper ul {
+.search-result-wrapper ul, 
+.search-result-wrapper ol {
   list-style: none;
   margin: 0.5rem 1.5rem;
 }
 
-#form:focus-within .search-result-wrapper, .search-result-wrapper:hover {
+#query-form:focus-within .search-result-wrapper,
+.search-result-wrapper:hover {
   height: 200px;
 }
 
@@ -122,7 +160,7 @@ export default {
   border-bottom: 1px solid rgba(142, 142, 142, 0.674);
 }
 
-input#query-form:focus {
+input#search-input:focus {
   outline: none;
 }
 
@@ -131,6 +169,6 @@ input#query-form:focus {
   width: inherit;
   border: none;
   margin: 0 1rem;
-  font-size: 1.2rem
+  font-size: 1.2rem;
 }
 </style>

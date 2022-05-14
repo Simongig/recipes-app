@@ -1,6 +1,23 @@
 <template>
   <main class="index-page">
-    <search-input/>
+    <div class="search-wrapper">
+      <ul class="selected-ingredients-list">
+        <li
+          class="selected-ingredient chip"
+          v-for="ingredient in selectedIngredients"
+          :key="ingredient"
+        >
+          {{ ingredient }}
+        </li>
+      </ul>
+      <search-input
+        @ingredientSelected="
+          (text) => {
+            selectedIngredients.push(text);
+          }
+        "
+      />
+    </div>
     <!-- <article v-if="0 < elements.length" class="card-grid">
       <recipe-card
         v-for="element in elements"
@@ -13,7 +30,7 @@
 </template>
 
 <script>
-import SearchInput from '../components/SearchInput.vue';
+import SearchInput from "../components/SearchInput.vue";
 // import RecipeCard from "../components/RecipeCard-v2.vue";
 const axios = require("axios");
 
@@ -24,6 +41,7 @@ export default {
   data() {
     return {
       elements: new Array(),
+      selectedIngredients: [],
     };
   },
   mounted() {
@@ -48,8 +66,34 @@ main {
   margin: 0 10vw;
 }
 
+.search-wrapper {
+  width: 100%;
+  max-width: 584px;
+  margin: auto;
+}
+
 h1 {
   margin-bottom: 2rem;
+}
+
+.selected-ingredient {
+  list-style: none;
+  display: inline-block;
+}
+
+.selected-ingredients-list {
+  margin-bottom: 1rem;
+}
+
+.chip {
+  border: 1px solid rgb(225, 225, 225);
+  padding: 0.3rem 0.7rem;
+  border-radius: 20px;
+  background-color: rgb(225, 225, 225);
+}
+
+.chip + .chip {
+  margin-left: 10px;
 }
 
 a:not(nav a) {

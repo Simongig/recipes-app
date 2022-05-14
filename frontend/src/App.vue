@@ -1,7 +1,11 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" >
+    <div v-if="this.testCookie">
     <navbar></navbar>
-    <router-view></router-view>
+    <router-view></router-view></div>
+    <div v-else>
+      <h1>This site is under construction</h1>
+    </div>
   </div>
 </template>
 
@@ -10,6 +14,16 @@ import Navbar from "./components/Navbar.vue";
 
 export default {
   name: "App",
+  data() {
+    return {
+      testCookie: -1 < document.cookie.indexOf('testCookie=true')
+    }
+  },
+  mounted () {
+    if(document.location.search.indexOf('testCookie=true')) {
+      document.cookie = 'testCookie=true'
+    }
+  },
   components: {
     Navbar,
   },
@@ -25,7 +39,7 @@ export default {
   color: #1b2625;
 }
 
-.app-container > *:nth-child(2) {
+.app-container > div > *:nth-child(2) {
   margin-top: 10rem;
 }
 </style>
