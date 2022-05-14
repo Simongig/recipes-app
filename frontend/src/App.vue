@@ -3,8 +3,8 @@
     <div v-if="this.testCookie">
     <navbar></navbar>
     <router-view></router-view></div>
-    <div v-else>
-      <h1>This site is under construction</h1>
+    <div class="construction" v-else>
+      <h1>This site is under construction!</h1>
     </div>
   </div>
 </template>
@@ -37,6 +37,14 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   /* color: #2c3e50; */
   color: #1b2625;
+}
+
+.construction {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .app-container > div > *:nth-child(2) {
