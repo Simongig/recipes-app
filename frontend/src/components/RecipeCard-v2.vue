@@ -32,8 +32,11 @@ export default {
   align-items: flex-end;
 }
 
-.card-content {
+.card * {
   color: #ebebeb;
+}
+
+.card-content {
   padding: 20px;
   max-height: 50%;
   text-align: left;

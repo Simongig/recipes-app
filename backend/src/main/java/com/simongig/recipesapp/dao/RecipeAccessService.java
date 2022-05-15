@@ -7,8 +7,8 @@ import com.simongig.recipesapp.model.IngredientName;
 import com.simongig.recipesapp.model.Recipe;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
-// import org.springframework.data.mongodb.core.query.Criteria;
-// import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 // import javax.management.Query;
@@ -64,6 +64,16 @@ public class RecipeAccessService implements RecipeDao {
     public int updateRecipeById(String id, Recipe recipe) {
 
         return 0;
+    }
+
+    @Override
+    public List<Recipe> selectRecipesByIngredients(String[] ingredients) {
+        Query query = new Query();
+        System.out.println(ingredients[0]);
+        query.addCriteria(Criteria.where("Ingredients.name").is(ingredients[0]));
+        
+        System.out.println(mongoOps.find(query, Recipe.class, "recipe"));
+        return mongoOps.find(query, Recipe.class, "recipe");
     }
 
 }

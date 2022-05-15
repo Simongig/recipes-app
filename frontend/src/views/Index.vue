@@ -2,13 +2,13 @@
   <main class="index-page">
     <div class="search-wrapper">
       <ul class="selected-ingredients-list">
-        <li
+        <!-- <li
           class="selected-ingredient chip"
-          v-for="ingredient in selectedIngredients"
-          :key="ingredient"
+
         >
           {{ ingredient }}
-        </li>
+        </li> -->
+        <search-chip v-for="(ingredient, index) in selectedIngredients" :key="index" :id="'chip-' + index" @click="(index) => selectedIngredients.splice(index,1)" :value="ingredient"/>
       </ul>
       <search-input
         @ingredientSelected="
@@ -18,37 +18,62 @@
         "
       />
     </div>
-    <!-- <article v-if="0 < elements.length" class="card-grid">
+    <div v-if="0 < foundRecipes.length" class="card-grid">
       <recipe-card
-        v-for="element in elements"
-        :key="element.id"
+        v-for="element in foundRecipes"
+        :key="element"
         :recipe="element"
       />
-    </article>
-    <div v-else>No elements found</div> -->
+    </div>
+    <div v-else>no recipes Found</div>
   </main>
 </template>
 
 <script>
 import SearchInput from "../components/SearchInput.vue";
-// import RecipeCard from "../components/RecipeCard-v2.vue";
-const axios = require("axios");
+import RecipeCard from "../components/RecipeCard-v2.vue";
+import axios from "axios";
+import SearchChip from '../components/SearchChip.vue';
 
 export default {
-  components: { SearchInput },
-  // components: { RecipeCard },
+  components: { SearchInput, RecipeCard, SearchChip },
   name: "Index",
   data() {
     return {
-      elements: new Array(),
       selectedIngredients: [],
+      foundRecipes: [],
     };
   },
-  mounted() {
-    axios.get("/api/v1/recipe/all").then((response) => {
-      console.log(response.data);
-      this.elements = response.data;
-    });
+  methods: {
+    findRecipes() {
+      const jsonString = JSON.stringify(this.selectedIngredients);
+      console.log(jsonString);
+      const data = new Blob([jsonString], { type: "application/json" });
+      console.log(data);
+      axios
+        .post("/api/v1/recipe/find", data, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          console.log(this.foundRecipes)
+          console.log(response.data)
+          this.foundRecipes = this.foundRecipes.concat( response.data);
+          console.log(this.foundRecipes)
+        });
+    },
+  },
+  watch: {
+    selectedIngredients: {
+      handler() {
+        if(this.selectedIngredients != 0) {
+          this.findRecipes();
+        } else {
+          this.foundRecipes.length = 0;
+        }
+        }, deep: true
+      },
   },
 };
 </script>
@@ -70,6 +95,7 @@ main {
   width: 100%;
   max-width: 584px;
   margin: auto;
+  min-height: 300px;
 }
 
 h1 {

@@ -1,6 +1,6 @@
 <template>
   <main class="recipe-pdp-wrapper" v-if="recipe != null">
-    <h1 class="site-title">This is a Recipe page for {{ recipe.title }}</h1>
+    <h1 class="site-title">Rezept für {{ recipe.title }}</h1>
     <article class="recipe-pdp-content">
       <div class="img-wrapper">
         <img :src="recipe.imagePaths[0]" alt="" />
@@ -88,7 +88,7 @@ export default {
   border-collapse: collapse;
 }
 
-.preparationSteps-wrapper .preparationStep {
+.preparationSteps-wrapper .preparationStep + .preparationStep {
   margin: 1rem 0;
 }
 

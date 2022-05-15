@@ -18,4 +18,6 @@ public interface RecipeDao {
     int deleteRecipeById(String id);
 
     int updateRecipeById(String id, Recipe recipe);
+
+    List<Recipe> selectRecipesByIngredients(String[] ingredients);
 }

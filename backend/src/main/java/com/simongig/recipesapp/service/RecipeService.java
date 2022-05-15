@@ -38,4 +38,8 @@ public class RecipeService {
     public int updateRecipe(String id, Recipe newRecipe) {
         return this.recipeDao.updateRecipeById(id, newRecipe);
     }
+
+    public List<Recipe> findRecipeByIngredients(String[] ingredients) {
+        return this.recipeDao.selectRecipesByIngredients(ingredients);
+    }
 }

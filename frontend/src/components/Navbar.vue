@@ -26,7 +26,7 @@ nav {
   /* background-color: #DAD0CE; */
   background-color: white;
   margin-bottom: 3rem;
-  border-bottom: 1px solid #843619;
+  border-bottom: 1px solid var(--main-color);
   position: fixed;
   top: 0;
   width: 100%;
@@ -35,15 +35,15 @@ nav {
 nav a {
   font-weight: bold;
   text-decoration: none;
-  color: #843619;
+  color: var(--main-color);
 }
 nav a.router-link-exact-active {
-  color: #B87730;
+  color: var(--secondary-color);
 }
 
 
 nav a:hover {
-  color: #B87730;
+  color: var(--secondary-color);
 }
 
 .nav-brand {
