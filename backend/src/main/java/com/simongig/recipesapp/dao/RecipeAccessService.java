@@ -70,8 +70,9 @@ public class RecipeAccessService implements RecipeDao {
     public List<Recipe> selectRecipesByIngredients(String[] ingredients) {
         Query query = new Query();
         System.out.println(ingredients[0]);
-        query.addCriteria(Criteria.where("Ingredients.name").is(ingredients[0]));
-        
+        Object[] ingredientObjs = (Object[]) ingredients;
+        query.addCriteria(Criteria.where("Ingredients.name").in(ingredientObjs));
+
         System.out.println(mongoOps.find(query, Recipe.class, "recipe"));
         return mongoOps.find(query, Recipe.class, "recipe");
     }

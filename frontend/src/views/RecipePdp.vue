@@ -2,10 +2,10 @@
   <main class="recipe-pdp-wrapper" v-if="recipe != null">
     <h1 class="site-title">Rezept für {{ recipe.title }}</h1>
     <article class="recipe-pdp-content">
-      <div class="img-wrapper">
-        <img :src="recipe.imagePaths[0]" alt="" />
-      </div>
-      <div class="content-wrapper">
+      <div class="left-column">
+        <div class="img-wrapper">
+          <img :src="recipe.imagePaths[0]" alt="" />
+        </div>
         <section class="ingredients-wrapper">
           <h2>Zutaten</h2>
           <table>
@@ -15,10 +15,16 @@
             </tr>
           </table>
         </section>
-        <section class="preparationSteps-wrapper" v-if="recipe.preparationSteps">
+      </div>
+      <div class="content-wrapper">
+        <section
+          class="preparationSteps-wrapper"
+          v-if="recipe.preparationSteps"
+        >
           <h2>Zubereitung</h2>
           <table>
-            <div class="preparationStep"
+            <div
+              class="preparationStep"
               v-for="step in recipe.preparationSteps"
               :key="step.title"
               :id="'step-' + step.id"
@@ -70,11 +76,9 @@ export default {
   gap: 2rem;
 }
 
-.recipe-pdp-content .preparationSteps-wrapper {
-  margin-top: 2rem;
-}
 
-.recipe-pdp-content .ingredients-wrapper h2, .recipe-pdp-content .preparationSteps-wrapper h2  {
+.recipe-pdp-content .ingredients-wrapper h2,
+.recipe-pdp-content .preparationSteps-wrapper h2 {
   margin-bottom: 1rem;
 }
 
@@ -83,7 +87,8 @@ export default {
   display: grid;
 }
 
-.ingredients-wrapper tr + tr, .preparationSteps-wrapper .preparationStep + .preparationStep {
+.ingredients-wrapper tr + tr,
+.preparationSteps-wrapper .preparationStep + .preparationStep {
   border-top: 1px solid #0000001c;
   border-collapse: collapse;
 }
@@ -92,7 +97,8 @@ export default {
   margin: 1rem 0;
 }
 
-.ingredients-wrapper tr, .preparationSteps-wrapper .preparationStep {
+.ingredients-wrapper tr,
+.preparationSteps-wrapper .preparationStep {
   padding: 0.5rem;
 }
 
