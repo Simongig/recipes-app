@@ -5,16 +5,21 @@
     <groupId>com.simongig</groupId>
     <artifactId>RecipesApp</artifactId>
     <version>0.0.2</version>
-	<packaging>pom</packaging>
+    <packaging>pom</packaging>
 
-	<name>RecipesApp</name>
-	<description>App to manage your own Recipes</description>
+    <name>RecipesApp</name>
+    <description>App to manage your own Recipes</description>
 
     <parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.3</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.3</version>
+        <relativePath /> <!-- lookup parent from repository -->
+    </parent>
+
+
+    <properties>
+        <main.basedir>${project.basedir}</main.basedir>
+    </properties>
 
 </project>
