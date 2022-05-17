@@ -16,7 +16,11 @@
         <version>2.6.3</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
-
+    
+	<modules>
+        <module>frontend</module>
+        <module>backend</module>
+    </modules>
 
     <properties>
         <main.basedir>${project.basedir}</main.basedir>
