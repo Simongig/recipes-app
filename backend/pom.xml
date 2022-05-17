@@ -10,9 +10,9 @@
         <version>0.0.2</version>
     </parent>
 
-    <!-- <properties>
+    <properties>
         <java.version>11</java.version>
-    </properties> -->
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
