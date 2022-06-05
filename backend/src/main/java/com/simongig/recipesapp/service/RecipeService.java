@@ -15,28 +15,28 @@ public class RecipeService {
     private final RecipeDao recipeDao;
 
     @Autowired
-    public RecipeService(@Qualifier("mongodb") RecipeDao recipeDao) {
+    public RecipeService(@Qualifier("mongoDB-Atlas") RecipeDao recipeDao) {
         this.recipeDao = recipeDao;
     }
 
-    public int addRecipe(Recipe recipe) {
-        return this.recipeDao.insertRecipe(recipe);
+    public void addRecipe(Recipe recipe) {
+        this.recipeDao.insertRecipe(recipe);
     }
 
     public List<Recipe> getAllRecipes() {
-        return this.recipeDao.selectAllRecipes();
+        return this.recipeDao.findAll();
     }
 
     public Optional<Recipe> getRecipeById(String id) {
-        return this.recipeDao.selectRecipeById(id);
+        return this.recipeDao.findById(id);
     }
 
-    public int deleteRecipe(String id) {
-        return this.recipeDao.deleteRecipeById(id);
+    public void deleteRecipe(String id) {
+        this.recipeDao.deleteById(id);
     }
 
     public int updateRecipe(String id, Recipe newRecipe) {
-        return this.recipeDao.updateRecipeById(id, newRecipe);
+        return this.recipeDao.updateById(id, newRecipe);
     }
 
     public List<Recipe> findRecipeByIngredients(String[] ingredients) {

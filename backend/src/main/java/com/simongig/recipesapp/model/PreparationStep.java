@@ -6,29 +6,13 @@ public class PreparationStep {
     private String title;
     private String content;
 
+    public PreparationStep() {}
+
     public PreparationStep(@JsonProperty String title, @JsonProperty String content) {
         this.setTitle(title);
         this.setContent(content);
     }
 
-    
-    @Override
-    public boolean equals(Object comp) {
-        PreparationStep compPrepStep = (PreparationStep)comp;
-        System.out.print(compPrepStep.title);
-        System.out.println(this.title);
-        if(this.title==compPrepStep.title) {
-            return true;
-        }
-        else {
-            return false;
-        } 
-    }  
-
-    @Override
-    public int hashCode() {
-        return title.hashCode();
-    }
 
     public String getContent() {
         return content;
@@ -49,5 +33,30 @@ public class PreparationStep {
     @Override
     public String toString() {
         return String.format("Step: %s", title);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((title == null) ? 0 : title.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PreparationStep other = (PreparationStep) obj;
+        if (title == null) {
+            if (other.title != null)
+                return false;
+        } else if (!title.equals(other.title))
+            return false;
+        return true;
     }
 }

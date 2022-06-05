@@ -22,7 +22,7 @@ public class RecipeAccessService implements RecipeDao {
     IngredientAccessService ingredientAccessService = new IngredientAccessService();
 
     @Override
-    public int insertRecipe(Recipe recipe) {
+    public void insertRecipe(Recipe recipe) {
         System.out.println(recipe.getImagePaths());
         for (Ingredient ingredient : recipe.getIngredients()) {
             System.out.println(ingredient);
@@ -37,33 +37,6 @@ public class RecipeAccessService implements RecipeDao {
             }
         }
         mongoOps.insert(recipe);
-        return 1;
-    }
-
-    @Override
-    public List<Recipe> selectAllRecipes() {
-        return mongoOps.findAll(Recipe.class);
-    }
-
-    @Override
-    public Optional<Recipe> selectRecipeById(String id) {
-        return Optional.ofNullable(mongoOps.findById(id, Recipe.class));
-    }
-
-    @Override
-    public int deleteRecipeById(String id) {
-        Recipe recipeToRemove = mongoOps.findById(id, Recipe.class);
-        Boolean wasRemoved = mongoOps.remove(recipeToRemove).wasAcknowledged();
-        if (wasRemoved) {
-            return 1;
-        }
-        return 0;
-    }
-
-    @Override
-    public int updateRecipeById(String id, Recipe recipe) {
-
-        return 0;
     }
 
     @Override
@@ -75,6 +48,30 @@ public class RecipeAccessService implements RecipeDao {
 
         System.out.println(mongoOps.find(query, Recipe.class, "recipe"));
         return mongoOps.find(query, Recipe.class, "recipe");
+    }
+
+    @Override
+    public List<Recipe> findAll() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Optional<Recipe> findById(String id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void deleteById(String id) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public int updateById(String id, Recipe recipe) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 }

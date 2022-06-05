@@ -26,7 +26,7 @@ public class RecipeController {
         System.out.println(data);
         for (MultipartFile image : images) {
             System.out.println(image.getOriginalFilename());
-            data.addImagePath(image.getOriginalFilename());
+            // data.addImagePath(image.getOriginalFilename());
         }
         recipeService.addRecipe(data);
     }
@@ -55,8 +55,8 @@ public class RecipeController {
         recipeService.deleteRecipe(id);
     }
 
-    @PutMapping("/update/{id}")
-    public void updateRecipeById(@PathVariable("id") String id, @RequestBody Recipe recipeToUpdate) {
-        recipeService.updateRecipe(id, recipeToUpdate);
-    }
+    // @PutMapping("/update/{id}")
+    // public void updateRecipeById(@PathVariable("id") String id, @RequestBody Recipe recipeToUpdate) {
+    //     recipeService.updateRecipe(id, recipeToUpdate);
+    // }
 }

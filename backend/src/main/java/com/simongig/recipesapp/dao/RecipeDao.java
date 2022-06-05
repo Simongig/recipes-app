@@ -7,17 +7,17 @@ import java.util.Optional;
 
 public interface RecipeDao {
 
-    default int insertRecipe(Recipe recipe) {
-        return insertRecipe(recipe);
+    default void insertRecipe(Recipe recipe) {
+        insertRecipe(recipe);
     }
 
-    List<Recipe> selectAllRecipes();
+    List<Recipe> findAll();
 
-    Optional<Recipe> selectRecipeById(String id);
+    Optional<Recipe> findById(String id);
 
-    int deleteRecipeById(String id);
+    void deleteById(String id);
 
-    int updateRecipeById(String id, Recipe recipe);
+    int updateById(String id, Recipe recipe);
 
     List<Recipe> selectRecipesByIngredients(String[] ingredients);
 }

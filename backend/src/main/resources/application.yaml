@@ -1,4 +1,8 @@
 spring:
   servlet:
     multipart:
-      max-file-size: 10MB
+      max-file-size: "10MB"
+  data:
+    mongodb:
+      uri: "mongodb+srv://simongig:4TbPkYIR5BVUKkRS@kochbuch-io.rocnz.mongodb.net/?retryWrites=true&w=majority"
+      database: "database"

@@ -5,9 +5,12 @@ import org.springframework.data.annotation.Id;
 
 public class IngredientName {
 
+
     @Id
     private String name;
     private int popularity;
+
+    public IngredientName() {}
 
     public IngredientName(String name) {
         this.setName(name);
