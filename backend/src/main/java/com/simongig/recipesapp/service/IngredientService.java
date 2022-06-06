@@ -17,12 +17,12 @@ public class IngredientService {
     private final IngredientDao ingredientDao;
 
     @Autowired
-    public IngredientService(@Qualifier("mongodb-IngredientDB") IngredientDao ingredientDao) {
+    public IngredientService(@Qualifier("MongoAtlas-Ingredients") IngredientDao ingredientDao) {
         this.ingredientDao = ingredientDao;
     }
 
-    public int addIngredientName(IngredientName ingredientName) {
-        return this.ingredientDao.insertIngredientName(ingredientName);
+    public void addIngredientName(IngredientName ingredientName) {
+        this.ingredientDao.insertIngredientName(ingredientName);
     }
 
     public List<IngredientName> getAllIngredientNames() {
@@ -37,21 +37,20 @@ public class IngredientService {
         return this.ingredientDao.selectIngredientNameById(id);
     }
 
-    public int deleteIngredientName(String id) {
-        return this.ingredientDao.deleteIngredientNameById(id);
+    public void deleteIngredientName(String id) {
+        this.ingredientDao.deleteIngredientNameById(id);
     }
 
-    public int updateIngredientName(String id, int popularity) {
+    public void updateIngredientName(String id, int popularity) {
         //@TODO maybe implement
-        return 0;
     }
 
-    public int increaseIngredientNamePopularityByName(String id, int popularityIncrease) {
-        return this.ingredientDao.increaseIngredientNamePopularityById(id, popularityIncrease);
+    public void increaseIngredientNamePopularityByName(String id, int popularityIncrease) {
+        this.ingredientDao.increaseIngredientNamePopularityById(id, popularityIncrease);
     }
     
-    public int incrementIngredientNamePopularityByName(String id) {
-        return this.ingredientDao.incrementIngredientNamePopularityById(id);
+    public void incrementIngredientNamePopularityByName(String id) {
+        this.ingredientDao.incrementIngredientNamePopularityById(id);
     }
 
 }

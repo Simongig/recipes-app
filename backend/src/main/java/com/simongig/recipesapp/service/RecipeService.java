@@ -15,7 +15,7 @@ public class RecipeService {
     private final RecipeDao recipeDao;
 
     @Autowired
-    public RecipeService(@Qualifier("mongoDB-Atlas") RecipeDao recipeDao) {
+    public RecipeService(@Qualifier("MongoAtlas-Recipes") RecipeDao recipeDao) {
         this.recipeDao = recipeDao;
     }
 

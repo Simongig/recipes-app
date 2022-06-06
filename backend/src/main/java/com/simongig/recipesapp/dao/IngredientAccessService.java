@@ -36,34 +36,29 @@ public class IngredientAccessService implements IngredientDao {
     }
 
     @Override
-    public int deleteIngredientNameById(String id) {
+    public void deleteIngredientNameById(String id) {
         // Optional<IngredientName> foundIngredientName = selectIngredientNameById(id);
-
-        return 0;
     }
 
     @Override
-    public int updateIngredientNamePopularityById(String id, int popularity) {
+    public void updateIngredientNamePopularityById(String id, int popularity) {
         Optional<IngredientName> foundIngredientName = selectIngredientNameById(id);
         foundIngredientName.get().setPopularity(popularity);
         mongoOps.updateFirst(new Query(Criteria.where("name").is(id)),
                 Update.update("popularity", foundIngredientName.get().getPopularity()), IngredientName.class);
-        return 1;
     }
 
     @Override
-    public int increaseIngredientNamePopularityById(String id, int popularityIncrease) {
+    public void increaseIngredientNamePopularityById(String id, int popularityIncrease) {
         Optional<IngredientName> foundIngredientName = selectIngredientNameById(id);
         foundIngredientName.get().increasePopularity(popularityIncrease);
         mongoOps.updateFirst(new Query(Criteria.where("name").is(id)),
                 Update.update("popularity", foundIngredientName.get().getPopularity()), IngredientName.class);
-        return 1;
     }
 
     @Override
-    public int incrementIngredientNamePopularityById(String id) {
+    public void incrementIngredientNamePopularityById(String id) {
         increaseIngredientNamePopularityById(id, 1);
-        return 1;
     }
 
 }

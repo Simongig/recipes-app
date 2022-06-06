@@ -35,7 +35,7 @@ public class IngredientController {
     // }
 
     @PutMapping("/{id}")
-    public int increaseIngredientNamePopularityByName(@PathVariable("name") String id, @RequestBody int popularityIncrease) {
-        return ingredientService.increaseIngredientNamePopularityByName(id, popularityIncrease);
+    public void increaseIngredientNamePopularityByName(@PathVariable("name") String id, @RequestBody int popularityIncrease) {
+        ingredientService.increaseIngredientNamePopularityByName(id, popularityIncrease);
     }
 }

@@ -7,19 +7,19 @@ import com.simongig.recipesapp.model.IngredientName;
 
 public interface IngredientDao {
 
-    default int insertIngredientName(IngredientName ingredientName) {
-        return insertIngredientName(ingredientName);
+    default void insertIngredientName(IngredientName ingredientName) {
+        insertIngredientName(ingredientName);
     }
 
     List<IngredientName> selectAllIngredientNames();
 
     Optional<IngredientName> selectIngredientNameById(String id);
 
-    int deleteIngredientNameById(String id);
+    void deleteIngredientNameById(String id);
 
-    int updateIngredientNamePopularityById(String id, int popularity);
+    void updateIngredientNamePopularityById(String id, int popularity);
 
-    int increaseIngredientNamePopularityById(String id, int popularityIncrease);
+    void increaseIngredientNamePopularityById(String id, int popularityIncrease);
 
-    int incrementIngredientNamePopularityById(String id);
+    void incrementIngredientNamePopularityById(String id);
 }

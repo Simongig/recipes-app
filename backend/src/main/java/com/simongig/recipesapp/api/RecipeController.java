@@ -21,13 +21,6 @@ public class RecipeController {
 
     @PostMapping("/add")
     public void addRecipe(@RequestPart Recipe data, @RequestPart ArrayList<MultipartFile> images) throws Exception {
-        System.out.println("---------- new Request ----------");
-        System.out.println(images.size());
-        System.out.println(data);
-        for (MultipartFile image : images) {
-            System.out.println(image.getOriginalFilename());
-            // data.addImagePath(image.getOriginalFilename());
-        }
         recipeService.addRecipe(data);
     }
 

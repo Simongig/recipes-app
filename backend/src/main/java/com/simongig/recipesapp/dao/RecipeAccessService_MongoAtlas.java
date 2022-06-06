@@ -16,7 +16,7 @@ import com.mongodb.client.MongoCollection;
 import com.simongig.recipesapp.model.Recipe;
 
 
-@Repository("mongoDB-Atlas")
+@Repository("MongoAtlas-Recipes")
 public class RecipeAccessService_MongoAtlas implements RecipeDao {
     
     private final MongoClient client;
