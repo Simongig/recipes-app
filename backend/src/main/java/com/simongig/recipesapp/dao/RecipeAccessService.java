@@ -69,9 +69,8 @@ public class RecipeAccessService implements RecipeDao {
     }
 
     @Override
-    public int updateById(String id, Recipe recipe) {
+    public void updateById(String id, Recipe recipe) {
         // TODO Auto-generated method stub
-        return 0;
     }
 
 }

@@ -35,8 +35,8 @@ public class RecipeService {
         this.recipeDao.deleteById(id);
     }
 
-    public int updateRecipe(String id, Recipe newRecipe) {
-        return this.recipeDao.updateById(id, newRecipe);
+    public void updateRecipe(String id, Recipe newRecipe) {
+        this.recipeDao.updateById(id, newRecipe);
     }
 
     public List<Recipe> findRecipeByIngredients(String[] ingredients) {
