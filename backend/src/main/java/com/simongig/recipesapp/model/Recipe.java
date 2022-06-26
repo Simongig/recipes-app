@@ -18,8 +18,10 @@ public class Recipe {
 
     private String title;
     private int duration;
+    @BsonProperty("preparation_steps")
     private List<PreparationStep> PreparationSteps;
     private List<Ingredient> Ingredients;
+    @BsonProperty("image_paths")
     private List<String> imagePaths;
     private int portions;
     // private Set<String> tags;
