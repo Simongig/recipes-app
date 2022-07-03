@@ -5,7 +5,7 @@
     </div>
     <div class="nav-links">
       <router-link to="/recipe/all">All Recipes</router-link>
-      <router-link to="/createRecipe">Create</router-link>
+      <router-link v-if="this.$store.state.isLoggedIn" to="/createRecipe">Create</router-link>
       <router-link to="/login">Login</router-link>
     </div>
   </nav>
@@ -41,7 +41,6 @@ nav a.router-link-exact-active {
   color: var(--secondary-color);
 }
 
-
 nav a:hover {
   color: var(--secondary-color);
 }
@@ -55,6 +54,4 @@ nav a:hover {
   display: flex;
   justify-content: space-around;
 }
-
-
 </style>

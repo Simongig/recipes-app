@@ -177,6 +177,16 @@ export default {
         content: "",
       });
     },
+    getAccessToken() {
+      let user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.access_token) {
+        // for Node.js Express back-end
+        console.log(user.access_token)
+        return user.access_token ;
+      } else {
+        return {};
+      }
+    },
     updateFiles() {
       document.getElementById("file-input").click();
     },
@@ -212,6 +222,7 @@ export default {
         .post("/api/v1/recipe/add", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
+            "Authorization": "Bearer " + this.getAccessToken()
           },
         })
         .then((response) => {

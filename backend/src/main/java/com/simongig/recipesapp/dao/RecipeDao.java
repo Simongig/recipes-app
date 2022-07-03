@@ -17,7 +17,7 @@ public interface RecipeDao {
 
     void deleteById(String id);
 
-    int updateById(String id, Recipe recipe);
+    void updateById(String id, Recipe recipe);
 
     List<Recipe> selectRecipesByIngredients(String[] ingredients);
 }

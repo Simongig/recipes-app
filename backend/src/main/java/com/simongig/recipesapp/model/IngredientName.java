@@ -1,5 +1,6 @@
 package com.simongig.recipesapp.model;
 
+import org.bson.codecs.pojo.annotations.BsonId;
 import org.springframework.data.annotation.Id;
 
 
@@ -7,6 +8,7 @@ public class IngredientName {
 
 
     @Id
+    @BsonId
     private String name;
     private int popularity;
 
@@ -44,5 +46,9 @@ public class IngredientName {
     @Override
     public String toString() {
         return String.format("IngredientName: %s with Popularity: %s", name, popularity);
+    }
+
+    public Object increasePopularityBy(int i) {
+        return null;
     }
 }
