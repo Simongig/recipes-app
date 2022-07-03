@@ -41,7 +41,8 @@ export default {
           console.log(response);
             localStorage.setItem('user', JSON.stringify(response.data))
             if(response.data.access_token) {
-              localStorage.setItem("loggedIn", true);
+              this.$store.commit("setToLoggedIn")
+              console.log(this.$store.state.isLoggedIn);
             }
         })
         .catch((e) => {

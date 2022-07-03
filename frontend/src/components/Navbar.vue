@@ -5,7 +5,7 @@
     </div>
     <div class="nav-links">
       <router-link to="/recipe/all">All Recipes</router-link>
-      <router-link v-if="isLoggedIn" to="/createRecipe">Create</router-link>
+      <router-link v-if="this.$store.state.isLoggedIn" to="/createRecipe">Create</router-link>
       <router-link to="/login">Login</router-link>
     </div>
   </nav>
@@ -14,14 +14,6 @@
 <script>
 export default {
   name: "Navbar",
-  data() {
-    return {
-      isLoggedIn: false,
-    };
-  },
-  mounted() {
-      this.isLoggedIn = window.localStorage.getItem("loggedIn");
-  },
 };
 </script>
 
