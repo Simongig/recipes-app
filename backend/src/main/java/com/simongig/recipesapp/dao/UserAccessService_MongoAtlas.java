@@ -57,6 +57,10 @@ public class UserAccessService_MongoAtlas implements UserDao, UserDetailsService
 
     @Override
     public void save(User user) {
+        //default add User Role
+        Bson roleFilter =  eq("name", "ROLE_USER");
+        UserRole newRole = userRoleCollection.find(roleFilter).first();
+        user.addRole(newRole);
         userCollection.insertOne(user);
     }
 

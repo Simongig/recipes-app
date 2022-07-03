@@ -1,11 +1,20 @@
 package com.simongig.recipesapp.model;
 
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.springframework.data.annotation.Id;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Ingredient {
+
+    @Id
+    @BsonId
     private String name;
     private double quantity;
     private String unit;
+    private String type;
+    private String category;
+    private Integer popularity;
 
     public Ingredient() {}
 
@@ -14,6 +23,7 @@ public class Ingredient {
         this.name = name;
         this.quantity = quantity;
         this.unit = unit;
+        this.popularity = 1;
     }
 
     @Override
@@ -63,6 +73,19 @@ public class Ingredient {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    
+    public Integer getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(Integer popularity) {
+        this.popularity = popularity;
+    }
+
+    public void increasePopularityBy(Integer increaseValue) {
+        this.popularity += increaseValue;
     }
 
     @Override

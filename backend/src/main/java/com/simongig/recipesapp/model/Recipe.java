@@ -3,7 +3,6 @@ package com.simongig.recipesapp.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.bson.codecs.pojo.annotations.BsonId;
-import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
@@ -18,10 +17,9 @@ public class Recipe {
 
     private String title;
     private int duration;
-    @BsonProperty("preparation_steps")
     private List<PreparationStep> PreparationSteps;
     private List<Ingredient> Ingredients;
-    @BsonProperty("image_paths")
+    // @BsonProperty("image_paths")
     private List<String> imagePaths;
     private int portions;
     // private Set<String> tags;

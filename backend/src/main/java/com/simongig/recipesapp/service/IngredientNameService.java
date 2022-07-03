@@ -3,7 +3,7 @@ package com.simongig.recipesapp.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.simongig.recipesapp.dao.IngredientDao;
+import com.simongig.recipesapp.dao.IngredientNameDao;
 import com.simongig.recipesapp.model.IngredientName;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,33 +12,33 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class IngredientService {
+public class IngredientNameService {
     
-    private final IngredientDao ingredientDao;
+    private final IngredientNameDao ingredientNameDao;
 
     @Autowired
-    public IngredientService(@Qualifier("MongoAtlas-Ingredients") IngredientDao ingredientDao) {
-        this.ingredientDao = ingredientDao;
+    public IngredientNameService(@Qualifier("MongoAtlas-IngredientNames") IngredientNameDao ingredientNameDao) {
+        this.ingredientNameDao = ingredientNameDao;
     }
 
     public void addIngredientName(IngredientName ingredientName) {
-        this.ingredientDao.insertIngredientName(ingredientName);
+        this.ingredientNameDao.insertIngredientName(ingredientName);
     }
 
     public List<IngredientName> getAllIngredientNames() {
-        for(IngredientName ingredient: this.ingredientDao.selectAllIngredientNames()) {
+        for(IngredientName ingredient: this.ingredientNameDao.selectAllIngredientNames()) {
             System.out.println(ingredient);
         }
         
-        return this.ingredientDao.selectAllIngredientNames();
+        return this.ingredientNameDao.selectAllIngredientNames();
     }
 
-    public Optional<IngredientName> getIngredientNameById(String id) {
-        return this.ingredientDao.selectIngredientNameById(id);
+    public Optional<IngredientName> getIngredientNameById(String name) {
+        return this.ingredientNameDao.selectIngredientNameByName(name);
     }
 
     public void deleteIngredientName(String id) {
-        this.ingredientDao.deleteIngredientNameById(id);
+        this.ingredientNameDao.deleteIngredientNameById(id);
     }
 
     public void updateIngredientName(String id, int popularity) {
@@ -46,11 +46,11 @@ public class IngredientService {
     }
 
     public void increaseIngredientNamePopularityByName(String id, int popularityIncrease) {
-        this.ingredientDao.increaseIngredientNamePopularityById(id, popularityIncrease);
+        this.ingredientNameDao.increaseIngredientNamePopularityById(id, popularityIncrease);
     }
     
     public void incrementIngredientNamePopularityByName(String id) {
-        this.ingredientDao.incrementIngredientNamePopularityById(id);
+        this.ingredientNameDao.incrementIngredientNamePopularityById(id);
     }
 
 }

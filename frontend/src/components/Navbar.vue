@@ -5,7 +5,7 @@
     </div>
     <div class="nav-links">
       <router-link to="/recipe/all">All Recipes</router-link>
-      <router-link to="/createRecipe">Create</router-link>
+      <router-link v-if="isLoggedIn" to="/createRecipe">Create</router-link>
       <router-link to="/login">Login</router-link>
     </div>
   </nav>
@@ -14,6 +14,14 @@
 <script>
 export default {
   name: "Navbar",
+  data() {
+    return {
+      isLoggedIn: false,
+    };
+  },
+  mounted() {
+      this.isLoggedIn = window.localStorage.getItem("loggedIn");
+  },
 };
 </script>
 
@@ -41,7 +49,6 @@ nav a.router-link-exact-active {
   color: var(--secondary-color);
 }
 
-
 nav a:hover {
   color: var(--secondary-color);
 }
@@ -55,6 +62,4 @@ nav a:hover {
   display: flex;
   justify-content: space-around;
 }
-
-
 </style>

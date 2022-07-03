@@ -3,7 +3,7 @@ package com.simongig.recipesapp.api;
 import java.util.List;
 
 import com.simongig.recipesapp.model.IngredientName;
-import com.simongig.recipesapp.service.IngredientService;
+import com.simongig.recipesapp.service.IngredientNameService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/ingredient")
 @RestController
 public class IngredientController {
-    private final IngredientService ingredientService;
+    private final IngredientNameService ingredientService;
 
     @Autowired
-    public IngredientController(IngredientService ingredientService) {
+    public IngredientController(IngredientNameService ingredientService) {
         this.ingredientService = ingredientService;
     }
 

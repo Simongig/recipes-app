@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.simongig.recipesapp.model.IngredientName;
 
-public interface IngredientDao {
+public interface IngredientNameDao {
 
     default void insertIngredientName(IngredientName ingredientName) {
         insertIngredientName(ingredientName);
@@ -13,7 +13,7 @@ public interface IngredientDao {
 
     List<IngredientName> selectAllIngredientNames();
 
-    Optional<IngredientName> selectIngredientNameById(String id);
+    Optional<IngredientName> selectIngredientNameByName(String name);
 
     void deleteIngredientNameById(String id);
 

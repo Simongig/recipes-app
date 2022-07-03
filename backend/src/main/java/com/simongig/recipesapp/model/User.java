@@ -1,5 +1,6 @@
 package com.simongig.recipesapp.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,7 +35,11 @@ public class User {
         this.email = email;
         this.username = username;
         this.password = password;
-        this.roles = roles;
+        if (null == roles || 0 == roles.size()) {
+            this.roles = new ArrayList<>();
+        } else {
+            this.roles = roles;
+        }
     }
 
     public User() {
@@ -94,5 +99,9 @@ public class User {
 
     public void setRoles(List<UserRole> roles) {
         this.roles = roles;
+    }
+
+    public void addRole(UserRole newRole) {
+        this.roles.add(newRole);
     }
 }

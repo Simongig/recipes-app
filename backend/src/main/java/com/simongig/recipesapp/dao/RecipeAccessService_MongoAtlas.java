@@ -39,7 +39,11 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
 
     @Override
     public List<Recipe> findAll() {
-        System.out.println("RecipeAccessService_MongoAtlas.findAll()");
+        List<Recipe> allRecipes = recipeCollection.find().into(new ArrayList<>());
+        for (Recipe recipe: allRecipes) {
+            System.out.println(recipe.getImagePaths());
+            System.out.println(recipe.getPreparationSteps());
+        }
         return recipeCollection.find().into(new ArrayList<>());
     }
 
@@ -51,7 +55,7 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
 
     
     public List<Recipe> selectRecipesByIngredients(String[] ingredients) {
-        Bson matchIngredients = in("Ingredients.name", ingredients);
+        Bson matchIngredients = in("ingredients.name", ingredients);
         return recipeCollection.find(matchIngredients, Recipe.class).into(new ArrayList<>());
     }
 
