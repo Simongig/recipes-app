@@ -1,11 +1,8 @@
 <template>
   <div class="app-container" >
-    <div v-if="this.testCookie">
+    <div>
     <navbar></navbar>
     <router-view></router-view></div>
-    <div class="construction" v-else>
-      <h1>This site is under construction!</h1>
-    </div>
   </div>
 </template>
 

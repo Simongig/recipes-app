@@ -37,13 +37,17 @@ export default {
           },
         })
         .then((response) => {
-          console.log(formData.get("data"));
-          console.log(response);
+            if(200 == response.status) {
+              alert('Super! Dein Login war erfolgreich!')
+            } else {
+              alert('Oh nein! Irgendwas ist beim Login schiefgelaufen :( \n Code: ' + response.status)
+            }
             localStorage.setItem('user', JSON.stringify(response.data))
             if(response.data.access_token) {
               this.$store.commit("setToLoggedIn")
               console.log(this.$store.state.isLoggedIn);
             }
+            router.push({ path: '/' })
         })
         .catch((e) => {
           console.log(formData.get("data"));
