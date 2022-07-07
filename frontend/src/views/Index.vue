@@ -88,7 +88,7 @@ export default {
 main {
   width: auto;
   height: 100%;
-  margin: 0 10vw;
+  margin: 10vw;
 }
 
 .search-wrapper {

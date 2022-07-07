@@ -9,26 +9,23 @@
     <h2>Add a recipe here</h2>
     <input
       type="text"
-      value="Lasagne"
       required
       name="title"
-      placeholder="Titel"
+      placeholder="Wie heißt das Rezept?"
       id=""
     />
     <input
       type="number"
-      value="15"
       required
       name="duration"
-      placeholder="Dauer"
+      placeholder="Wie lange dauert das Rezept?"
       id=""
     />
     <input
       type="number"
-      value="15"
       required
       name="portions"
-      placeholder="Portionen"
+      placeholder="Für wie viele Personen reicht es?"
       id=""
     />
     <fieldset class="form-section">
@@ -102,7 +99,7 @@
         </div>
       </div>
     </fieldset>
-    <div class="custom-file-input">
+    <div class="custom-file-input" v-if="false">
       <input
         type="button"
         class="custom-file-input-button"
@@ -119,7 +116,7 @@
         @change="updateFilesArray()"
       />
     </div>
-    <image-upload-preview :images="files" required />
+    <image-upload-preview v-if="false" :images="files" />
     <input @click="sendForm()" type="submit" value="Rezept hinzufügen" />
   </form>
 </template>
@@ -136,19 +133,13 @@ export default {
       files: [],
       ingredients: [
         {
-          quantity: 2,
-          unit: "Stück",
-          name: "Tomate",
         },
       ],
       preparationSteps: [
         {
-          title: "Step1",
-          content:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum ad exercitationem alias sed! Eveniet corrupti dicta hic illo itaque illum.",
         },
       ],
-      unitOptions: ["Stück", "Teelöffel", "Gramm", "Liter"],
+      unitOptions: ["Stück", "Teelöffel", "Esslöffel", "Gramm", "Kilo", "Liter", "Prise", "Milliliter", "Bündel"],
     };
   },
   mounted() {
@@ -226,8 +217,12 @@ export default {
           },
         })
         .then((response) => {
-          console.log(formData.get("data"));
-          console.log(response);
+            if(200 == response.status) {
+              alert('Dein Rezpet wurde erfolgreich hochgeladen!')
+            } else {
+              alert('Oh nein! Irgendwas ist beim Upload schiefgelaufen :( \n Code: ' + response.status)
+            }
+            router.push({ path: '/' })
         })
         .catch((e) => {
           console.log(formData.get("data"));
