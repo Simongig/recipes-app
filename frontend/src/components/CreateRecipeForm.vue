@@ -124,6 +124,7 @@
 <script>
 import axios from "axios";
 import ImageUploadPreview from "./ImageUploadPreview.vue";
+import router from '../router'
 // import IngredientFormInput from "./IngredientFormInput.vue";
 export default {
   name: "createRecipeForm",
@@ -225,7 +226,8 @@ export default {
             router.push({ path: '/' })
         })
         .catch((e) => {
-          console.log(formData.get("data"));
+          router.push({ path: '/' })
+          alert('Oh nein! Irgendwas ist beim Upload schiefgelaufen :(');
           console.log(e);
         });
     },

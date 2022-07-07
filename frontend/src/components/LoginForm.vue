@@ -14,6 +14,7 @@
 
 <script>
 import axios from "axios";
+import router from '../router'
 export default {
   name: "login-form",
   mounted() {
@@ -50,8 +51,8 @@ export default {
             router.push({ path: '/' })
         })
         .catch((e) => {
-          console.log(formData.get("data"));
-          console.log(e);
+            alert('Oh nein! Irgendwas ist beim Login schiefgelaufen :(')
+            console.log(e);
         });
     },
   },
