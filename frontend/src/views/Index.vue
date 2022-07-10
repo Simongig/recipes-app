@@ -59,7 +59,7 @@ export default {
         .then((response) => {
           console.log(this.foundRecipes)
           console.log(response.data)
-          this.foundRecipes = this.foundRecipes.concat( response.data);
+          this.foundRecipes = response.data;
           console.log(this.foundRecipes)
         });
     },

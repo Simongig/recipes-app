@@ -4,10 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-backend/src/main/resources/public/css/
-backend/src/main/resources/public/img/
-backend/src/main/resources/public/js/
-backend/src/main/resources/public/index.html
+backend/src/main/resources/public/**
 
 ### STS ###
 .apt_generated

@@ -55,7 +55,11 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
 
     
     public List<Recipe> selectRecipesByIngredients(String[] ingredients) {
-        Bson matchIngredients = in("ingredients.name", ingredients);
+        System.out.println("------- Search Recipes -------");
+        for(String i: ingredients) {
+            System.out.println(i);
+        }
+        Bson matchIngredients = in("ingredients._id", ingredients);
         return recipeCollection.find(matchIngredients, Recipe.class).into(new ArrayList<>());
     }
 
