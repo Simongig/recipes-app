@@ -226,7 +226,6 @@ export default {
             router.push({ path: '/' })
         })
         .catch((e) => {
-          router.push({ path: '/' })
           alert('Oh nein! Irgendwas ist beim Upload schiefgelaufen :(');
           console.log(e);
         });
