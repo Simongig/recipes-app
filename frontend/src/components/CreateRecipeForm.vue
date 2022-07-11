@@ -193,8 +193,7 @@ export default {
             "&orientation=landscape&collections=food-drinks"
         )
         .then((value) => {
-          var random = Math.round((Math.random() * 100) % 4);
-          return value.data.results[random].urls.regular;
+          return value.data.results[0].urls.regular;
         });
       const imageURLArr = new Array();
       imageURLArr.push(imageURL);
