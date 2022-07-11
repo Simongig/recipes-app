@@ -6,7 +6,7 @@
     class="boxshadow recipe-create-form"
     enctype="multipart/form-data"
   >
-    <h2>Add a recipe here</h2>
+    <h2>Fügen Sie Ihr Rezept hinzu</h2>
     <input
       type="text"
       required
@@ -29,7 +29,7 @@
       id=""
     />
     <fieldset class="form-section">
-      <legend>Ingredients</legend>
+      <legend>Zutaten</legend>
       <div class="ingredients-grid">
         <div
           class="ingredient"
@@ -66,7 +66,7 @@
       </div>
     </fieldset>
     <fieldset class="form-section">
-      <legend>Preparation Steps</legend>
+      <legend>Zubereitungsschritte</legend>
       <div class="preparationSteps-grid">
         <div
           class="preparationStep"
@@ -76,7 +76,7 @@
           <input
             type="text"
             required
-            placeholder="Preparation"
+            placeholder="Vorbereitung"
             id=""
             v-model="preparationSteps[index].title"
           />
@@ -85,7 +85,7 @@
             required
             cols="30"
             rows="10"
-            placeholder="Cut onion"
+            placeholder="Wasser in einen Topf füllen und reichlich Salz dazu geben"
             v-model="preparationSteps[index].content"
           ></textarea>
         </div>
@@ -279,7 +279,7 @@ export default {
 
 .ingredient {
   display: grid;
-  grid-template-columns: 5rem 5rem auto;
+  grid-template-columns: 3rem 5rem auto;
   gap: 5px;
 }
 

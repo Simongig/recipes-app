@@ -4,9 +4,14 @@
       <router-link to="/">Home</router-link>
     </div>
     <div class="nav-links">
-      <router-link to="/recipe/all">All Recipes</router-link>
-      <router-link v-if="this.$store.state.isLoggedIn" to="/createRecipe">Create</router-link>
-      <router-link to="/login">Login</router-link>
+      <router-link to="/recipe/all">Rezepte</router-link>
+      <router-link v-if="this.$store.state.isLoggedIn" to="/createRecipe"
+        >Erstellen</router-link
+      >
+      <router-link v-if="this.$store.state.isLoggedIn" to="/profile"
+        >Profil</router-link
+      >
+      <router-link v-else to="/login">Login</router-link>
     </div>
   </nav>
 </template>
@@ -26,10 +31,10 @@ nav {
   /* background-color: #DAD0CE; */
   background-color: white;
   margin-bottom: 3rem;
-  border-bottom: 1px solid var(--main-color);
   position: fixed;
   top: 0;
   width: 100%;
+  box-shadow: 0px 0px 22px -2px #cecece;
 }
 
 nav a {
@@ -53,5 +58,9 @@ nav a:hover {
 .nav-links {
   display: flex;
   justify-content: space-around;
+}
+
+.nav-links > * + * {
+  padding-left: 0.5rem;
 }
 </style>
