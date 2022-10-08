@@ -7,27 +7,38 @@
     enctype="multipart/form-data"
   >
     <h2>Fügen Sie Ihr Rezept hinzu</h2>
+    <div class="form-field-wrapper">
     <input
       type="text"
       required
       name="title"
-      placeholder="Wie heißt das Rezept?"
+      placeholder="*not-shown*"
       id=""
     />
+      <label for="title">Wie heißt das Rezept?</label>
+    </div>
+    <div class="form-field-wrapper">
     <input
       type="number"
       required
       name="duration"
-      placeholder="Wie lange dauert das Rezept?"
+      placeholder="*not-shown*"
       id=""
     />
+      <label for="title">Wie lange dauert es?</label>
+      <div style="padding: 0 1rem;">Minuten</div>
+    </div>
+    <div class="form-field-wrapper">
     <input
       type="number"
       required
       name="portions"
-      placeholder="Für wie viele Personen reicht es?"
+      placeholder="*not-shown*"
       id=""
     />
+      <label for="title">Für wie viele Personen reicht es?</label>
+      <div style="padding: 0 1rem;">Personen</div>
+    </div>
     <fieldset class="form-section">
       <legend>Zutaten</legend>
       <div class="ingredients-grid">
@@ -190,7 +201,7 @@ export default {
         .get(
           "https://api.unsplash.com/search/photos?client_id=ZlrYQ-virrK3j1gPYVdac_pQQ63rplNe52KDDdubxb0&query=" +
             formData.get("title").trim().replace(" ", "-") +
-            "&orientation=landscape&collections=food-drinks"
+            "&collections=food-drinks"
         )
         .then((value) => {
           return value.data.results[0].urls.regular;
@@ -244,6 +255,40 @@ export default {
 
 .form-section legend {
   padding: 0 0.7rem;
+}
+
+.form-field-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-field-wrapper > label {
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: grey;
+  transition: all ease-in-out 0.15s;
+  font-size: small;
+}
+
+.form-field-wrapper > input:focus + label,
+.form-field-wrapper > input:not(:placeholder-shown) + label {
+	top: -25%;
+	transform: translateY(0);
+	background-color: white;
+	padding: 0 0.5rem;
+  font-size: x-small;
+}
+
+.form-field-wrapper > input::placeholder {
+  color: transparent;
+}
+
+.form-field-wrapper > input {
+  width: 100%;
+  height: 100%;
 }
 
 .add-element {

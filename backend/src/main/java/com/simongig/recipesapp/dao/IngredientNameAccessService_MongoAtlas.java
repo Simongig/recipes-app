@@ -9,12 +9,14 @@ import java.util.Optional;
 import javax.annotation.PostConstruct;
 
 import org.bson.conversions.Bson;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
+import com.simongig.recipesapp.model.Ingredient;
 import com.simongig.recipesapp.model.IngredientName;
 
 @Repository("MongoAtlas-IngredientNames")
@@ -43,7 +45,7 @@ public class IngredientNameAccessService_MongoAtlas implements IngredientNameDao
 
     @Override
     public Optional<IngredientName> selectIngredientNameByName(String name) {
-        Bson matchName = eq("name", name);
+        Bson matchName = eq("_id", name);
         return Optional.ofNullable(ingredientNameCollection.find(matchName).first());
 
     }
@@ -64,14 +66,23 @@ public class IngredientNameAccessService_MongoAtlas implements IngredientNameDao
 
     @Override
     public void increaseIngredientNamePopularityById(String id, int popularityIncrease) {
-        // Optional<Ingredient> foundIngredient = selectIngredientById(id);
-        // foundIngredient.get().increasePopularity(popularityIncrease);
-        // mongoOps.updateFirst(new Query(Criteria.where("name").is(id)),
-        //         Update.update("popularity", foundIngredient.get().getPopularity()), Ingredient.class);
+        Optional<IngredientName> foundIngredient = selectIngredientNameByName(id);
+        System.out.println("Ingredientpopularity: "+ foundIngredient.get().getPopularity());
+        System.out.println(selectIngredientNameByName(id));
+        foundIngredient.get().increasePopularity(popularityIncrease);
+        // Update.update("popularity", foundIngredient.get().getPopularity()), Ingredient.class);
+        System.out.println("new Ingredientpopularity: "+ foundIngredient.get().getPopularity());
+        try {   
+            UpdateOptions options = new UpdateOptions().upsert(true);
+            System.out.println(ingredientNameCollection.updateOne(eq("_id", id), Updates.set("popularity", foundIngredient.get().getPopularity()), options));
+        } catch (Exception e) {
+            System.out.println("Error updating: " + e.getMessage());
+        }
     }
 
     @Override
     public void incrementIngredientNamePopularityById(String id) {
+        System.out.println("incrementIngredientNamePopularityById() " + id);
         increaseIngredientNamePopularityById(id, 1);
     }
 

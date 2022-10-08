@@ -26,11 +26,13 @@ public class RecipeService {
     }
 
     public void addRecipe(Recipe recipe) {
+        List<IngredientName> aIngredientNames = ingredientNameService.getAllIngredientNames();
         for(Ingredient ingredient: recipe.getIngredients()) {
-            System.out.println(ingredient);
-            List<IngredientName> filteredIngredients = ingredientNameService.getAllIngredientNames().stream().filter(c -> c.getName() == ingredient.getName()).collect(Collectors.toList());
+            System.out.println("Ingredient:" + ingredient);
+            List<IngredientName> filteredIngredients = aIngredientNames.stream().filter(c -> c.getName().equals(ingredient.getName())).collect(Collectors.toList());
+            System.out.println("All IngredientNames: " + filteredIngredients);
             if(0 < filteredIngredients.size()) {
-                filteredIngredients.forEach(elem -> elem.increasePopularityBy(1));
+                ingredientNameService.incrementIngredientNamePopularityByName(ingredient.getName());
             } else {
                 ingredientNameService.addIngredientName(new IngredientName(ingredient.getName()));
             }
