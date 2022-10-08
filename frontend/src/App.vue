@@ -1,24 +1,28 @@
 <template>
-  <div class="app-container" >
+  <div class="app-container">
     <div>
-    <navbar></navbar>
-    <router-view></router-view></div>
+      <navbar></navbar>
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
 <script>
 import Navbar from "./components/Navbar.vue";
+// const axios = require("axios");
 
 export default {
   name: "App",
   data() {
     return {
-      testCookie: -1 < document.cookie.indexOf('testCookie=true')
-    }
+      testCookie: -1 < document.cookie.indexOf("testCookie=true"),
+    };
   },
-  mounted () {
-    if(document.location.search.indexOf('testCookie=true')) {
-      document.cookie = 'testCookie=true'
+  mounted() {
+    var user_data = JSON.parse(localStorage.getItem("user"));
+    if (null != user_data) {
+      this.$store.commit("setToLoggedIn");
+      console.log(this.$store.state.isLoggedIn);
     }
   },
   components: {
@@ -30,8 +34,8 @@ export default {
 <style>
 :root {
   --main-color: #223240;
-  --secondary-color: #8C452B;
-  --tertiary-color: #73614C;
+  --secondary-color: #8c452b;
+  --tertiary-color: #73614c;
 }
 
 #app {
