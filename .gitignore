@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 
 backend/src/main/resources/public/**
+frontend/public/**
 
 ### STS ###
 .apt_generated
