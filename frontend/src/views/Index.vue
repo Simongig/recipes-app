@@ -1,6 +1,6 @@
 <template>
   <main class="index-page">
-    <div class="search-wrapper">
+    <section class="search-wrapper">
       <ul class="selected-ingredients-list">
         <!-- <li
           class="selected-ingredient chip"
@@ -8,7 +8,13 @@
         >
           {{ ingredient }}
         </li> -->
-        <search-chip v-for="(ingredient, index) in selectedIngredients" :key="index" :id="'chip-' + index" @click="(index) => selectedIngredients.splice(index,1)" :value="ingredient"/>
+        <search-chip
+          v-for="(ingredient, index) in selectedIngredients"
+          :key="index"
+          :id="'chip-' + index"
+          @click="(index) => selectedIngredients.splice(index, 1)"
+          :value="ingredient"
+        />
       </ul>
       <search-input
         @ingredientSelected="
@@ -17,15 +23,27 @@
           }
         "
       />
-    </div>
-    <div v-if="0 < foundRecipes.length" class="card-grid">
-      <recipe-card
-        v-for="element in foundRecipes"
-        :key="element"
-        :recipe="element"
-      />
-    </div>
-    <div v-else>no recipes Found</div>
+    </section>
+    <section v-if="0 < foundRecipes.length" class="search-results-wrapper">
+      <h2>Suchergebnisse:</h2>
+      <div class="card-grid">
+        <recipe-card
+          v-for="element in foundRecipes"
+          :key="element"
+          :recipe="element"
+        />
+      </div>
+    </section>
+    <section class="suggestions-slider">
+      <h2>Neue Rezepte</h2>
+      <div class="card-grid">
+        <recipe-card
+          v-for="element in suggestedRecipes"
+          :key="element"
+          :recipe="element"
+        />
+      </div>
+    </section>
   </main>
 </template>
 
@@ -33,7 +51,7 @@
 import SearchInput from "../components/SearchInput.vue";
 import RecipeCard from "../components/RecipeCard-v2.vue";
 import axios from "axios";
-import SearchChip from '../components/SearchChip.vue';
+import SearchChip from "../components/SearchChip.vue";
 
 export default {
   components: { SearchInput, RecipeCard, SearchChip },
@@ -42,6 +60,7 @@ export default {
     return {
       selectedIngredients: [],
       foundRecipes: [],
+      suggestedRecipes: [],
     };
   },
   methods: {
@@ -57,38 +76,64 @@ export default {
           },
         })
         .then((response) => {
-          console.log(this.foundRecipes)
-          console.log(response.data)
-          this.foundRecipes = this.foundRecipes.concat( response.data);
-          console.log(this.foundRecipes)
+          console.log(this.foundRecipes);
+          console.log(response.data);
+          this.foundRecipes = response.data;
+          console.log(this.foundRecipes);
         });
     },
+  },
+  mounted() {
+    axios.get("/api/v1/recipe/all").then((response) => {
+      console.log(response.data);
+      this.suggestedRecipes = response.data.reverse().slice(0, 5);
+    });
   },
   watch: {
     selectedIngredients: {
       handler() {
-        if(this.selectedIngredients != 0) {
+        if (this.selectedIngredients != 0) {
           this.findRecipes();
         } else {
           this.foundRecipes.length = 0;
         }
-        }, deep: true
       },
+      deep: true,
+    },
   },
 };
 </script>
 
 <style>
+html {
+  box-sizing: border-box;
+}
+
 * {
   padding: 0;
   margin: 0;
-  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+}
+
+h1,
+h2 {
+  padding-bottom: 1rem;
 }
 
 main {
   width: auto;
   height: 100%;
-  margin: 0 10vw;
+  margin: 10vw;
+}
+
+.index-page > section + section {
+  margin-top: 4rem;
 }
 
 .search-wrapper {
@@ -129,9 +174,13 @@ a:not(nav a) {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   grid-auto-rows: 460px;
   gap: 10px;
+}
+
+.card-grid > .card-wrapper {
+  max-width: 460px;
 }
 @media (max-width: 768px) {
 }

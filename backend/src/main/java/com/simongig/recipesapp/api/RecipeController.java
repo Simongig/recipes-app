@@ -3,6 +3,7 @@ package com.simongig.recipesapp.api;
 import com.simongig.recipesapp.model.Recipe;
 import com.simongig.recipesapp.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,14 +21,8 @@ public class RecipeController {
     }
 
     @PostMapping("/add")
-    public void addRecipe(@RequestPart Recipe data, @RequestPart ArrayList<MultipartFile> images) throws Exception {
-        System.out.println("---------- new Request ----------");
-        System.out.println(images.size());
-        System.out.println(data);
-        for (MultipartFile image : images) {
-            System.out.println(image.getOriginalFilename());
-            // data.addImagePath(image.getOriginalFilename());
-        }
+    //public void addRecipe(@RequestPart Recipe data, @RequestPart ArrayList<MultipartFile> images) throws Exception {
+    public void addRecipe(@RequestPart Recipe data,@Nullable @RequestPart ArrayList<MultipartFile> images) throws Exception {
         recipeService.addRecipe(data);
     }
 

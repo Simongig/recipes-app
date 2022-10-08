@@ -21,11 +21,24 @@
       </div>
       <div class="search-result-wrapper">
         <ol class="results" v-if="searchResults.length > 0">
-          <li @click="(event) => $emit('ingredientSelected', event.target.attributes['ingredient-name'].value)" v-for="result in searchResults" :key="result.name" :ingredient-name="result.name">
+          <li
+            @click="
+              (event) =>
+                $emit(
+                  'ingredientSelected',
+                  event.target.attributes['ingredient-name'].value
+                )
+            "
+            v-for="result in searchResults"
+            :key="result.name"
+            :ingredient-name="result.name"
+          >
             {{ result.name }}
           </li>
         </ol>
-        <ul class="no-results" v-else><li>keine Ergebnisse gefunden</li></ul>
+        <ul class="no-results" v-else>
+          <li>keine Ergebnisse gefunden</li>
+        </ul>
       </div>
     </form>
   </section>
@@ -71,7 +84,7 @@ export default {
           });
         });
       } else {
-        this.searchResults = []
+        this.searchResults = [];
       }
     },
   },
@@ -137,7 +150,7 @@ ol.results > li:hover {
   transition: height 0.3s ease-out;
 }
 
-.search-result-wrapper ul, 
+.search-result-wrapper ul,
 .search-result-wrapper ol {
   list-style: none;
   margin: 0.5rem 1.5rem;

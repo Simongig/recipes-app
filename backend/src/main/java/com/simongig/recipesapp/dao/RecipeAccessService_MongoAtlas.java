@@ -16,7 +16,7 @@ import com.mongodb.client.MongoCollection;
 import com.simongig.recipesapp.model.Recipe;
 
 
-@Repository("mongoDB-Atlas")
+@Repository("MongoAtlas-Recipes")
 public class RecipeAccessService_MongoAtlas implements RecipeDao {
     
     private final MongoClient client;
@@ -39,7 +39,11 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
 
     @Override
     public List<Recipe> findAll() {
-        System.out.println("RecipeAccessService_MongoAtlas.findAll()");
+        List<Recipe> allRecipes = recipeCollection.find().into(new ArrayList<>());
+        for (Recipe recipe: allRecipes) {
+            System.out.println(recipe.getImagePaths());
+            System.out.println(recipe.getPreparationSteps());
+        }
         return recipeCollection.find().into(new ArrayList<>());
     }
 
@@ -51,7 +55,11 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
 
     
     public List<Recipe> selectRecipesByIngredients(String[] ingredients) {
-        Bson matchIngredients = in("Ingredients.name", ingredients);
+        System.out.println("------- Search Recipes -------");
+        for(String i: ingredients) {
+            System.out.println(i);
+        }
+        Bson matchIngredients = in("ingredients._id", ingredients);
         return recipeCollection.find(matchIngredients, Recipe.class).into(new ArrayList<>());
     }
 
@@ -62,9 +70,8 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
     }
 
     @Override
-    public int updateById(String id, Recipe recipe) {
+    public void updateById(String id, Recipe recipe) {
         // TODO Auto-generated method stub
-        return 0;
     }
 
 }

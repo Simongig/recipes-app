@@ -6,33 +6,30 @@
     class="boxshadow recipe-create-form"
     enctype="multipart/form-data"
   >
-    <h2>Add a recipe here</h2>
+    <h2>Fügen Sie Ihr Rezept hinzu</h2>
     <input
       type="text"
-      value="Lasagne"
       required
       name="title"
-      placeholder="Titel"
+      placeholder="Wie heißt das Rezept?"
       id=""
     />
     <input
       type="number"
-      value="15"
       required
       name="duration"
-      placeholder="Dauer"
+      placeholder="Wie lange dauert das Rezept?"
       id=""
     />
     <input
       type="number"
-      value="15"
       required
       name="portions"
-      placeholder="Portionen"
+      placeholder="Für wie viele Personen reicht es?"
       id=""
     />
     <fieldset class="form-section">
-      <legend>Ingredients</legend>
+      <legend>Zutaten</legend>
       <div class="ingredients-grid">
         <div
           class="ingredient"
@@ -69,7 +66,7 @@
       </div>
     </fieldset>
     <fieldset class="form-section">
-      <legend>Preparation Steps</legend>
+      <legend>Zubereitungsschritte</legend>
       <div class="preparationSteps-grid">
         <div
           class="preparationStep"
@@ -79,7 +76,7 @@
           <input
             type="text"
             required
-            placeholder="Preparation"
+            placeholder="Vorbereitung"
             id=""
             v-model="preparationSteps[index].title"
           />
@@ -88,7 +85,7 @@
             required
             cols="30"
             rows="10"
-            placeholder="Cut onion"
+            placeholder="Wasser in einen Topf füllen und reichlich Salz dazu geben"
             v-model="preparationSteps[index].content"
           ></textarea>
         </div>
@@ -102,7 +99,7 @@
         </div>
       </div>
     </fieldset>
-    <div class="custom-file-input">
+    <div class="custom-file-input" v-if="false">
       <input
         type="button"
         class="custom-file-input-button"
@@ -119,7 +116,7 @@
         @change="updateFilesArray()"
       />
     </div>
-    <image-upload-preview :images="files" required />
+    <image-upload-preview v-if="false" :images="files" />
     <input @click="sendForm()" type="submit" value="Rezept hinzufügen" />
   </form>
 </template>
@@ -127,6 +124,7 @@
 <script>
 import axios from "axios";
 import ImageUploadPreview from "./ImageUploadPreview.vue";
+import router from '../router'
 // import IngredientFormInput from "./IngredientFormInput.vue";
 export default {
   name: "createRecipeForm",
@@ -136,19 +134,13 @@ export default {
       files: [],
       ingredients: [
         {
-          quantity: 2,
-          unit: "Stück",
-          name: "Tomate",
         },
       ],
       preparationSteps: [
         {
-          title: "Step1",
-          content:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum ad exercitationem alias sed! Eveniet corrupti dicta hic illo itaque illum.",
         },
       ],
-      unitOptions: ["Stück", "Teelöffel", "Gramm", "Liter"],
+      unitOptions: ["Stück", "Teelöffel", "Esslöffel", "Gramm", "Kilo", "Liter", "Prise", "Milliliter", "Bündel"],
     };
   },
   mounted() {
@@ -177,6 +169,16 @@ export default {
         content: "",
       });
     },
+    getAccessToken() {
+      let user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.access_token) {
+        // for Node.js Express back-end
+        console.log(user.access_token)
+        return user.access_token ;
+      } else {
+        return {};
+      }
+    },
     updateFiles() {
       document.getElementById("file-input").click();
     },
@@ -191,8 +193,7 @@ export default {
             "&orientation=landscape&collections=food-drinks"
         )
         .then((value) => {
-          var random = Math.round((Math.random() * 100) % 4);
-          return value.data.results[random].urls.regular;
+          return value.data.results[0].urls.regular;
         });
       const imageURLArr = new Array();
       imageURLArr.push(imageURL);
@@ -212,14 +213,19 @@ export default {
         .post("/api/v1/recipe/add", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
+            "Authorization": "Bearer " + this.getAccessToken()
           },
         })
         .then((response) => {
-          console.log(formData.get("data"));
-          console.log(response);
+            if(200 == response.status) {
+              alert('Dein Rezpet wurde erfolgreich hochgeladen!')
+            } else {
+              alert('Oh nein! Irgendwas ist beim Upload schiefgelaufen :( \n Code: ' + response.status)
+            }
+            router.push({ path: '/' })
         })
         .catch((e) => {
-          console.log(formData.get("data"));
+          alert('Oh nein! Irgendwas ist beim Upload schiefgelaufen :(');
           console.log(e);
         });
     },
@@ -272,7 +278,7 @@ export default {
 
 .ingredient {
   display: grid;
-  grid-template-columns: 5rem 5rem auto;
+  grid-template-columns: 3rem 5rem auto;
   gap: 5px;
 }
 

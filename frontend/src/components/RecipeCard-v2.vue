@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="{name: 'recipePdp', params: { id: recipe.id }}">
+  <router-link class="card-wrapper" :to="{name: 'recipePdp', params: { id: recipe.id }}">
     <section
       class="card"
       :style="`background-image: url(${recipe.imagePaths[0]})`"
@@ -22,7 +22,6 @@ export default {
 
 <style>
 .card {
-  border: 1px solid rgba(100, 100, 111, 0.2);
   border-radius: 10px;
   overflow: hidden;
   display: grid;

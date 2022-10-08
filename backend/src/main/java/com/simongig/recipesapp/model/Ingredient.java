@@ -1,8 +1,14 @@
 package com.simongig.recipesapp.model;
 
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.springframework.data.annotation.Id;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Ingredient {
+
+    @Id
+    @BsonId
     private String name;
     private double quantity;
     private String unit;

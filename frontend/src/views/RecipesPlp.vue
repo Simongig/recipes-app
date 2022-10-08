@@ -1,6 +1,6 @@
 <template>
   <main class="recipes-list-page">
-    <h1>All Recipes</h1>
+    <h1>Alle Rezepte</h1>
     <article v-if="0 < elements.length" class="card-grid">
       <recipe-card
         v-for="element in elements"
