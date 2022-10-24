@@ -6,6 +6,7 @@ target/
 
 backend/src/main/resources/public/**
 frontend/public/**
+backend/src/main/resources/public/index.html
 
 ### STS ###
 .apt_generated
