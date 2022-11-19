@@ -4,7 +4,7 @@
 
     <groupId>com.simongig</groupId>
     <artifactId>RecipesApp</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>RecipesApp</name>
