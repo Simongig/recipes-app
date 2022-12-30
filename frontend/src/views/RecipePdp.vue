@@ -68,21 +68,24 @@ export default {
         .classList.toggle("dropdown-closed");
     },
     makeIngredientsSticky() {
-      var ingredients_elem = document.querySelector(".ingredients-wrapper-sticky");
-      if(null == ingredients_elem) {
+      let ingredients_elem = document.querySelector(".ingredients-wrapper");
+      let ingredients_elem_sticky = document.querySelector('.ingredients-wrapper-sticky');
+
+      if(null == ingredients_elem || null == ingredients_elem_sticky) {
         return;
       }
-      var scrolldepth_lower_than_element =
+      let scrolldepth_lower_than_element =
         window.scrollY >
         ingredients_elem.offsetTop + ingredients_elem.offsetHeight;
+      console.log('scrolldepth_lower_than_element:', scrolldepth_lower_than_element);
       if (scrolldepth_lower_than_element) {
-        ingredients_elem.classList.add("visible");
-        ingredients_elem.classList.add("dropdown-closed");
-        ingredients_elem
+        ingredients_elem_sticky.classList.add("visible");
+        ingredients_elem_sticky.classList.add("dropdown-closed");
+        ingredients_elem_sticky
           .querySelector("h2")
           .addEventListener("click", this.toggleIngredientsDropDown);
       } else {
-        ingredients_elem.classList.remove("visible");
+        ingredients_elem_sticky.classList.remove("visible");
       }
     },
   },

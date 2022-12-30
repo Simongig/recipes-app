@@ -204,6 +204,7 @@ export default {
             "&collections=food-drinks"
         )
         .then((value) => {
+          if(value.data.results == null) return "";
           return value.data.results[0].urls.regular;
         });
       const imageURLArr = new Array();
