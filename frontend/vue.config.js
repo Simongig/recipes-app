@@ -2,8 +2,9 @@ module.exports = {
     configureWebpack:{
     }, 
     devServer:{
-      host: 'localhost',
+      host: '0.0.0.0',
       hot:true,
+      // https: true,
       port: 8081,  
       open: 'Chrome',
       proxy: { //https://cli.vuejs.org/guide/html-and-static-assets.html#disable-index-generation

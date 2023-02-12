@@ -6,18 +6,12 @@
           type="search"
           id="search-input"
           name="q"
-          placeholder="Search..."
+          placeholder="Gib etwas ein"
           :value="searchInput"
           aria-label="Search through site content"
           @input="(event) => (searchInput = event.target.value)"
         />
-        <span class="search-button-container">
-          <svg viewBox="0 0 1024 1024">
-            <path
-              d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-            ></path>
-          </svg>
-        </span>
+        <ion-icon name="search-outline" class="search-icon hydrated"></ion-icon>
       </div>
       <div class="search-result-wrapper">
         <ol class="results" v-if="searchResults.length > 0">
@@ -177,11 +171,26 @@ input#search-input:focus {
   outline: none;
 }
 
+.search ion-icon.search-icon {
+	padding: 0 1rem;
+  cursor: pointer;
+}
+
 .search input {
   height: 100%;
   width: inherit;
   border: none;
   margin: 0 1rem;
   font-size: 1.2rem;
+}
+.search input[type="search"] {
+  background-color: transparent !important;
+}
+
+.search input[type="search"]::-moz-search-decoration {
+  display: none;
+}
+.search input[type="search"]::-webkit-search-decoration {
+  display: none;
 }
 </style>

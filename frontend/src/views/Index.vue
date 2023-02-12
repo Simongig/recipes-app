@@ -1,6 +1,7 @@
 <template>
   <main class="index-page">
     <section class="search-wrapper">
+      <h1>Was möchtest du heute kochen?</h1>
       <ul class="selected-ingredients-list">
         <!-- <li
           class="selected-ingredient chip"
@@ -34,6 +35,7 @@
         />
       </div>
     </section>
+    <categories></categories>
     <section class="suggestions-slider">
       <h2>Neue Rezepte</h2>
       <div class="card-grid">
@@ -52,6 +54,7 @@ import SearchInput from "../components/SearchInput.vue";
 import RecipeCard from "../components/RecipeCard-v2.vue";
 import axios from "axios";
 import SearchChip from "../components/SearchChip.vue";
+// import Categories from "../components/Categories.vue";
 
 export default {
   components: { SearchInput, RecipeCard, SearchChip },
@@ -105,32 +108,6 @@ export default {
 </script>
 
 <style>
-html {
-  box-sizing: border-box;
-}
-
-* {
-  padding: 0;
-  margin: 0;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-}
-
-h1,
-h2 {
-  padding-bottom: 1rem;
-}
-
-main {
-  width: auto;
-  height: 100%;
-  margin: 10vw;
-}
 
 .index-page > section + section {
   margin-top: 4rem;
@@ -139,8 +116,11 @@ main {
 .search-wrapper {
   width: 100%;
   max-width: 584px;
-  margin: auto;
-  min-height: 300px;
+  min-height: 60vh;
+}
+
+.search-wrapper h1 {
+  font-size: 3rem;
 }
 
 h1 {
@@ -183,5 +163,9 @@ a:not(nav a) {
   max-width: 460px;
 }
 @media (max-width: 768px) {
+  .search-wrapper h1 {
+    font-size: 2.2rem;
+    line-height: 3rem;
+  }
 }
 </style>
