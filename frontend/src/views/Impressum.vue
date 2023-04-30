@@ -5,7 +5,6 @@
         <h3>Angaben gem&auml;&szlig; &sect; 5 TMG</h3>
         <p>Simon Giglhuber<br />
             Strelitzstra&szlig;e 8<br />
-            5. Stock<br />
             12105 Berlin</p>
 
         <h3>Kontakt</h3>

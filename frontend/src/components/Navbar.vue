@@ -42,7 +42,8 @@
         </div>
       </div>
       <div class="nav-mobile-menu nav-item" @click="toggleNav">
-        <ion-icon name="menu-outline"></ion-icon>
+        <ion-icon class="nav-close-icon hydrated" name="close-outline"></ion-icon>
+        <ion-icon class="nav-menu-icon hydrated" name="menu-outline"></ion-icon>
       </div>
     </div>
   </nav>
@@ -122,6 +123,19 @@ nav a:hover {
   display: none;
   align-items: center;
 }
+
+.nav-close-icon {
+  display: none;
+}
+
+.nav-mobile-show .nav-close-icon {
+  display: initial;
+}
+
+.nav-mobile-show .nav-menu-icon {
+  display: none;
+}
+
 
 .nav-item {
   padding: 0.5rem;

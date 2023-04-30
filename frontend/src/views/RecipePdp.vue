@@ -41,7 +41,7 @@
       </div>
     </article>
       <section class="ingredients-wrapper-sticky dropdown-closed">
-          <h2>Zutaten</h2>
+          <h2>Zutaten <ion-icon class="chevron-down-outline hydrated" name="chevron-down-outline"></ion-icon></h2>
           <table>
             <tr v-for="ingredient in recipe.ingredients" :key="ingredient.name">
               <td>{{ ingredient.quantity }} {{ ingredient.unit }}</td>
@@ -175,14 +175,22 @@ export default {
 
 .ingredients-wrapper-sticky > h2 {
   margin-left: 2rem;
+  display: flex;
+  align-items: center;
 }
-.ingredients-wrapper-sticky > h2::after {
-  content: url('../assets/icons/chevron-down-outline-cropped.svg');
-  display: inline-block;
-  padding: 0 5%;
-  height: inherit;
-  width: 20px;
+
+.ingredients-wrapper-sticky.dropdown-closed > h2 {
+  margin-bottom: 0;
 }
+
+.ingredients-wrapper-sticky:not(.dropdown-closed) .chevron-down-outline {
+  transform: rotate(180deg);
+}
+
+.ingredients-wrapper-sticky .chevron-down-outline {
+  margin-left: 0.5rem;
+}
+
 .ingredients-wrapper-sticky.dropdown-closed > table {
   display: none;
 }
