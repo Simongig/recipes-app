@@ -38,41 +38,11 @@
     <categories></categories>
     <section class="suggestions-slider">
       <h2>Neue Rezepte</h2>
-      <swiper-container
-        class="swiper"
-        :slides-per-view="1.2"
-        :spaceBetween="20"
-        :pagination="{
-          hideOnClick: true,
-        }"
-        :breakpoints="{
-          // when window width is >= 320px
-          480: {
-            slidesPerView: 1.3,
-          },
-          // when window width is >= 480px
-          768: {
-            slidesPerView: 2.3,
-          },
-          // when window width is >= 640px
-          1200: {
-            slidesPerView: 3.5,
-          },
-          1440: {
-            slidesPerView: 5,
-          },
-        }"
-        :navigation="{
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        }"
-        @progress="onProgress"
-        @slidechange="onSlideChange"
-      >
-        <swiper-slide v-for="element in suggestedRecipes" :key="element">
+      <section class="swiper swiper-container">
+        <article class="swiper-slide" v-for="element in suggestedRecipes" :key="element">
           <recipe-card :recipe="element" />
-        </swiper-slide>
-      </swiper-container>
+        </article>
+      </section>
     </section>
   </main>
 </template>
@@ -82,8 +52,8 @@ import SearchInput from "../components/SearchInput.vue";
 import RecipeCard from "../components/RecipeCard-v2.vue";
 import axios from "axios";
 import SearchChip from "../components/SearchChip.vue";
-import { register } from "swiper/element/swiper-element.js";
-register();
+import Swiper from "swiper/swiper-bundle"
+// register();
 // import Categories from "../components/Categories.vue";
 
 import "swiper/swiper.css";
@@ -100,7 +70,7 @@ export default {
       selectedIngredients: [],
       foundRecipes: [],
       suggestedRecipes: [],
-      swiper: null,
+      swiper: Swiper,
     };
   },
   methods: {
@@ -128,7 +98,34 @@ export default {
       console.log(response.data);
       this.suggestedRecipes = response.data.reverse().slice(0, 5);
     });
-    // this.swiper = new window.Swiper('.swiper')
+    new window.Swiper('.swiper', {
+      slidesPerView: "1.2",
+        spaceBetween: "20",
+        pagination: {
+          hideOnClick: true,
+        },
+        breakpoints: {
+          // when window width is >= 320px
+          480: {
+            slidesPerView: 1.3,
+          },
+          // when window width is >= 480px
+          768: {
+            slidesPerView: 2.3,
+          },
+          // when window width is >= 640px
+          1200: {
+            slidesPerView: 3.5,
+          },
+          1440: {
+            slidesPerView: 5,
+          },
+        },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        }
+    })
   },
   watch: {
     selectedIngredients: {
