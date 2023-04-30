@@ -1,5 +1,8 @@
 <template>
-  <router-link class="card-wrapper" :to="{name: 'recipePdp', params: { id: recipe.id }}">
+  <router-link
+    class="card-wrapper"
+    :to="{ name: 'recipePdp', params: { id: recipe.id } }"
+  >
     <section
       class="card"
       :style="`background-image: url(${recipe.imagePaths[0]})`"
@@ -42,8 +45,12 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-background: rgb(1,1,1);
-background: linear-gradient(0deg, rgba(0, 0, 0, 0.89) 50%, rgba(1,1,1,0) 100%);
+  background: rgb(1, 1, 1);
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.89) 50%,
+    rgba(1, 1, 1, 0) 100%
+  );
 }
 
 .card-content .recipe-author {

@@ -38,13 +38,41 @@
     <categories></categories>
     <section class="suggestions-slider">
       <h2>Neue Rezepte</h2>
-      <div class="card-grid">
-        <recipe-card
-          v-for="element in suggestedRecipes"
-          :key="element"
-          :recipe="element"
-        />
-      </div>
+      <swiper-container
+        class="swiper"
+        :slides-per-view="1.2"
+        :spaceBetween="20"
+        :pagination="{
+          hideOnClick: true,
+        }"
+        :breakpoints="{
+          // when window width is >= 320px
+          480: {
+            slidesPerView: 1.3,
+          },
+          // when window width is >= 480px
+          768: {
+            slidesPerView: 2.3,
+          },
+          // when window width is >= 640px
+          1200: {
+            slidesPerView: 3.5,
+          },
+          1440: {
+            slidesPerView: 5,
+          },
+        }"
+        :navigation="{
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        }"
+        @progress="onProgress"
+        @slidechange="onSlideChange"
+      >
+        <swiper-slide v-for="element in suggestedRecipes" :key="element">
+          <recipe-card :recipe="element" />
+        </swiper-slide>
+      </swiper-container>
     </section>
   </main>
 </template>
@@ -54,16 +82,25 @@ import SearchInput from "../components/SearchInput.vue";
 import RecipeCard from "../components/RecipeCard-v2.vue";
 import axios from "axios";
 import SearchChip from "../components/SearchChip.vue";
+import { register } from "swiper/element/swiper-element.js";
+register();
 // import Categories from "../components/Categories.vue";
 
+import "swiper/swiper.css";
+
 export default {
-  components: { SearchInput, RecipeCard, SearchChip },
+  components: {
+    SearchInput,
+    RecipeCard,
+    SearchChip,
+  },
   name: "Index",
   data() {
     return {
       selectedIngredients: [],
       foundRecipes: [],
       suggestedRecipes: [],
+      swiper: null,
     };
   },
   methods: {
@@ -91,6 +128,7 @@ export default {
       console.log(response.data);
       this.suggestedRecipes = response.data.reverse().slice(0, 5);
     });
+    // this.swiper = new window.Swiper('.swiper')
   },
   watch: {
     selectedIngredients: {
@@ -108,9 +146,12 @@ export default {
 </script>
 
 <style>
-
 .index-page > section + section {
   margin-top: 4rem;
+}
+
+.swiper {
+  width: 100%;
 }
 
 .search-wrapper {
@@ -125,6 +166,10 @@ export default {
 
 h1 {
   margin-bottom: 2rem;
+}
+
+h2 {
+  margin-bottom: 1rem;
 }
 
 .selected-ingredient {
@@ -159,8 +204,12 @@ a:not(nav a) {
   gap: 10px;
 }
 
-.card-grid > .card-wrapper {
+.card-wrapper {
   max-width: 460px;
+  min-width: 230px;
+  height: 460px;
+  width: 100%;
+  display: inline-block;
 }
 @media (max-width: 768px) {
   .search-wrapper h1 {

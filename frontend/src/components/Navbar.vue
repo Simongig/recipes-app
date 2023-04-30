@@ -1,38 +1,49 @@
 <template>
   <nav>
-    <div class="nav-brand">
-      <router-link class="nav-item home-link" to="/">Kochbuch.io</router-link>
-    </div>
-    <div class="nav-main-container">
-      <div class="nav-links">
-        <router-link class="nav-item" to="/recipe/all"
-          >Alle Rezepte</router-link
-        >
-        <router-link class="nav-item" to="/recipe/categories"
-          >Kategorien</router-link
-        >
-        <router-link
-          class="nav-item"
-          v-if="this.$store.state.isLoggedIn"
-          to="/createRecipe"
-          >Erstellen</router-link
+    <div class="nav-inner" @click="closeNavOnLinkClick">
+      <div class="nav-brand">
+        <router-link class="nav-item home-link" to="/"
+          >Kochbuch.io<sup
+            style="
+              font-size: x-small;
+              font-weight: normal;
+              margin-left: 0.25rem;
+            "
+            >beta</sup
+          ></router-link
         >
       </div>
-      <div class="nav-extra-items">
-        <router-link
-          class="nav-item nav-profile"
-          v-if="this.$store.state.isLoggedIn"
-          to="/profile"
-          ><ion-icon name="person-outline"></ion-icon
-        ></router-link>
+      <div class="nav-main-container">
+        <div class="nav-links">
+          <router-link class="nav-item" to="/recipe/all"
+            >Alle Rezepte</router-link
+          >
+          <router-link class="nav-item" to="/recipe/categories"
+            >Kategorien</router-link
+          >
+          <router-link
+            class="nav-item"
+            v-if="this.$store.state.isLoggedIn"
+            to="/createRecipe"
+            >Erstellen</router-link
+          >
+        </div>
+        <div class="nav-extra-items">
+          <router-link
+            class="nav-item nav-profile"
+            v-if="this.$store.state.isLoggedIn"
+            to="/profile"
+            ><ion-icon name="person-outline"></ion-icon
+          ></router-link>
 
-        <router-link class="nav-item nav-login" v-else to="/login"
-          ><ion-icon name="person-add-outline"></ion-icon
-        ></router-link>
+          <router-link class="nav-item nav-login" v-else to="/login"
+            ><ion-icon name="person-add-outline"></ion-icon
+          ></router-link>
+        </div>
       </div>
-    </div>
-    <div class="nav-mobile-menu nav-item" @click="openNavMenu">
-      <ion-icon name="menu-outline"></ion-icon>
+      <div class="nav-mobile-menu nav-item" @click="toggleNav">
+        <ion-icon name="menu-outline"></ion-icon>
+      </div>
     </div>
   </nav>
 </template>
@@ -41,10 +52,15 @@
 export default {
   name: "Navbar",
   methods: {
-    openNavMenu(event) {
-      console.log(event);
+    toggleNav(event) {
       let nav_container = event.target.closest("body");
       nav_container.classList.toggle("nav-mobile-show");
+    },
+    closeNavOnLinkClick(event) {
+      console.log(event.target);
+      if (event.target.closest('.nav-links .nav-item, .nav-brand') == null) return;
+      let nav_container = event.target.closest("body");
+      nav_container.classList.remove("nav-mobile-show");
     },
   },
 };
@@ -52,21 +68,26 @@ export default {
 
 <style>
 nav {
-  padding: 1rem;
-  text-align: center;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  padding: 1rem 0;
   /* background-color: #DAD0CE; */
   /* background-color: #323232; */
   background-color: rgba(255, 255, 255, 0.658);
-  margin-bottom: 3rem;
   position: fixed;
   top: 0;
   width: 100%;
+  margin-bottom: 3rem;
   box-shadow: 0px 0px 22px -2px #cecece;
   z-index: 100;
   color: white;
   backdrop-filter: blur(20px);
+}
+
+nav .nav-inner {
+  text-align: center;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  max-width: 1300px;
+  margin: auto;
 }
 
 nav a.router-link-exact-active:not(.home-link),
@@ -86,6 +107,8 @@ nav a:hover {
 
 .nav-brand {
   font-weight: bold;
+  display: flex;
+  align-items: flex-start;
 }
 
 .nav-links,
@@ -106,10 +129,21 @@ nav a:hover {
   cursor: pointer;
 }
 
+@media (max-width: 1300px) {
+  nav .nav-inner {
+    margin-left: 10vw;
+    margin-right: 10vw;
+  }
+}
+
 @media (max-width: 768px) {
   .nav-mobile-menu {
     display: flex;
     justify-content: flex-end;
+  }
+
+  .home-link {
+    font-size: 1.5rem;
   }
 
   .nav-main-container {
@@ -122,6 +156,7 @@ nav a:hover {
 
   .nav-mobile-show .nav-brand {
     grid-area: brand;
+    text-align: left;
   }
 
   .nav-mobile-show .nav-mobile-menu {
@@ -135,10 +170,13 @@ nav a:hover {
     height: 100%;
   }
 
-  .nav-mobile-show nav {
+  .nav-mobile-show nav,
+  .nav-mobile-show .nav-inner {
     height: 100vh;
+  }
+  .nav-mobile-show .nav-inner {
     grid-template-areas: "brand menu" "main main";
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr auto;
     grid-template-rows: auto 1fr;
   }
   .nav-mobile-show .nav-main-container {
@@ -174,6 +212,13 @@ nav a:hover {
     width: 100%;
     border-top: 1px solid var(--dark-grey);
     padding-top: 0.8rem;
+  }
+}
+
+@media (max-width: 550px) {
+  nav .nav-inner {
+    margin-left: 5vw;
+    margin-right: 5vw;
   }
 }
 </style>

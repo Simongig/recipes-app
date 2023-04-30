@@ -177,17 +177,12 @@ export default {
   margin-left: 2rem;
 }
 .ingredients-wrapper-sticky > h2::after {
-  content: "\25BC";
-  position: absolute;
+  content: url('../assets/icons/chevron-down-outline-cropped.svg');
+  display: inline-block;
   padding: 0 5%;
-  transform: scaleY(50%) rotate(180deg);
-  opacity: 33%;
+  height: inherit;
+  width: 20px;
 }
-
-.ingredients-wrapper-sticky.dropdown-closed > h2::after {
-  transform: scaleY(50%);
-}
-
 .ingredients-wrapper-sticky.dropdown-closed > table {
   display: none;
 }

@@ -4,6 +4,7 @@ import CreateRecipe from '../views/CreateRecipe.vue'
 import Login from '../views/Login.vue'
 import RecipePdp from '../views/RecipePdp.vue'
 import RecipesPlp from '../views/RecipesPlp.vue'
+import Impressum from '../views/Impressum.vue'
 
 const routes = [
   {
@@ -35,6 +36,11 @@ const routes = [
     path: '/recipe/id/:id',
     name: 'recipePdp',
     component: RecipePdp
+  },
+  {
+    path: '/impressum',
+    name: 'impressum',
+    component: Impressum
   }
 ]
 

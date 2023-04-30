@@ -3,12 +3,14 @@
     <div>
       <navbar></navbar>
       <router-view></router-view>
+      <Footer></Footer>
     </div>
   </div>
 </template>
 
 <script>
 import Navbar from "./components/Navbar.vue";
+import Footer from "./components/Footer.vue";
 // const axios = require("axios");
 
 export default {
@@ -27,24 +29,30 @@ export default {
   },
   components: {
     Navbar,
+    Footer,
   },
 };
 </script>
 
 <style>
 :root {
-  --main-color: #223240;
-  --secondary-color: #8c452b;
-  --tertiary-color: #73614c;
-  --dark-grey: #323232;
-  --light-font: #F4F4F4;
+  --main-color: #212e2f;
+  --secondary-color: #c3a452;
+  --tertiary-color: #fdfdfa;
+  --dark-grey: #333333;
+  --light-grey: #E3E3E3;
+  --light-font: #fdfdfa;
 }
 
 html {
   box-sizing: border-box;
+  background-color: var(--tertiary-color);
 }
 
-*:visited, *:active, a, ion-icon {
+*:visited,
+*:active,
+a,
+ion-icon {
   color: var(--dark-grey);
 }
 
@@ -67,8 +75,9 @@ h2 {
 
 main {
   width: auto;
+  max-width: 1300px;
   height: 100%;
-  margin: 10vw;
+  margin: 10vw auto;
 }
 
 #app {
@@ -91,5 +100,19 @@ main {
 
 ion-icon {
   font-size: 1.5rem;
+}
+
+@media (max-width: 1300px) {
+  main {
+    margin-left: 10vw;
+    margin-right: 10vw;
+  }
+}
+
+@media (max-width: 550px) {
+  main {
+    margin-left: 5vw;
+    margin-right: 5vw;
+  }
 }
 </style>
