@@ -41,6 +41,11 @@ const routes = [
     path: '/impressum',
     name: 'impressum',
     component: Impressum
+  },
+  {
+    path: '/error',
+    name: 'error',
+    component: Index,
   }
 ]
 
