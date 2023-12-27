@@ -1,16 +1,19 @@
 package com.simongig.recipesapp.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.springframework.stereotype.Repository;
 
 import static com.mongodb.client.model.Filters.*;
 
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Updates;
@@ -54,6 +57,13 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
         return Optional.ofNullable(recipeCollection.find(matchId).first());
     }
 
+    public List<Recipe> search(String search_term) {
+        Document search_options = new Document("query", search_term).append("path", "title").append("fuzzy", new Document());
+        Document agg = new Document("$search", new Document("index", "Recipes").append("text",search_options));
+        System.out.println(agg);
+        List<Recipe> search_results = recipeCollection.aggregate(Arrays.asList(agg)).into(new ArrayList<>());
+        return search_results;
+    }
     
     public List<Recipe> selectRecipesByIngredients(String[] ingredients) {
         System.out.println("------- Search Recipes -------");

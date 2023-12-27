@@ -48,6 +48,10 @@ public class RecipeService {
         return this.recipeDao.findById(id);
     }
 
+    public List<Recipe> search(String searchTerm){
+        return this.recipeDao.search(searchTerm);
+    } 
+
     public void deleteRecipe(String id) {
         this.recipeDao.deleteById(id);
     }
