@@ -7,21 +7,14 @@ import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
+import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.springframework.data.mongodb.repository.Query;
-import org.springframework.data.rest.core.projection.ProjectionDefinitions;
 import org.springframework.stereotype.Repository;
 
 import static com.mongodb.client.model.Filters.*;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Projections;
-
-import static com.mongodb.client.model.Projections.*;
-import com.mongodb.client.model.TextSearchOptions;
 import com.mongodb.client.model.Updates;
 import com.simongig.recipesapp.model.Recipe;
 
@@ -63,12 +56,13 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
         return Optional.ofNullable(recipeCollection.find(matchId).first());
     }
 
-    public List<Recipe> searchByName(String search_term) {
-        String pattern = ".*" + search_term + ".*";
-        Bson name_regex = regex("title", pattern, "i");
-        return recipeCollection.find(name_regex).into(new ArrayList<>());
+    public List<Recipe> search(String search_term) {
+        Document search_options = new Document("query", search_term).append("path", "title").append("fuzzy", new Document());
+        Document agg = new Document("$search", new Document("index", "Recipes").append("text",search_options));
+        System.out.println(agg);
+        List<Recipe> search_results = recipeCollection.aggregate(Arrays.asList(agg)).into(new ArrayList<>());
+        return search_results;
     }
-
     
     public List<Recipe> selectByIngredients(String[] ingredients) {
         System.out.println("------- Search Recipes -------");

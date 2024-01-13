@@ -15,6 +15,8 @@ public interface RecipeDao {
 
     Optional<Recipe> findById(String id);
 
+    List<Recipe> search(String search_term);
+
     void deleteById(String id);
 
     void updateById(String id, Recipe recipe);

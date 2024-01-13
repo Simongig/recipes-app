@@ -38,9 +38,9 @@ public class RecipeController {
     }
 
     @PostMapping("/search")
-    public List<Recipe> findRecipesByName(@RequestBody String search_term) {
+    public List<Recipe> search(@RequestBody String search_term) {
         System.out.println(search_term);
-        return recipeService.searchByName(search_term);
+        return recipeService.search(search_term);
     }
 
     @GetMapping("/id/{id}")
