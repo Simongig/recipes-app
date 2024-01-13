@@ -40,22 +40,31 @@
         </section>
       </div>
     </article>
-      <section class="ingredients-wrapper-sticky dropdown-closed">
-          <h2>Zutaten <ion-icon class="chevron-down-outline hydrated" name="chevron-down-outline"></ion-icon></h2>
-          <table>
-            <tr v-for="ingredient in recipe.ingredients" :key="ingredient.name">
-              <td>{{ ingredient.quantity }} {{ ingredient.unit }}</td>
-              <td>{{ ingredient.name }}</td>
-            </tr>
-          </table>
-        </section>
+    <section class="ingredients-wrapper-sticky dropdown-closed">
+      <h2>
+        Zutaten
+        <ion-icon
+          class="chevron-up-outline hydrated"
+          name="chevron-up-outline"
+        ></ion-icon>
+      </h2>
+      <table>
+        <tr v-for="ingredient in recipe.ingredients" :key="ingredient.name">
+          <td>{{ ingredient.quantity }} {{ ingredient.unit }}</td>
+          <td>{{ ingredient.name }}</td>
+        </tr>
+      </table>
+    </section>
+    <!-- <Button :text="test"></Button> -->
   </main>
   <div v-else>Couldn't find this recipe</div>
 </template>
 
 <script>
+// import Button from '../components/Button.vue';
 const axios = require("axios");
 export default {
+  // components: { Button },
   data() {
     return {
       recipe: null,
@@ -69,15 +78,20 @@ export default {
     },
     makeIngredientsSticky() {
       let ingredients_elem = document.querySelector(".ingredients-wrapper");
-      let ingredients_elem_sticky = document.querySelector('.ingredients-wrapper-sticky');
+      let ingredients_elem_sticky = document.querySelector(
+        ".ingredients-wrapper-sticky"
+      );
 
-      if(null == ingredients_elem || null == ingredients_elem_sticky) {
+      if (null == ingredients_elem || null == ingredients_elem_sticky) {
         return;
       }
       let scrolldepth_lower_than_element =
         window.scrollY >
         ingredients_elem.offsetTop + ingredients_elem.offsetHeight;
-      console.log('scrolldepth_lower_than_element:', scrolldepth_lower_than_element);
+      console.log(
+        "scrolldepth_lower_than_element:",
+        scrolldepth_lower_than_element
+      );
       if (scrolldepth_lower_than_element) {
         ingredients_elem_sticky.classList.add("visible");
         ingredients_elem_sticky.classList.add("dropdown-closed");
@@ -96,6 +110,7 @@ export default {
       .then((response) => {
         console.log("/api/v1" + urlPath);
         this.recipe = response.data;
+        document.title = "kochbuch.io - " + this.recipe.title
       })
       .catch((reason) => {
         console.error(reason);
@@ -104,7 +119,7 @@ export default {
   },
   beforeUnmount() {
     document.removeEventListener("scroll", this.makeIngredientsSticky);
-  }
+  },
 };
 </script>
 
@@ -183,11 +198,11 @@ export default {
   margin-bottom: 0;
 }
 
-.ingredients-wrapper-sticky:not(.dropdown-closed) .chevron-down-outline {
+.ingredients-wrapper-sticky:not(.dropdown-closed) .chevron-up-outline {
   transform: rotate(180deg);
 }
 
-.ingredients-wrapper-sticky .chevron-down-outline {
+.ingredients-wrapper-sticky .chevron-up-outline {
   margin-left: 0.5rem;
 }
 

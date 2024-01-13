@@ -2,28 +2,22 @@
   <main class="index-page">
     <section class="search-wrapper">
       <h1>Was möchtest du heute kochen?</h1>
-      <ul class="selected-ingredients-list">
-        <!-- <li
-          class="selected-ingredient chip"
-
-        >
-          {{ ingredient }}
-        </li> -->
-        <search-chip
-          v-for="(ingredient, index) in selectedIngredients"
-          :key="index"
-          :id="'chip-' + index"
-          @click="(index) => selectedIngredients.splice(index, 1)"
-          :value="ingredient"
-        />
-      </ul>
-      <search-input
-        @ingredientSelected="
-          (text) => {
-            selectedIngredients.push(text);
-          }
-        "
-      />
+      <div class="filter-container">
+        <ul class="selected-ingredients-list">
+          <search-chip
+            v-for="(ingredient, index) in selectedIngredients"
+            :key="index"
+            :id="'chip-' + index"
+            @click="(index) => selectedIngredients.splice(index, 1)"
+            :value="ingredient"
+          />
+        </ul>
+        <div class="search-type-toggle">
+          <span v-if="search_type==='ingredients'">Nach Zutaten suchen</span><span v-else>Nach Rezepten suchen</span><input checked v-model="search_type" value="ingredients" name="search-type" type="radio"><input v-model="search_type" name="search-type" value="recipes" type="radio">
+        </div>
+      </div>
+      <search-input-ingredients v-if="search_type === 'ingredients'" @ingredientSelected="(text) => {selectedIngredients.push(text);}"></search-input-ingredients>
+      <search-input-recipes v-else></search-input-recipes>
     </section>
     <section v-if="0 < foundRecipes.length" class="search-results-wrapper">
       <h2>Suchergebnisse:</h2>
@@ -78,7 +72,8 @@
 </template>
 
 <script>
-import SearchInput from "../components/SearchInput.vue";
+import SearchInputIngredients from "../components/SearchInputIngredients.vue";
+import SearchInputRecipes from "../components/SearchInputRecipes.vue";
 import RecipeCard from "../components/RecipeCard-v2.vue";
 import axios from "axios";
 import SearchChip from "../components/SearchChip.vue";
@@ -90,9 +85,10 @@ import "swiper/swiper.css";
 
 export default {
   components: {
-    SearchInput,
     RecipeCard,
     SearchChip,
+    SearchInputIngredients,
+    SearchInputRecipes
   },
   name: "Index",
   data() {
@@ -101,6 +97,7 @@ export default {
       foundRecipes: [],
       suggestedRecipes: [],
       swiper: null,
+      search_type: 'ingredients',
     };
   },
   methods: {
@@ -121,7 +118,7 @@ export default {
           this.foundRecipes = response.data;
           console.log(this.foundRecipes);
         });
-    },
+    }
   },
   mounted() {
     axios.get("/api/v1/recipe/all").then((response) => {
@@ -172,20 +169,18 @@ h2 {
   margin-bottom: 1rem;
 }
 
-.selected-ingredient {
-  list-style: none;
-  display: inline-block;
-}
-
-.selected-ingredients-list {
+.filter-container {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: flex-end;
   margin-bottom: 1rem;
 }
 
-.chip {
-  border: 1px solid rgb(225, 225, 225);
-  padding: 0.3rem 0.7rem;
-  border-radius: 20px;
-  background-color: rgb(225, 225, 225);
+.search-type-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .chip + .chip {

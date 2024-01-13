@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class ViewController {
-    @RequestMapping(value = "/{path:^(?!api|css|js)(?!index\\.html$).*}/**")
+    @RequestMapping(value = "/{path:^(?!api|css|js|img)(?!index\\.html$).*}/**")
     public String forward(@PathVariable String path) {
         System.out.println("------ Forward - path: " + path);
         return "forward:/";

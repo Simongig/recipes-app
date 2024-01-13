@@ -35,7 +35,12 @@ public class RecipeController {
     public List<Recipe> findRecipesByIngredient(@RequestBody String[] ingredients) {
         System.out.println(ingredients);
         return recipeService.findRecipeByIngredients(ingredients);
+    }
 
+    @PostMapping("/search")
+    public List<Recipe> findRecipesByName(@RequestBody String search_term) {
+        System.out.println(search_term);
+        return recipeService.searchByName(search_term);
     }
 
     @GetMapping("/id/{id}")

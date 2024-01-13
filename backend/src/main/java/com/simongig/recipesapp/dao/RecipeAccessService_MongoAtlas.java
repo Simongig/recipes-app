@@ -1,18 +1,27 @@
 package com.simongig.recipesapp.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
 import org.bson.conversions.Bson;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.rest.core.projection.ProjectionDefinitions;
 import org.springframework.stereotype.Repository;
 
 import static com.mongodb.client.model.Filters.*;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
+
+import static com.mongodb.client.model.Projections.*;
+import com.mongodb.client.model.TextSearchOptions;
 import com.mongodb.client.model.Updates;
 import com.simongig.recipesapp.model.Recipe;
 
@@ -34,7 +43,7 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
 
     
     @Override
-    public void insertRecipe(Recipe recipe) {
+    public void insert(Recipe recipe) {
         recipeCollection.insertOne(recipe);
     }
 
@@ -54,8 +63,14 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
         return Optional.ofNullable(recipeCollection.find(matchId).first());
     }
 
+    public List<Recipe> searchByName(String search_term) {
+        String pattern = ".*" + search_term + ".*";
+        Bson name_regex = regex("title", pattern, "i");
+        return recipeCollection.find(name_regex).into(new ArrayList<>());
+    }
+
     
-    public List<Recipe> selectRecipesByIngredients(String[] ingredients) {
+    public List<Recipe> selectByIngredients(String[] ingredients) {
         System.out.println("------- Search Recipes -------");
         for(String i: ingredients) {
             System.out.println(i);
