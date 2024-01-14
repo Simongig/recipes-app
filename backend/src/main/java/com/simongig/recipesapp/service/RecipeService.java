@@ -44,10 +44,6 @@ public class RecipeService {
         return this.recipeDao.findAll();
     }
 
-    public List<Recipe> searchByName(String input) {
-        return recipeDao.searchByName(input);
-    }
-
     public Optional<Recipe> getRecipeById(String id) {
         return this.recipeDao.findById(id);
     }

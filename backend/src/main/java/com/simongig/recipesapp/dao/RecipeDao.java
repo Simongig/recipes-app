@@ -20,8 +20,6 @@ public interface RecipeDao {
     void deleteById(String id);
 
     void updateById(String id, Recipe recipe);
-    
-    List<Recipe> searchByName(String input);
 
     List<Recipe> selectByIngredients(String[] ingredients);
 }
