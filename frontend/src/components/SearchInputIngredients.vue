@@ -12,7 +12,7 @@
           aria-label="Search through site content"
           @input="(event) => (searchInput = event.target.value)"
         />
-        <ion-icon name="search-outline" class="search-icon hydrated"></ion-icon>
+        <ion-icon name="options" class="search-icon hydrated"></ion-icon>
       </div>
       <div class="search-result-wrapper">
         <ol class="results" v-if="searchResults.length > 0">

@@ -148,12 +148,12 @@ export default {
 }
 
 .nav-item {
-  padding: 0.5rem;
+  padding:  0.5rem 0.5rem 0.5rem 0;
   text-decoration: none;
   cursor: pointer;
 }
 
-@media (max-width: 1300px) {
+@media (max-width: 1500px) {
   .header-nav .nav-inner {
     margin-left: 10vw;
     margin-right: 10vw;
