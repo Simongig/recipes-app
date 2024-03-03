@@ -2,18 +2,8 @@
   <main class="index-page">
     <section class="search-wrapper">
       <h1>Was möchtest du heute kochen?</h1>
-      <div class="search-filters">
-        <div class="search-switch"> 
-          <div class="switch-option-wrapper" :class="[searchType === 'ingredients' ? 'active' : '']">
-            <label for="search-type">Zutaten</label>
-            <input type="radio" v-model="searchType" value="ingredients" name="search-type" id="">
-          </div>
-          <div class="switch-option-wrapper" :class="[searchType === 'recipes' ? 'active' : '']" >
-            <input type="radio" checked v-model="searchType" value="recipes" name="search-type" id="">
-            <label for="search-type">Rezepte</label>
-          </div>
-        </div>
-        <ul v-if="searchType === 'ingredients'" class="selected-ingredients-list">
+      <div class="filter-container">
+        <ul class="selected-ingredients-list">
           <search-chip
             v-for="(ingredient, index) in selectedIngredients"
             :key="index"
@@ -22,15 +12,12 @@
             :value="ingredient"
           />
         </ul>
+        <div class="search-type-toggle">
+          <span v-if="search_type==='ingredients'">Nach Zutaten suchen</span><span v-else>Nach Rezepten suchen</span><input checked v-model="search_type" value="ingredients" name="search-type" type="radio"><input v-model="search_type" name="search-type" value="recipes" type="radio">
+        </div>
       </div>
-      <search-input-ingredients v-if="searchType  === 'ingredients'"
-        @ingredientSelected="
-          (text) => {
-            selectedIngredients.push(text);
-          }
-        "
-      />
-      <search-input-recipes v-else ></search-input-recipes>
+      <search-input-ingredients v-if="search_type === 'ingredients'" @ingredientSelected="(text) => {selectedIngredients.push(text);}"></search-input-ingredients>
+      <search-input-recipes v-else></search-input-recipes>
     </section>
     <section v-if="0 < foundRecipes.length" class="search-results-wrapper">
       <h2>Suchergebnisse:</h2>
@@ -86,6 +73,7 @@
 
 <script>
 import SearchInputIngredients from "../components/SearchInputIngredients.vue";
+import SearchInputRecipes from "../components/SearchInputRecipes.vue";
 import RecipeCard from "../components/RecipeCard-v2.vue";
 import axios from "axios";
 import SearchChip from "../components/SearchChip.vue";
@@ -94,14 +82,13 @@ register();
 // import Categories from "../components/Categories.vue";
 
 import "swiper/swiper.css";
-import SearchInputRecipes from '../components/SearchInputRecipes.vue';
 
 export default {
   components: {
-    SearchInputIngredients,
     RecipeCard,
     SearchChip,
-    SearchInputRecipes,
+    SearchInputIngredients,
+    SearchInputRecipes
   },
   name: "Index",
   data() {
@@ -111,6 +98,7 @@ export default {
       suggestedRecipes: [],
       searchType: null,
       swiper: null,
+      search_type: 'ingredients',
     };
   },
   methods: {
@@ -131,7 +119,7 @@ export default {
           this.foundRecipes = response.data;
           console.log(this.foundRecipes);
         });
-    },
+    }
   },
   mounted() {
     axios.get("/api/v1/recipe/all").then((response) => {
@@ -182,44 +170,18 @@ h2 {
   margin-bottom: 1rem;
 }
 
-.selected-ingredient {
-  list-style: none;
-  display: inline-block;
-}
-
-.search-filters {
+.filter-container {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: flex-end;
   margin-bottom: 1rem;
 }
 
-.search-switch {
-  display: inline-flex;
+.search-type-toggle {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  background-color: var(--light-grey);
-}
-
-.switch-option-wrapper {
-  padding: 0.5rem 0.75rem;
-}
-
-.search-switch,
-.switch-option-wrapper.active {
-  border-radius: 2rem;
-}
-
-.switch-option-wrapper.active {
-  background-color: var(--secondary-color);
-}
-
-.switch-option-wrapper > *:nth-child(2) {
-  margin-left: 0.5rem;
-}
-
-.chip {
-  border: 1px solid rgb(225, 225, 225);
-  padding: 0.3rem 0.7rem;
-  border-radius: 20px;
-  background-color: rgb(225, 225, 225);
+  gap: 10px;
 }
 
 .chip + .chip {

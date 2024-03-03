@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public interface RecipeDao {
 
-    default void insertRecipe(Recipe recipe) {
-        insertRecipe(recipe);
+    default void insert(Recipe recipe) {
+        insert(recipe);
     }
 
     List<Recipe> findAll();
@@ -21,5 +21,5 @@ public interface RecipeDao {
 
     void updateById(String id, Recipe recipe);
 
-    List<Recipe> selectRecipesByIngredients(String[] ingredients);
+    List<Recipe> selectByIngredients(String[] ingredients);
 }

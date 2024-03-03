@@ -102,7 +102,7 @@ ion-icon {
   font-size: 1.5rem;
 }
 
-@media (max-width: 1300px) {
+@media (max-width: 1500px) {
   main {
     margin-left: 10vw;
     margin-right: 10vw;

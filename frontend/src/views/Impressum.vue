@@ -17,7 +17,10 @@
 
 <script>
 export default {
-    name: "Index",
+    name: "Impressum",
+        mounted() {
+            window.scroll(0,0)
+        }
 }
 </script>
 

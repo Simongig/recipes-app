@@ -1,6 +1,9 @@
 <template>
-  <li class="selected-ingredient chip">
-    {{ value }}
+  <li class="chip">
+    <span>{{ value }}</span>
+    <button class="chip--close">
+      <img src="../assets/icons/x.svg" alt="" />
+    </button>
   </li>
 </template>
 
@@ -13,28 +16,32 @@ export default {
 
 <style>
 .chip {
-    cursor: pointer;
-}
-/* .chip:hover::after {
-    color: var(--main-color);
-  content: "x";
-  position: absolute;
-  right: -5px;
-  top: -5px;
-  background-color: red;
-  width: 1rem;
-  height: 1rem;
-  text-align: center;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
+  cursor: pointer;
+  border-radius: 20px;
+  background-color: rgb(225, 225, 225);
+  display: inline-flex;
+  justify-items: center;
   align-items: center;
-} */
+  overflow: hidden;
+  height: 100%;
+}
 
-.chip:hover::after {
-    content: "delete";
-    background-color: red;
-    margin-left: 0.5rem;
-    padding: 0.2rem 0.2rem;
+.chip span {
+  padding: 0.3rem 0.7rem;
+  display: inline-block;
+}
+
+.chip img {
+  height: 100%;
+}
+
+.chip--close {
+  display: inline-flex;
+  
+  border: none;
+  background-color: red;
+  height: 100%;
+  padding: 0 0.5rem;
+
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <nav class="header-nav">
     <div class="nav-inner" @click="closeNavOnLinkClick">
       <div class="nav-brand">
         <router-link class="nav-item home-link" to="/"
@@ -42,7 +42,10 @@
         </div>
       </div>
       <div class="nav-mobile-menu nav-item" @click="toggleNav">
-        <ion-icon class="nav-close-icon hydrated" name="close-outline"></ion-icon>
+        <ion-icon
+          class="nav-close-icon hydrated"
+          name="close-outline"
+        ></ion-icon>
         <ion-icon class="nav-menu-icon hydrated" name="menu-outline"></ion-icon>
       </div>
     </div>
@@ -59,7 +62,8 @@ export default {
     },
     closeNavOnLinkClick(event) {
       console.log(event.target);
-      if (event.target.closest('.nav-links .nav-item, .nav-brand') == null) return;
+      if (event.target.closest(".nav-links .nav-item, .nav-brand") == null)
+        return;
       let nav_container = event.target.closest("body");
       nav_container.classList.remove("nav-mobile-show");
     },
@@ -68,7 +72,7 @@ export default {
 </script>
 
 <style>
-nav {
+.header-nav {
   padding: 1rem 0;
   /* background-color: #DAD0CE; */
   /* background-color: #323232; */
@@ -83,7 +87,7 @@ nav {
   backdrop-filter: blur(20px);
 }
 
-nav .nav-inner {
+.header-nav .nav-inner {
   text-align: center;
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -91,8 +95,8 @@ nav .nav-inner {
   margin: auto;
 }
 
-nav a.router-link-exact-active:not(.home-link),
-nav a:hover {
+.header-nav a.router-link-exact-active:not(.home-link),
+.header-nav a:hover {
   color: var(--secondary-color);
 }
 
@@ -114,9 +118,16 @@ nav a:hover {
 
 .nav-links,
 .nav-login,
-.nav-profile {
+.nav-profile,
+.nav-extra-items {
   display: flex;
   align-items: center;
+}
+
+
+.nav-profile {
+  background-color: var(--light-grey);
+  border-radius: 50%;
 }
 
 .nav-mobile-menu {
@@ -136,17 +147,17 @@ nav a:hover {
   display: none;
 }
 
-
 .nav-item {
-  padding: 0.5rem;
+  padding:  0.5rem 0.5rem 0.5rem 0;
   text-decoration: none;
   cursor: pointer;
 }
 
-@media (max-width: 1300px) {
-  nav .nav-inner {
+@media (max-width: 1500px) {
+  .header-nav .nav-inner {
     margin-left: 10vw;
     margin-right: 10vw;
+    width: 80vw;
   }
 }
 
@@ -158,6 +169,15 @@ nav a:hover {
 
   .home-link {
     font-size: 1.5rem;
+  }
+
+  .nav-profile {
+    background-color: transparent;
+  }
+
+  .nav-profile::after {
+    content: 'Profile';
+    margin-left: 0.5rem;
   }
 
   .nav-main-container {
@@ -230,9 +250,10 @@ nav a:hover {
 }
 
 @media (max-width: 550px) {
-  nav .nav-inner {
+  .header-nav .nav-inner {
     margin-left: 5vw;
     margin-right: 5vw;
+    width: 90vw;
   }
 }
 </style>

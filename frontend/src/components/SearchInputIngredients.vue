@@ -1,6 +1,7 @@
 <template>
   <section class="search">
     <form id="query-form" role="search">
+      
       <div class="search-input-wrapper">
         <input
           type="search"
@@ -42,7 +43,7 @@
 const axios = require("axios");
 
 export default {
-  name: "searchInput",
+  name: "searchInputIngredients",
   data() {
     return {
       elements: new Array(),

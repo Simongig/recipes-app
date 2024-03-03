@@ -37,7 +37,7 @@ public class RecipeService {
                 ingredientNameService.addIngredientName(new IngredientName(ingredient.getName()));
             }
         }
-        this.recipeDao.insertRecipe(recipe);
+        this.recipeDao.insert(recipe);
     }
 
     public List<Recipe> getAllRecipes() {
@@ -61,6 +61,6 @@ public class RecipeService {
     }
 
     public List<Recipe> findRecipeByIngredients(String[] ingredients) {
-        return this.recipeDao.selectRecipesByIngredients(ingredients);
+        return this.recipeDao.selectByIngredients(ingredients);
     }
 }

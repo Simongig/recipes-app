@@ -6,7 +6,7 @@
           type="search"
           id="search-input"
           name="q"
-          placeholder="Suche nach einem Rezept"
+          placeholder="Such nach einem Rezept"
           :value="searchInput"
           aria-label="Search through site content"
           @input="(event) => (searchInput = event.target.value)"
@@ -15,9 +15,12 @@
       </div>
       <div class="search-result-wrapper">
         <ol class="results" v-if="searchResults.length > 0">
-          <li v-for="result in searchResults" :key="result.id">
-            <router-link :to="{ name: 'recipePdp', params: { id: result.id } }">{{ result.title }}</router-link>
-          </li>
+          <li
+            v-for="result in searchResults"
+            :key="result.id"
+          ><router-link :to="{ name: 'recipePdp', params: { id: result.id } }" >
+            {{ result.title }}
+          </router-link></li>
         </ol>
         <ul class="no-results" v-else>
           <li>keine Ergebnisse gefunden</li>
@@ -28,15 +31,23 @@
 </template>
 
 <script>
+const axios = require("axios");
 
 export default {
-  name: "searchInput",
+  name: "searchInputRecipes",
   data() {
     return {
       elements: new Array(),
       searchInput: "",
       searchResults: [],
     };
+  },
+  methods: {
+    sendSearchQuery() {
+      axios.get("/api/v1/recipe/all").then((response) => {
+        console.log(response);
+      });
+    },
   },
   mounted() {
     document.querySelector("#query-form").addEventListener("submit", (e) => {
@@ -46,16 +57,15 @@ export default {
   watch: {
     searchInput() {
       console.log(this.searchInput);
-      let search_term = this.searchInput.trim();
-      if (typeof search_term == 'string' && search_term.length != 0) {
-        fetch("api/v1/recipe/search", {
+      if (this.searchInput.length != 0) {
+        fetch("/api/v1/recipe/search", {
           method: "POST",
-          body: search_term
+          body: this.searchInput.trim(),
         })
-        .then((response) => response.json())
+        .then(response => response.json())
         .then((results) => {
           console.log(results);
-          this.searchResults = results
+          this.searchResults = results;
         });
       } else {
         this.searchResults = [];
@@ -132,7 +142,6 @@ ol.results > li:hover {
 
 #query-form:focus-within .search-result-wrapper,
 .search-result-wrapper:hover {
-  height: auto;
   max-height: 200px;
 }
 

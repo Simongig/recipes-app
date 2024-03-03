@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 
 import static com.mongodb.client.model.Filters.*;
 
-import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Updates;
@@ -37,7 +36,7 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
 
     
     @Override
-    public void insertRecipe(Recipe recipe) {
+    public void insert(Recipe recipe) {
         recipeCollection.insertOne(recipe);
     }
 
@@ -65,7 +64,7 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
         return search_results;
     }
     
-    public List<Recipe> selectRecipesByIngredients(String[] ingredients) {
+    public List<Recipe> selectByIngredients(String[] ingredients) {
         System.out.println("------- Search Recipes -------");
         for(String i: ingredients) {
             System.out.println(i);
