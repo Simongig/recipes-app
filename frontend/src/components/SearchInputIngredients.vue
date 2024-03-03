@@ -6,7 +6,7 @@
           type="search"
           id="search-input"
           name="q"
-          placeholder="Gib etwas ein"
+          placeholder="Suche nach Zutaten"
           :value="searchInput"
           aria-label="Search through site content"
           @input="(event) => (searchInput = event.target.value)"
@@ -152,7 +152,8 @@ ol.results > li:hover {
 
 #query-form:focus-within .search-result-wrapper,
 .search-result-wrapper:hover {
-  height: 200px;
+  height: auto;
+  max-height: 200px;
 }
 
 .search-input-wrapper {

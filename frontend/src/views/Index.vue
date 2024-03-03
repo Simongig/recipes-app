@@ -2,28 +2,35 @@
   <main class="index-page">
     <section class="search-wrapper">
       <h1>Was möchtest du heute kochen?</h1>
-      <ul class="selected-ingredients-list">
-        <!-- <li
-          class="selected-ingredient chip"
-
-        >
-          {{ ingredient }}
-        </li> -->
-        <search-chip
-          v-for="(ingredient, index) in selectedIngredients"
-          :key="index"
-          :id="'chip-' + index"
-          @click="(index) => selectedIngredients.splice(index, 1)"
-          :value="ingredient"
-        />
-      </ul>
-      <search-input
+      <div class="search-filters">
+        <div class="search-switch"> 
+          <div class="switch-option-wrapper" :class="[searchType === 'ingredients' ? 'active' : '']">
+            <label for="search-type">Zutaten</label>
+            <input type="radio" v-model="searchType" value="ingredients" name="search-type" id="">
+          </div>
+          <div class="switch-option-wrapper" :class="[searchType === 'recipes' ? 'active' : '']" >
+            <input type="radio" checked v-model="searchType" value="recipes" name="search-type" id="">
+            <label for="search-type">Rezepte</label>
+          </div>
+        </div>
+        <ul v-if="searchType === 'ingredients'" class="selected-ingredients-list">
+          <search-chip
+            v-for="(ingredient, index) in selectedIngredients"
+            :key="index"
+            :id="'chip-' + index"
+            @click="(index) => selectedIngredients.splice(index, 1)"
+            :value="ingredient"
+          />
+        </ul>
+      </div>
+      <search-input-ingredients v-if="searchType  === 'ingredients'"
         @ingredientSelected="
           (text) => {
             selectedIngredients.push(text);
           }
         "
       />
+      <search-input-recipes v-else ></search-input-recipes>
     </section>
     <section v-if="0 < foundRecipes.length" class="search-results-wrapper">
       <h2>Suchergebnisse:</h2>
@@ -78,7 +85,7 @@
 </template>
 
 <script>
-import SearchInput from "../components/SearchInput.vue";
+import SearchInputIngredients from "../components/SearchInputIngredients.vue";
 import RecipeCard from "../components/RecipeCard-v2.vue";
 import axios from "axios";
 import SearchChip from "../components/SearchChip.vue";
@@ -87,12 +94,14 @@ register();
 // import Categories from "../components/Categories.vue";
 
 import "swiper/swiper.css";
+import SearchInputRecipes from '../components/SearchInputRecipes.vue';
 
 export default {
   components: {
-    SearchInput,
+    SearchInputIngredients,
     RecipeCard,
     SearchChip,
+    SearchInputRecipes,
   },
   name: "Index",
   data() {
@@ -100,6 +109,7 @@ export default {
       selectedIngredients: [],
       foundRecipes: [],
       suggestedRecipes: [],
+      searchType: null,
       swiper: null,
     };
   },
@@ -177,8 +187,32 @@ h2 {
   display: inline-block;
 }
 
-.selected-ingredients-list {
+.search-filters {
   margin-bottom: 1rem;
+}
+
+.search-switch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--light-grey);
+}
+
+.switch-option-wrapper {
+  padding: 0.5rem 0.75rem;
+}
+
+.search-switch,
+.switch-option-wrapper.active {
+  border-radius: 2rem;
+}
+
+.switch-option-wrapper.active {
+  background-color: var(--secondary-color);
+}
+
+.switch-option-wrapper > *:nth-child(2) {
+  margin-left: 0.5rem;
 }
 
 .chip {
