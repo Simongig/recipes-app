@@ -80,6 +80,7 @@ export default {
   data() {
     return {
       suggestedRecipes: [],
+      searchType: null,
       swiper: null,
       search_type: 'recipes',
     };
