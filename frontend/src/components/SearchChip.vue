@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "searchChip",
+  name: "SearchChip",
   props: ["value", "index"],
 };
 </script>
@@ -20,7 +20,6 @@ export default {
   border-radius: 20px;
   background-color: rgb(225, 225, 225);
   display: inline-flex;
-  justify-items: center;
   align-items: center;
   overflow: hidden;
   height: 100%;
@@ -36,12 +35,11 @@ export default {
 }
 
 .chip--close {
+  background-color: transparent;
   display: inline-flex;
-  
   border: none;
-  background-color: red;
   height: 100%;
-  padding: 0 0.5rem;
+  padding: 0 0.25rem 0 0;
 
 }
 </style>

@@ -15,7 +15,6 @@ import static com.mongodb.client.model.Filters.*;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Updates;
 import com.simongig.recipesapp.model.Recipe;
 
 
@@ -57,20 +56,20 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
     }
 
     public List<Recipe> search(String search_term) {
+        System.out.println("------- Search Recipes By Name -------");
         Document search_options = new Document("query", search_term).append("path", "title").append("fuzzy", new Document());
         Document agg = new Document("$search", new Document("index", "Recipes").append("text",search_options));
-        System.out.println(agg);
         List<Recipe> search_results = recipeCollection.aggregate(Arrays.asList(agg)).into(new ArrayList<>());
         return search_results;
     }
     
     public List<Recipe> selectByIngredients(String[] ingredients) {
-        System.out.println("------- Search Recipes -------");
-        for(String i: ingredients) {
-            System.out.println(i);
-        }
-        Bson matchIngredients = in("ingredients._id", ingredients);
-        return recipeCollection.find(matchIngredients, Recipe.class).into(new ArrayList<>());
+        System.out.println("------- Search Recipes By Ingredients -------");
+        System.out.println(Arrays.toString(ingredients));
+        Bson matchIngredients = all("ingredients._id", ingredients);
+        List<Recipe> recipes = recipeCollection.find(matchIngredients, Recipe.class).into(new ArrayList<>());
+        System.out.println(recipes);
+        return recipes;
     }
 
     @Override

@@ -1,54 +1,71 @@
 <template>
   <section class="search">
-    <form id="query-form" role="search">
-      
-      <div class="search-input-wrapper">
-        <input
-          type="search"
-          id="search-input"
-          name="q"
-          placeholder="Gib etwas ein"
-          :value="searchInput"
-          aria-label="Search through site content"
-          @input="(event) => (searchInput = event.target.value)"
-        />
-        <ion-icon name="options" class="search-icon hydrated"></ion-icon>
-      </div>
-      <div class="search-result-wrapper">
-        <ol class="results" v-if="searchResults.length > 0">
-          <li
-            @click="
-              (event) =>
-                $emit(
-                  'ingredientSelected',
-                  event.target.attributes['ingredient-name'].value
-                )
-            "
-            v-for="result in searchResults"
-            :key="result.name"
-            :ingredient-name="result.name"
-          >
-            {{ result.name }}
-          </li>
-        </ol>
-        <ul class="no-results" v-else>
-          <li>keine Ergebnisse gefunden</li>
+    <div class="search-wrapper">
+      <div class="filter-container" v-if="selectedIngredients.size > 0">
+        <ul class="selected-ingredients-list">
+          <search-chip
+            v-for="ingredient in selectedIngredients"
+            :key="ingredient"
+            @click="() => selectedIngredients.delete(ingredient)"
+            :value="ingredient"
+          />
         </ul>
       </div>
-    </form>
+      <form id="query-form" role="search">
+        <div class="search-input-wrapper">
+          <input
+            type="search"
+            id="search-input"
+            name="q"
+            placeholder="z.B. Spaghetti, Tomaten, Käse etc."
+            :value="searchInput"
+            aria-label="Search through site content"
+            @input="(event) => (searchInput = event.target.value)"
+          />
+          <ion-icon name="search-outline" class="search-icon hydrated"></ion-icon>
+        </div>
+        <div v-if="0 < searchResults.length" class="search-result-wrapper">
+          <ol class="results">
+            <li
+              @click="addIngredient"
+              v-for="result in searchResults"
+              :key="result.name"
+              :ingredient-name="result.name"
+            >
+              {{ result.name }}
+            </li>
+          </ol>
+        </div>
+      </form>
+    </div>
+    <div v-if="0 < foundRecipes.length" class="search-results-wrapper">
+      <h2>Suchergebnisse:</h2>
+      <div class="card-grid">
+        <recipe-card
+          v-for="element in foundRecipes"
+          :key="element"
+          :recipe="element"
+        />
+      </div>
+    </div>
   </section>
 </template>
 
 <script>
+import SearchChip from './SearchChip.vue';
+import RecipeCard from './RecipeCard-v2.vue';
 const axios = require("axios");
 
 export default {
+  components: { SearchChip, RecipeCard },
   name: "searchInputIngredients",
   data() {
     return {
-      elements: new Array(),
+      elements: [],
+      selectedIngredients: new Set(),
       searchInput: "",
       searchResults: [],
+      foundRecipes: [],
     };
   },
   methods: {
@@ -57,6 +74,31 @@ export default {
         console.log(response);
       });
     },
+    findRecipes() {
+      let selectedIngredientsArr = Array.from(this.selectedIngredients);
+      const jsonString = JSON.stringify(selectedIngredientsArr);
+      console.log(jsonString);
+      const data = new Blob([jsonString], { type: "application/json" });
+      console.log(data);
+      axios
+        .post("/api/v1/recipe/find", data, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          console.log(this.foundRecipes);
+          console.log(response.data);
+          this.foundRecipes = response.data;
+          console.log(this.foundRecipes);
+        });
+    },
+    addIngredient(event) {
+      this.selectedIngredients.add(event.target.getAttribute('ingredient-name'));
+      let search_input = document.querySelector('#search-input');
+      this.searchInput = "";
+      search_input.focus();
+    }
   },
   mounted() {
     document.querySelector("#query-form").addEventListener("submit", (e) => {
@@ -65,31 +107,47 @@ export default {
   },
   watch: {
     searchInput() {
-      console.log(this.searchInput);
-      if (this.searchInput.length != 0) {
-        axios.get("api/v1/ingredient/all").then((results) => {
-          console.log(results.data);
-          this.searchResults = results.data.filter((ingredient) => {
-            return (
-              -1 <
-              ingredient.name
-                .toLowerCase()
-                .indexOf(this.searchInput.toLowerCase())
-            );
-          });
-        });
-      } else {
+      console.log("Current Search Input:", this.searchInput);
+      if (this.searchInput.length == 0) {
         this.searchResults = [];
+        return;
       }
+      axios.get("api/v1/ingredient/all").then((results) => {
+        console.log(results.data);
+        this.searchResults = results.data.filter((ingredient) => {
+          return (
+            -1 <
+            ingredient.name
+              .toLowerCase()
+              .indexOf(this.searchInput.toLowerCase())
+          );
+        });
+      });
+    },
+    selectedIngredients: {
+      handler() {
+        if (this.selectedIngredients.size != 0) {
+          this.findRecipes();
+        } else {
+          this.foundRecipes.length = 0;
+        }
+      },
+      deep: true,
     },
   },
 };
 </script>
 
-<style>
-.search {
+<style scoped>
+.search, .search-wrapper {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.search-wrapper {
+  min-height: 200px;
 }
 
 .search form {
@@ -106,7 +164,7 @@ export default {
   margin-right: 10px;
 }
 
-.search button {
+.search-input-wrapper button {
   all: unset;
   cursor: pointer;
   display: block;
@@ -148,7 +206,8 @@ ol.results > li:hover {
 .search-result-wrapper ul,
 .search-result-wrapper ol {
   list-style: none;
-  margin: 0.5rem 1.5rem;
+  padding: 0.5rem 1.5rem;
+  border-top: 1px solid rgba(142, 142, 142, 0.674);
 }
 
 #query-form:focus-within .search-result-wrapper,
@@ -162,10 +221,6 @@ ol.results > li:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.search-input-wrapper:focus-within {
-  border-bottom: 1px solid rgba(142, 142, 142, 0.674);
 }
 
 input#search-input:focus {
@@ -183,6 +238,7 @@ input#search-input:focus {
   border: none;
   margin: 0 1rem;
   font-size: 1.2rem;
+  text-overflow: ellipsis;
 }
 .search input[type="search"] {
   background-color: transparent !important;
@@ -193,5 +249,18 @@ input#search-input:focus {
 }
 .search input[type="search"]::-webkit-search-decoration {
   display: none;
+}
+
+.filter-container {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.selected-ingredients-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 </style>

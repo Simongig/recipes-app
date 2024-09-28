@@ -33,7 +33,6 @@ public class RecipeController {
 
     @PostMapping("/find")
     public List<Recipe> findRecipesByIngredient(@RequestBody String[] ingredients) {
-        System.out.println(ingredients);
         return recipeService.findRecipeByIngredients(ingredients);
     }
 

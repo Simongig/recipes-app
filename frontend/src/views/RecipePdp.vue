@@ -136,7 +136,7 @@ export default {
   width: 100%;
   display: grid;
   max-height: 50vh;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .ingredients-wrapper tr + tr,

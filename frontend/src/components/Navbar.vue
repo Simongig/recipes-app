@@ -124,10 +124,16 @@ export default {
   align-items: center;
 }
 
+.nav-item {
+  padding:  0.5rem 0.5rem 0.5rem 0;
+  text-decoration: none;
+  cursor: pointer;
+}
 
 .nav-profile {
   background-color: var(--light-grey);
   border-radius: 50%;
+  padding: 0.5rem;
 }
 
 .nav-mobile-menu {
@@ -145,12 +151,6 @@ export default {
 
 .nav-mobile-show .nav-menu-icon {
   display: none;
-}
-
-.nav-item {
-  padding:  0.5rem 0.5rem 0.5rem 0;
-  text-decoration: none;
-  cursor: pointer;
 }
 
 @media (max-width: 1500px) {

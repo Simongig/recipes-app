@@ -1,35 +1,23 @@
 <template>
   <main class="index-page">
-    <section class="search-wrapper">
+    <section class="home-search-wrapper">
       <h1>Was möchtest du heute kochen?</h1>
-      <div class="filter-container">
-        <ul class="selected-ingredients-list">
-          <search-chip
-            v-for="(ingredient, index) in selectedIngredients"
-            :key="index"
-            :id="'chip-' + index"
-            @click="(index) => selectedIngredients.splice(index, 1)"
-            :value="ingredient"
-          />
-        </ul>
-        <div class="search-type-toggle">
-          <span v-if="search_type==='ingredients'">Nach Zutaten suchen</span><span v-else>Nach Rezepten suchen</span><input checked v-model="search_type" value="ingredients" name="search-type" type="radio"><input v-model="search_type" name="search-type" value="recipes" type="radio">
-        </div>
+      <div class="search-type-toggle">
+        Suche nach
+        <button class="search-type-button" @click="search_type = 'recipes'">
+          <label :class="search_type == 'recipes' ? 'selected' : ''" class="search-type-toggle-item" for="recipes">Rezepten</label>
+          <input v-model="search_type" name="search-type" value="recipes" type="radio">
+        </button>
+        oder 
+        <button class="search-type-button search-type-ingredients" @click="search_type = 'ingredients'">
+          <div class="search-type-toggle-nudge">Clicke um die Suche zu wechseln</div>
+          <label :class="search_type == 'ingredients' ? 'selected' : ''" class="search-type-toggle-item" for="ingredients">Zutaten</label>
+          <input checked v-model="search_type" value="ingredients" name="search-type" type="radio">
+        </button>
       </div>
-      <search-input-ingredients v-if="search_type === 'ingredients'" @ingredientSelected="(text) => {selectedIngredients.push(text);}"></search-input-ingredients>
+      <search-input-ingredients v-if="search_type === 'ingredients'"></search-input-ingredients>
       <search-input-recipes v-else></search-input-recipes>
     </section>
-    <section v-if="0 < foundRecipes.length" class="search-results-wrapper">
-      <h2>Suchergebnisse:</h2>
-      <div class="card-grid">
-        <recipe-card
-          v-for="element in foundRecipes"
-          :key="element"
-          :recipe="element"
-        />
-      </div>
-    </section>
-    <categories></categories>
     <section class="suggestions-slider">
       <h2>Neue Rezepte</h2>
       <swiper-container
@@ -76,7 +64,6 @@ import SearchInputIngredients from "../components/SearchInputIngredients.vue";
 import SearchInputRecipes from "../components/SearchInputRecipes.vue";
 import RecipeCard from "../components/RecipeCard-v2.vue";
 import axios from "axios";
-import SearchChip from "../components/SearchChip.vue";
 import { register } from "swiper/element/swiper-element.js";
 register();
 // import Categories from "../components/Categories.vue";
@@ -86,38 +73,20 @@ import "swiper/swiper.css";
 export default {
   components: {
     RecipeCard,
-    SearchChip,
     SearchInputIngredients,
     SearchInputRecipes
   },
   name: "Index",
   data() {
     return {
-      selectedIngredients: [],
-      foundRecipes: [],
       suggestedRecipes: [],
       swiper: null,
-      search_type: 'ingredients',
+      search_type: 'recipes',
     };
   },
   methods: {
-    findRecipes() {
-      const jsonString = JSON.stringify(this.selectedIngredients);
-      console.log(jsonString);
-      const data = new Blob([jsonString], { type: "application/json" });
-      console.log(data);
-      axios
-        .post("/api/v1/recipe/find", data, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then((response) => {
-          console.log(this.foundRecipes);
-          console.log(response.data);
-          this.foundRecipes = response.data;
-          console.log(this.foundRecipes);
-        });
+    hideNudeAfterTimeout() {
+      setTimeout(() => document.querySelector('.search-type-toggle-nudge').classList.add('nudge-hide'), 5000);
     }
   },
   mounted() {
@@ -125,19 +94,8 @@ export default {
       console.log(response.data);
       this.suggestedRecipes = response.data.reverse().slice(0, 5);
     });
+    this.hideNudeAfterTimeout();
     // this.swiper = new window.Swiper('.swiper')
-  },
-  watch: {
-    selectedIngredients: {
-      handler() {
-        if (this.selectedIngredients != 0) {
-          this.findRecipes();
-        } else {
-          this.foundRecipes.length = 0;
-        }
-      },
-      deep: true,
-    },
   },
 };
 </script>
@@ -151,13 +109,13 @@ export default {
   width: 100%;
 }
 
-.search-wrapper {
+.home-search-wrapper {
   width: 100%;
   max-width: 584px;
   min-height: 60vh;
 }
 
-.search-wrapper h1 {
+.home-search-wrapper h1 {
   font-size: 3rem;
 }
 
@@ -169,22 +127,78 @@ h2 {
   margin-bottom: 1rem;
 }
 
-.filter-container {
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 1rem;
+.search-type-ingredients {
+  position: relative;
+}
+
+.search-type-toggle-nudge {
+  position: absolute;
+  top: -200%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  display: block;
+  overflow:visible;
+  width: 200px;
+  background-color: #caf5ff;
+  filter: brightness(1);
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  box-shadow: 0px 2px 11px 0px #d1d1d1;
+  animation: nudgeBounce 1s ease-out 3
+}
+
+@keyframes nudgeBounce {
+  0% {top: -200%}
+  50% {top: -180%}
+  100% {top: -200%}
+}
+
+.search-type-toggle-nudge::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background-color: #caf5ff;
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    transform: rotateZ(45deg)
+  }
+
+.search-type-toggle-nudge.nudge-hide {
+  opacity: 0;
+  transition: opacity 1s;
 }
 
 .search-type-toggle {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-bottom: 1rem;
 }
 
-.chip + .chip {
-  margin-left: 10px;
+.search-type-button {
+  all: unset;
+}
+
+.search-type-toggle-item {
+  cursor: pointer;
+  line-height: 1.6;
+  color: var(--primary-color);
+  text-underline-offset: 0.6ch;
+  text-decoration: underline dotted;
+  
+}
+
+.search-type-toggle-item.selected {
+  text-decoration: underline;
+  text-decoration-color: var(--secondary-color);
+  font-weight: bold;
+}
+
+.search-type-toggle input {
+  display: none;
 }
 
 a:not(nav a) {
