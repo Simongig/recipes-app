@@ -1,8 +1,5 @@
 package com.simongig.recipesapp.api;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,10 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,17 +24,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simongig.recipesapp.model.User;
 import com.simongig.recipesapp.model.UserRole;
-import com.simongig.recipesapp.service.UserService;;
+import com.simongig.recipesapp.service.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RequestMapping("api/v1/auth")
 @RestController
 public class UserController {
 
     private final UserService userService;
+    private final Algorithm algorithm;
 
-    @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, Algorithm algorithm) {
         this.userService = userService;
+        this.algorithm = algorithm;
     }
 
     @GetMapping("/users")
@@ -66,11 +65,11 @@ public class UserController {
     @PostMapping("/token/refresh")
     public void generateRefreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
+        
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 String token = authorizationHeader.substring("Bearer ".length());
-                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-                JWTVerifier verifier = JWT.require(algorithm).build();
+                JWTVerifier verifier = JWT.require(this.algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(token);
                 String username = decodedJWT.getSubject();
                 Optional<User> user_opt = userService.findByUsername(username);
@@ -96,7 +95,7 @@ public class UserController {
                     Map<String, String> tokens = new HashMap<>();
                     tokens.put("access_token", access_token);
                     tokens.put("refresh_token", refresh_token);
-                    response.setContentType("applicaton/json");
+                    response.setContentType("application/json");
                     new ObjectMapper().writeValue(response.getOutputStream(), tokens);
                 }
             } catch (Exception exception) {

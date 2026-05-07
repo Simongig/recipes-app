@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Index from '../views/Index'
+import Index from '../views/Index.vue'
 import CreateRecipe from '../views/CreateRecipe.vue'
 import Login from '../views/Login.vue'
 import RecipePdp from '../views/RecipePdp.vue'
@@ -10,7 +10,7 @@ const routes = [
   {
     path: '/',
     name: 'Index',
-    component: Index
+    component: Index,
   },
   {
     path: '/createRecipe',
@@ -18,40 +18,41 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: CreateRecipe
-  }, {
+    component: CreateRecipe,
+  },
+  {
     path: '/recipe/all',
     name: 'recipePlp',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: RecipesPlp
+    component: RecipesPlp,
   },
   {
     path: '/login',
     name: 'login',
-    component: Login
+    component: Login,
   },
   {
     path: '/recipe/id/:id',
     name: 'recipePdp',
-    component: RecipePdp
+    component: RecipePdp,
   },
   {
     path: '/impressum',
     name: 'impressum',
-    component: Impressum
+    component: Impressum,
   },
   {
     path: '/error',
     name: 'error',
     component: Index,
-  }
+  },
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes
+  history: createWebHistory(),
+  routes,
 })
 
 export default router

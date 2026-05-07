@@ -7,9 +7,7 @@ import com.simongig.recipesapp.model.IngredientName;
 
 public interface IngredientNameDao {
 
-    default void insertIngredientName(IngredientName ingredientName) {
-        insertIngredientName(ingredientName);
-    }
+    void insertIngredientName(IngredientName ingredientName);
 
     List<IngredientName> selectAllIngredientNames();
 

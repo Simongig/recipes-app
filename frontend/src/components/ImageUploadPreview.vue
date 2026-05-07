@@ -12,22 +12,19 @@
 
 <script>
 export default {
-  name: "ImageUploadPreview",
-  props: ["images"],
+  name: 'ImageUploadPreview',
+  props: ['images'],
   methods: {
     getImageURLfromFile(image) {
-      window.imageURL = URL.createObjectURL(image);
-      return URL.createObjectURL(image);
+      window.imageURL = URL.createObjectURL(image)
+      return URL.createObjectURL(image)
     },
     getImageIDfromURL(image) {
-      var url = this.getImageURLfromFile(image);
-      return url.replace(
-        "blob:" + document.location.origin + "/",
-        ""
-      );
+      var url = this.getImageURLfromFile(image)
+      return url.replace('blob:' + document.location.origin + '/', '')
     },
   },
-};
+}
 </script>
 
 <style>

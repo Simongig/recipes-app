@@ -3,35 +3,23 @@
     <div class="nav-inner" @click="closeNavOnLinkClick">
       <div class="nav-brand">
         <router-link class="nav-item home-link" to="/"
-          >Kochbuch.io<sup
-            style="
-              font-size: x-small;
-              font-weight: normal;
-              margin-left: 0.25rem;
-            "
+          >Kochbuch.io<sup style="font-size: x-small; font-weight: normal; margin-left: 0.25rem"
             >beta</sup
           ></router-link
         >
       </div>
       <div class="nav-main-container">
         <div class="nav-links">
-          <router-link class="nav-item" to="/recipe/all"
-            >Alle Rezepte</router-link
-          >
-          <router-link class="nav-item" to="/recipe/categories"
-            >Kategorien</router-link
-          >
-          <router-link
-            class="nav-item"
-            v-if="this.$store.state.isLoggedIn"
-            to="/createRecipe"
+          <router-link class="nav-item" to="/recipe/all">Alle Rezepte</router-link>
+          <router-link class="nav-item" to="/recipe/categories">Kategorien</router-link>
+          <router-link class="nav-item" v-if="isLoggedIn" to="/createRecipe"
             >Erstellen</router-link
           >
         </div>
         <div class="nav-extra-items">
           <router-link
             class="nav-item nav-profile"
-            v-if="this.$store.state.isLoggedIn"
+            v-if="isLoggedIn"
             to="/profile"
             ><ion-icon name="person-outline"></ion-icon
           ></router-link>
@@ -42,10 +30,7 @@
         </div>
       </div>
       <div class="nav-mobile-menu nav-item" @click="toggleNav">
-        <ion-icon
-          class="nav-close-icon hydrated"
-          name="close-outline"
-        ></ion-icon>
+        <ion-icon class="nav-close-icon hydrated" name="close-outline"></ion-icon>
         <ion-icon class="nav-menu-icon hydrated" name="menu-outline"></ion-icon>
       </div>
     </div>
@@ -53,22 +38,27 @@
 </template>
 
 <script>
+import { mapState } from 'pinia'
+import useStore from '../stores'
+
 export default {
-  name: "Navbar",
+  name: 'Navbar',
+  computed: {
+    ...mapState(useStore, ['isLoggedIn']),
+  },
   methods: {
     toggleNav(event) {
-      let nav_container = event.target.closest("body");
-      nav_container.classList.toggle("nav-mobile-show");
+      let nav_container = event.target.closest('body')
+      nav_container.classList.toggle('nav-mobile-show')
     },
     closeNavOnLinkClick(event) {
-      console.log(event.target);
-      if (event.target.closest(".nav-links .nav-item, .nav-brand") == null)
-        return;
-      let nav_container = event.target.closest("body");
-      nav_container.classList.remove("nav-mobile-show");
+      console.log(event.target)
+      if (event.target.closest('.nav-links .nav-item, .nav-brand') == null) return
+      let nav_container = event.target.closest('body')
+      nav_container.classList.remove('nav-mobile-show')
     },
   },
-};
+}
 </script>
 
 <style>
@@ -125,7 +115,7 @@ export default {
 }
 
 .nav-item {
-  padding:  0.5rem 0.5rem 0.5rem 0;
+  padding: 0.5rem 0.5rem 0.5rem 0;
   text-decoration: none;
   cursor: pointer;
 }
@@ -209,7 +199,7 @@ export default {
     height: 100vh;
   }
   .nav-mobile-show .nav-inner {
-    grid-template-areas: "brand menu" "main main";
+    grid-template-areas: 'brand menu' 'main main';
     grid-template-columns: 1fr auto;
     grid-template-rows: auto 1fr;
   }
@@ -228,7 +218,7 @@ export default {
   }
 
   .nav-links > .nav-item::after {
-    content: "";
+    content: '';
     background-image: url(/img/chevron-forward-outline.65e801bd.svg);
     height: 100%;
     display: inline-block;

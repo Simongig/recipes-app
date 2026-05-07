@@ -5,10 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import static com.mongodb.client.model.Filters.*;
@@ -24,13 +25,16 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
     private final MongoClient client;
     private MongoCollection<Recipe> recipeCollection;
 
+    @Value("${spring.data.mongodb.database}")
+    private String databaseName;
+
     public RecipeAccessService_MongoAtlas(MongoClient mongoClient) {
         this.client = mongoClient;
     }
-    
+
     @PostConstruct
     void init() {
-        recipeCollection = client.getDatabase("database").getCollection("Recipe",Recipe.class);
+        recipeCollection = client.getDatabase(databaseName).getCollection("Recipe", Recipe.class);
     }
 
     

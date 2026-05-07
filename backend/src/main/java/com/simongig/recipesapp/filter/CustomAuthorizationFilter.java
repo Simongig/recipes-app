@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,9 +21,14 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 import static java.util.Arrays.stream;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION; 
-import static org.springframework.http.HttpStatus.FORBIDDEN;; 
 
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
+
+    private final Algorithm algorithm;
+
+    public CustomAuthorizationFilter(Algorithm algorithm) {
+        this.algorithm = algorithm;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -36,8 +41,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 try {
                     System.out.println("--------- Start Authorization ---------");
                     String token = authorizationHeader.substring("Bearer ".length());
-                    Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-                    JWTVerifier verifier = JWT.require(algorithm).build();
+                    JWTVerifier verifier = JWT.require(this.algorithm).build();
                     DecodedJWT decodedJWT = verifier.verify(token);
                     String username = decodedJWT.getSubject();
                     String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
@@ -55,9 +59,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     System.out.println("--------- End Authorization ---------");
                 } catch (Exception exception) {
                     System.out.println("Error loggin in: " + exception.getMessage());
-                    response.setHeader("error", exception.getMessage());
-                    response.sendError(FORBIDDEN.value());
-                    throw(exception);
+                    filterChain.doFilter(request, response);
                 }
             } else {
                 filterChain.doFilter(request, response);

@@ -1,10 +1,5 @@
 <template>
-  <form
-    class="boxshadow login-form"
-    id="login-form"
-    action="/login"
-    method="post"
-  >
+  <form class="boxshadow login-form" id="login-form" action="/login" method="post">
     <h2>Anmeldung</h2>
     <input type="text" name="username" placeholder="username" id="" />
     <input type="password" placeholder="Passwort" name="password" id="" />
@@ -13,50 +8,53 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios'
 import router from '../router'
+import { mapActions } from 'pinia'
+import useStore from '../stores'
+
 export default {
-  name: "login-form",
+  name: 'login-form',
   mounted() {
-    document.querySelector("#login-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-    });
+    document.querySelector('#login-form').addEventListener('submit', (e) => {
+      e.preventDefault()
+    })
   },
   methods: {
+    ...mapActions(useStore, ['setToLoggedIn']),
     submitForm() {
-      const params = new URLSearchParams();
-      const form = document.querySelector("#login-form");
-      const formData = new FormData(form);
-      console.log("username", formData.get("username"));
-      console.log("password", formData.get("password"));
-      params.append("username", formData.get("username"));
-      params.append("password", formData.get("password"));
+      const params = new URLSearchParams()
+      const form = document.querySelector('#login-form')
+      const formData = new FormData(form)
+      console.log('username', formData.get('username'))
+      console.log('password', formData.get('password'))
+      params.append('username', formData.get('username'))
+      params.append('password', formData.get('password'))
       axios
-        .post("/api/auth/login", params, {
+        .post('/api/auth/login', params, {
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
         })
         .then((response) => {
-            if(200 == response.status) {
-              alert('Super! Dein Login war erfolgreich!')
-            } else {
-              alert('Oh nein! Irgendwas ist beim Login schiefgelaufen :( \n Code: ' + response.status)
-            }
-            localStorage.setItem('user', JSON.stringify(response.data))
-            if(response.data.access_token) {
-              this.$store.commit("setToLoggedIn")
-              console.log(this.$store.state.isLoggedIn);
-            }
-            router.push({ path: '/' })
+          if (200 == response.status) {
+            alert('Super! Dein Login war erfolgreich!')
+          } else {
+            alert('Oh nein! Irgendwas ist beim Login schiefgelaufen :( \n Code: ' + response.status)
+          }
+          localStorage.setItem('user', JSON.stringify(response.data))
+          if (response.data.access_token) {
+            this.setToLoggedIn()
+          }
+          router.push({ path: '/' })
         })
         .catch((e) => {
-            alert('Oh nein! Irgendwas ist beim Login schiefgelaufen :(')
-            console.log(e);
-        });
+          alert('Oh nein! Irgendwas ist beim Login schiefgelaufen :(')
+          console.log(e)
+        })
     },
   },
-};
+}
 </script>
 
 <style>

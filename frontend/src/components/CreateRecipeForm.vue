@@ -8,45 +8,23 @@
   >
     <h2>Fügen Sie Ihr Rezept hinzu</h2>
     <div class="form-field-wrapper">
-    <input
-      type="text"
-      required
-      name="title"
-      placeholder="*not-shown*"
-      id=""
-    />
+      <input type="text" required name="title" placeholder="*not-shown*" id="" />
       <label for="title">Wie heißt das Rezept?</label>
     </div>
     <div class="form-field-wrapper">
-    <input
-      type="number"
-      required
-      name="duration"
-      placeholder="*not-shown*"
-      id=""
-    />
+      <input type="number" required name="duration" placeholder="*not-shown*" id="" />
       <label for="title">Wie lange dauert es?</label>
-      <div style="padding: 0 1rem;">Minuten</div>
+      <div style="padding: 0 1rem">Minuten</div>
     </div>
     <div class="form-field-wrapper">
-    <input
-      type="number"
-      required
-      name="portions"
-      placeholder="*not-shown*"
-      id=""
-    />
+      <input type="number" required name="portions" placeholder="*not-shown*" id="" />
       <label for="title">Für wie viele Personen reicht es?</label>
-      <div style="padding: 0 1rem;">Personen</div>
+      <div style="padding: 0 1rem">Personen</div>
     </div>
     <fieldset class="form-section">
       <legend>Zutaten</legend>
       <div class="ingredients-grid">
-        <div
-          class="ingredient"
-          v-for="(ingredient, index) in ingredients"
-          :key="index"
-        >
+        <div class="ingredient" v-for="(ingredient, index) in ingredients" :key="index">
           <input
             type="text"
             inputmode="numeric"
@@ -60,11 +38,7 @@
               {{ option }}
             </option>
           </select>
-          <input
-            type="text"
-            v-model="ingredients[index].name"
-            placeholder="Tomate"
-          />
+          <input type="text" v-model="ingredients[index].name" placeholder="Tomate" />
         </div>
       </div>
       <div class="add-element-wrapper">
@@ -133,116 +107,122 @@
 </template>
 
 <script>
-import axios from "axios";
-import ImageUploadPreview from "./ImageUploadPreview.vue";
+import axios from 'axios'
+import ImageUploadPreview from './ImageUploadPreview.vue'
 import router from '../router'
 // import IngredientFormInput from "./IngredientFormInput.vue";
 export default {
-  name: "createRecipeForm",
+  name: 'createRecipeForm',
   components: { ImageUploadPreview },
   data() {
     return {
       files: [],
-      ingredients: [
-        {
-        },
+      ingredients: [{}],
+      preparationSteps: [{}],
+      unitOptions: [
+        'Stück',
+        'Teelöffel',
+        'Esslöffel',
+        'Gramm',
+        'Kilo',
+        'Liter',
+        'Prise',
+        'Milliliter',
+        'Bündel',
       ],
-      preparationSteps: [
-        {
-        },
-      ],
-      unitOptions: ["Stück", "Teelöffel", "Esslöffel", "Gramm", "Kilo", "Liter", "Prise", "Milliliter", "Bündel"],
-    };
+    }
   },
   mounted() {
-    document.querySelector("#recipe-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-    });
+    document.querySelector('#recipe-form').addEventListener('submit', (e) => {
+      e.preventDefault()
+    })
   },
   methods: {
     updateFilesArray() {
-      this.files = [];
-      let files = document.getElementById("file-input").files;
+      this.files = []
+      let files = document.getElementById('file-input').files
       for (let i = 0; i < files.length; i++) {
-        this.files.push(files[i]);
+        this.files.push(files[i])
       }
     },
     addIngredient() {
       this.ingredients.push({
-        name: "",
-        unit: "",
-        quantity: "",
-      });
+        name: '',
+        unit: '',
+        quantity: '',
+      })
     },
     addPreparationStep() {
       this.preparationSteps.push({
-        title: "",
-        content: "",
-      });
+        title: '',
+        content: '',
+      })
     },
     getAccessToken() {
-      let user = JSON.parse(localStorage.getItem("user"));
+      let user = JSON.parse(localStorage.getItem('user'))
       if (user && user.access_token) {
         // for Node.js Express back-end
         console.log(user.access_token)
-        return user.access_token ;
+        return user.access_token
       } else {
-        return {};
+        return {}
       }
     },
     updateFiles() {
-      document.getElementById("file-input").click();
+      document.getElementById('file-input').click()
     },
     async sendForm() {
-      const form = document.querySelector("form");
-      const formData = new FormData(form);
+      const form = document.querySelector('form')
+      const formData = new FormData(form)
 
       const imageURL = await axios
         .get(
-          "https://api.unsplash.com/search/photos?client_id=ZlrYQ-virrK3j1gPYVdac_pQQ63rplNe52KDDdubxb0&query=" +
-            formData.get("title").trim().replace(" ", "-") +
-            "&collections=food-drinks"
+          'https://api.unsplash.com/search/photos?client_id=ZlrYQ-virrK3j1gPYVdac_pQQ63rplNe52KDDdubxb0&query=' +
+            formData.get('title').trim().replace(' ', '-') +
+            '&collections=food-drinks',
         )
         .then((value) => {
-          if(value.data.results == null) return "";
-          return value.data.results[0].urls.regular;
-        });
-      const imageURLArr = new Array();
-      imageURLArr.push(imageURL);
-      console.log(imageURLArr);
+          if (value.data.results == null) return ''
+          return value.data.results[0].urls.regular
+        })
+      const imageURLArr = new Array()
+      imageURLArr.push(imageURL)
+      console.log(imageURLArr)
       var jsonString = JSON.stringify({
-        title: formData.get("title"),
-        duration: formData.get("duration"),
-        portions: formData.get("portions"),
+        title: formData.get('title'),
+        duration: formData.get('duration'),
+        portions: formData.get('portions'),
         ingredients: this.ingredients,
         preparationSteps: this.preparationSteps,
         imagePaths: imageURLArr,
-      });
-      const data = new Blob([jsonString], { type: "application/json" });
+      })
+      const data = new Blob([jsonString], { type: 'application/json' })
 
-      formData.append("data", data);
+      formData.append('data', data)
       axios
-        .post("/api/v1/recipe/add", formData, {
+        .post('/api/v1/recipe/add', formData, {
           headers: {
-            "Content-Type": "multipart/form-data",
-            "Authorization": "Bearer " + this.getAccessToken()
+            'Content-Type': 'multipart/form-data',
+            Authorization: 'Bearer ' + this.getAccessToken(),
           },
         })
         .then((response) => {
-            if(200 == response.status) {
-              alert('Dein Rezpet wurde erfolgreich hochgeladen!')
-            } else {
-              alert('Oh nein! Irgendwas ist beim Upload schiefgelaufen :( \n Code: ' + response.status)
-            }
-            router.push({ path: '/' })
+          if (200 == response.status) {
+            alert('Dein Rezpet wurde erfolgreich hochgeladen!')
+          } else {
+            alert(
+              'Oh nein! Irgendwas ist beim Upload schiefgelaufen :( \n Code: ' + response.status,
+            )
+          }
+          router.push({ path: '/' })
         })
         .catch((e) => {
-          alert('Oh nein! Irgendwas ist beim Upload schiefgelaufen :(');
-          console.log(e);
-        });
+          alert('Oh nein! Irgendwas ist beim Upload schiefgelaufen :(')
+          console.log(e)
+        })
     },
   },
-};
+}
 </script>
 
 <style>
@@ -276,10 +256,10 @@ export default {
 
 .form-field-wrapper > input:focus + label,
 .form-field-wrapper > input:not(:placeholder-shown) + label {
-	top: -25%;
-	transform: translateY(0);
-	background-color: white;
-	padding: 0 0.5rem;
+  top: -25%;
+  transform: translateY(0);
+  background-color: white;
+  padding: 0 0.5rem;
   font-size: x-small;
 }
 
@@ -297,7 +277,7 @@ export default {
   padding-left: 2.5rem;
   background-color: none;
   background-color: transparent;
-  background: url("../assets/icons/plus.svg");
+  background: url('../assets/icons/plus.svg');
   background-size: 15px;
   background-repeat: no-repeat;
   background-position: 0.7rem center;
@@ -345,11 +325,11 @@ fieldset {
   padding: 20px;
 }
 
-.custom-file-input input[type="file"] {
+.custom-file-input input[type='file'] {
   display: none;
 }
 
-.custom-file-input input[type="button"] {
+.custom-file-input input[type='button'] {
   width: 100%;
   height: 100%;
 }
@@ -371,7 +351,7 @@ input {
   max-height: 2rem;
 }
 
-input[type="submit"] {
+input[type='submit'] {
   background-color: darkgreen;
   color: white;
 }

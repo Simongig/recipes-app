@@ -16,12 +16,11 @@
         </div>
         <div v-if="0 < searchResults.length" class="search-result-wrapper">
           <ol class="results">
-            <li
-              v-for="result in searchResults"
-              :key="result.id"
-            ><router-link :to="{ name: 'recipePdp', params: { id: result.id } }" >
-              {{ result.title }}
-            </router-link></li>
+            <li v-for="result in searchResults" :key="result.id">
+              <router-link :to="{ name: 'recipePdp', params: { id: result.id } }">
+                {{ result.title }}
+              </router-link>
+            </li>
           </ol>
         </div>
       </form>
@@ -30,53 +29,54 @@
 </template>
 
 <script>
-const axios = require("axios");
+import axios from 'axios'
 
 export default {
-  name: "searchInputRecipes",
+  name: 'searchInputRecipes',
   data() {
     return {
       elements: new Array(),
-      searchInput: "",
+      searchInput: '',
       searchResults: [],
       foundRecipes: [],
-    };
+    }
   },
   methods: {
     sendSearchQuery() {
-      axios.get("/api/v1/recipe/all").then((response) => {
-        console.log(response);
-      });
+      axios.get('/api/v1/recipe/all').then((response) => {
+        console.log(response)
+      })
     },
   },
   mounted() {
-    document.querySelector("#query-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-    });
+    document.querySelector('#query-form').addEventListener('submit', (e) => {
+      e.preventDefault()
+    })
   },
   watch: {
     searchInput() {
-      console.log(this.searchInput);
+      console.log(this.searchInput)
       if (this.searchInput.length != 0) {
-        fetch("/api/v1/recipe/search", {
-          method: "POST",
+        fetch('/api/v1/recipe/search', {
+          method: 'POST',
           body: this.searchInput.trim(),
         })
-        .then(response => response.json())
-        .then((results) => {
-          console.log(results);
-          this.searchResults = results;
-        });
+          .then((response) => response.json())
+          .then((results) => {
+            console.log(results)
+            this.searchResults = results
+          })
       } else {
-        this.searchResults = [];
+        this.searchResults = []
       }
     },
   },
-};
+}
 </script>
 
 <style scoped>
-.search, .search-wrapper {
+.search,
+.search-wrapper {
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -161,7 +161,7 @@ input#search-input:focus {
 }
 
 .search ion-icon.search-icon {
-	padding: 0 1rem;
+  padding: 0 1rem;
   cursor: pointer;
 }
 
@@ -173,14 +173,14 @@ input#search-input:focus {
   font-size: 1.2rem;
   text-overflow: ellipsis;
 }
-.search input[type="search"] {
+.search input[type='search'] {
   background-color: transparent !important;
 }
 
-.search input[type="search"]::-moz-search-decoration {
+.search input[type='search']::-moz-search-decoration {
   display: none;
 }
-.search input[type="search"]::-webkit-search-decoration {
+.search input[type='search']::-webkit-search-decoration {
   display: none;
 }
 </style>

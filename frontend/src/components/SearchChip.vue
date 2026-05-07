@@ -9,9 +9,9 @@
 
 <script>
 export default {
-  name: "SearchChip",
-  props: ["value", "index"],
-};
+  name: 'SearchChip',
+  props: ['value', 'index'],
+}
 </script>
 
 <style>
@@ -40,6 +40,5 @@ export default {
   border: none;
   height: 100%;
   padding: 0 0.25rem 0 0;
-
 }
 </style>

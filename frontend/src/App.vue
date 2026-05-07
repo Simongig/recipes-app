@@ -9,29 +9,32 @@
 </template>
 
 <script>
-import Navbar from "./components/Navbar.vue";
-import Footer from "./components/Footer.vue";
-// const axios = require("axios");
+import { mapActions } from 'pinia'
+import useStore from './stores'
+import Navbar from './components/Navbar.vue'
+import Footer from './components/Footer.vue'
 
 export default {
-  name: "App",
+  name: 'App',
   data() {
     return {
-      testCookie: -1 < document.cookie.indexOf("testCookie=true"),
-    };
+      testCookie: -1 < document.cookie.indexOf('testCookie=true'),
+    }
+  },
+  methods: {
+    ...mapActions(useStore, ['setToLoggedIn']),
   },
   mounted() {
-    var user_data = JSON.parse(localStorage.getItem("user"));
+    var user_data = JSON.parse(localStorage.getItem('user'))
     if (null != user_data) {
-      this.$store.commit("setToLoggedIn");
-      console.log(this.$store.state.isLoggedIn);
+      this.setToLoggedIn()
     }
   },
   components: {
     Navbar,
     Footer,
   },
-};
+}
 </script>
 
 <style>
@@ -40,7 +43,7 @@ export default {
   --secondary-color: #c3a452;
   --tertiary-color: #fdfdfa;
   --dark-grey: #333333;
-  --light-grey: #E3E3E3;
+  --light-grey: #e3e3e3;
   --light-font: #fdfdfa;
 }
 

@@ -17,10 +17,7 @@
         </section>
       </div>
       <div class="content-wrapper">
-        <section
-          class="preparationSteps-wrapper"
-          v-if="recipe.preparationSteps"
-        >
+        <section class="preparationSteps-wrapper" v-if="recipe.preparationSteps">
           <h2>Zubereitung</h2>
           <table>
             <div
@@ -43,10 +40,7 @@
     <section class="ingredients-wrapper-sticky dropdown-closed">
       <h2>
         Zutaten
-        <ion-icon
-          class="chevron-up-outline hydrated"
-          name="chevron-up-outline"
-        ></ion-icon>
+        <ion-icon class="chevron-up-outline hydrated" name="chevron-up-outline"></ion-icon>
       </h2>
       <table>
         <tr v-for="ingredient in recipe.ingredients" :key="ingredient.name">
@@ -62,65 +56,57 @@
 
 <script>
 // import Button from '../components/Button.vue';
-const axios = require("axios");
+import axios from 'axios'
 export default {
   // components: { Button },
   data() {
     return {
       recipe: null,
-    };
+    }
   },
   methods: {
     toggleIngredientsDropDown() {
-      document
-        .querySelector(".ingredients-wrapper-sticky")
-        .classList.toggle("dropdown-closed");
+      document.querySelector('.ingredients-wrapper-sticky').classList.toggle('dropdown-closed')
     },
     makeIngredientsSticky() {
-      let ingredients_elem = document.querySelector(".ingredients-wrapper");
-      let ingredients_elem_sticky = document.querySelector(
-        ".ingredients-wrapper-sticky"
-      );
+      let ingredients_elem = document.querySelector('.ingredients-wrapper')
+      let ingredients_elem_sticky = document.querySelector('.ingredients-wrapper-sticky')
 
       if (null == ingredients_elem || null == ingredients_elem_sticky) {
-        return;
+        return
       }
       let scrolldepth_lower_than_element =
-        window.scrollY >
-        ingredients_elem.offsetTop + ingredients_elem.offsetHeight;
-      console.log(
-        "scrolldepth_lower_than_element:",
-        scrolldepth_lower_than_element
-      );
+        window.scrollY > ingredients_elem.offsetTop + ingredients_elem.offsetHeight
+      console.log('scrolldepth_lower_than_element:', scrolldepth_lower_than_element)
       if (scrolldepth_lower_than_element) {
-        ingredients_elem_sticky.classList.add("visible");
-        ingredients_elem_sticky.classList.add("dropdown-closed");
+        ingredients_elem_sticky.classList.add('visible')
+        ingredients_elem_sticky.classList.add('dropdown-closed')
         ingredients_elem_sticky
-          .querySelector("h2")
-          .addEventListener("click", this.toggleIngredientsDropDown);
+          .querySelector('h2')
+          .addEventListener('click', this.toggleIngredientsDropDown)
       } else {
-        ingredients_elem_sticky.classList.remove("visible");
+        ingredients_elem_sticky.classList.remove('visible')
       }
     },
   },
   mounted() {
-    const urlPath = document.location.pathname;
+    const urlPath = document.location.pathname
     axios
-      .get("/api/v1" + urlPath)
+      .get('/api/v1' + urlPath)
       .then((response) => {
-        console.log("/api/v1" + urlPath);
-        this.recipe = response.data;
-        document.title = "kochbuch.io - " + this.recipe.title
+        console.log('/api/v1' + urlPath)
+        this.recipe = response.data
+        document.title = 'kochbuch.io - ' + this.recipe.title
       })
       .catch((reason) => {
-        console.error(reason);
-      });
-    document.addEventListener("scroll", this.makeIngredientsSticky);
+        console.error(reason)
+      })
+    document.addEventListener('scroll', this.makeIngredientsSticky)
   },
   beforeUnmount() {
-    document.removeEventListener("scroll", this.makeIngredientsSticky);
+    document.removeEventListener('scroll', this.makeIngredientsSticky)
   },
-};
+}
 </script>
 
 <style>
@@ -132,7 +118,8 @@ export default {
   gap: 2rem;
 }
 
-.ingredients-wrapper table, .ingredients-wrapper-sticky table {
+.ingredients-wrapper table,
+.ingredients-wrapper-sticky table {
   width: 100%;
   display: grid;
   max-height: 50vh;

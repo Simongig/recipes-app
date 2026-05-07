@@ -45,8 +45,10 @@ frontend/target
 
 
 # local env files
+.env
 .env.local
 .env.*.local
+*/.env
 
 # Log files
 npm-debug.log*

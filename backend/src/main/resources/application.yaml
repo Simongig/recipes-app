@@ -2,15 +2,18 @@ spring:
   servlet:
     multipart:
       max-file-size: "10MB"
-  data:
-    mongodb:
-      uri: "mongodb+srv://simongig:4TbPkYIR5BVUKkRS@kochbuch-io.rocnz.mongodb.net/?retryWrites=true&w=majority"
-      database: "database"
-  # server:
-  #   ssl:
-  #     key-store: classpath:keystore.jks
-  #     key-store-password: Z*EhJDbgz6
-  #     key-store-type: JKS
-  #     key-alias: kochbuch.io
-  #     enabled: true
-  #   port: 8080
+  # data:
+  #   mongodb:
+      # uri: // in docker compose.yaml
+      # database: // in docker compose.yaml
+jwt:                                                                                                                                                                                                                                                        
+  secret: ${JWT_SECRET}
+
+server:
+  # ssl:
+  #   key-store: classpath:keystore.jks
+  #   key-store-password: Z*EhJDbgz6
+  #   key-store-type: JKS
+  #   key-alias: kochbuch.io
+  #   enabled: true
+  port: 8080

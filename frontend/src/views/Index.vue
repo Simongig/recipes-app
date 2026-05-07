@@ -5,14 +5,33 @@
       <div class="search-type-toggle">
         Suche nach
         <button class="search-type-button" @click="search_type = 'recipes'">
-          <label :class="search_type == 'recipes' ? 'selected' : ''" class="search-type-toggle-item" for="recipes">Rezepten</label>
-          <input v-model="search_type" name="search-type" value="recipes" type="radio">
+          <label
+            :class="search_type == 'recipes' ? 'selected' : ''"
+            class="search-type-toggle-item"
+            for="recipes"
+            >Rezepten</label
+          >
+          <input v-model="search_type" name="search-type" value="recipes" type="radio" />
         </button>
-        oder 
-        <button class="search-type-button search-type-ingredients" @click="search_type = 'ingredients'">
+        oder
+        <button
+          class="search-type-button search-type-ingredients"
+          @click="search_type = 'ingredients'"
+        >
           <div class="search-type-toggle-nudge">Clicke um die Suche zu wechseln</div>
-          <label :class="search_type == 'ingredients' ? 'selected' : ''" class="search-type-toggle-item" for="ingredients">Zutaten</label>
-          <input checked v-model="search_type" value="ingredients" name="search-type" type="radio">
+          <label
+            :class="search_type == 'ingredients' ? 'selected' : ''"
+            class="search-type-toggle-item"
+            for="ingredients"
+            >Zutaten</label
+          >
+          <input
+            checked
+            v-model="search_type"
+            value="ingredients"
+            name="search-type"
+            type="radio"
+          />
         </button>
       </div>
       <search-input-ingredients v-if="search_type === 'ingredients'"></search-input-ingredients>
@@ -60,45 +79,48 @@
 </template>
 
 <script>
-import SearchInputIngredients from "../components/SearchInputIngredients.vue";
-import SearchInputRecipes from "../components/SearchInputRecipes.vue";
-import RecipeCard from "../components/RecipeCard-v2.vue";
-import axios from "axios";
-import { register } from "swiper/element/swiper-element.js";
-register();
+import SearchInputIngredients from '../components/SearchInputIngredients.vue'
+import SearchInputRecipes from '../components/SearchInputRecipes.vue'
+import RecipeCard from '../components/RecipeCard-v2.vue'
+import axios from 'axios'
+import { register } from 'swiper/element/bundle'
+register()
 // import Categories from "../components/Categories.vue";
 
-import "swiper/swiper.css";
+import 'swiper/swiper.css'
 
 export default {
   components: {
     RecipeCard,
     SearchInputIngredients,
-    SearchInputRecipes
+    SearchInputRecipes,
   },
-  name: "Index",
+  name: 'Index',
   data() {
     return {
       suggestedRecipes: [],
       searchType: null,
       swiper: null,
       search_type: 'recipes',
-    };
+    }
   },
   methods: {
     hideNudeAfterTimeout() {
-      setTimeout(() => document.querySelector('.search-type-toggle-nudge').classList.add('nudge-hide'), 5000);
-    }
+      setTimeout(
+        () => document.querySelector('.search-type-toggle-nudge').classList.add('nudge-hide'),
+        5000,
+      )
+    },
   },
   mounted() {
-    axios.get("/api/v1/recipe/all").then((response) => {
-      console.log(response.data);
-      this.suggestedRecipes = response.data.reverse().slice(0, 5);
-    });
-    this.hideNudeAfterTimeout();
+    axios.get('/api/v1/recipe/all').then((response) => {
+      console.log(response.data)
+      this.suggestedRecipes = response.data.reverse().slice(0, 5)
+    })
+    this.hideNudeAfterTimeout()
     // this.swiper = new window.Swiper('.swiper')
   },
-};
+}
 </script>
 
 <style>
@@ -139,33 +161,39 @@ h2 {
   transform: translateX(-50%);
   text-align: center;
   display: block;
-  overflow:visible;
+  overflow: visible;
   width: 200px;
   background-color: #caf5ff;
   filter: brightness(1);
   border-radius: 0.5rem;
   padding: 0.25rem 0.5rem;
   box-shadow: 0px 2px 11px 0px #d1d1d1;
-  animation: nudgeBounce 1s ease-out 3
+  animation: nudgeBounce 1s ease-out 3;
 }
 
 @keyframes nudgeBounce {
-  0% {top: -200%}
-  50% {top: -180%}
-  100% {top: -200%}
+  0% {
+    top: -200%;
+  }
+  50% {
+    top: -180%;
+  }
+  100% {
+    top: -200%;
+  }
 }
 
 .search-type-toggle-nudge::after {
-    content: "";
-    width: 10px;
-    height: 10px;
-    background-color: #caf5ff;
-    position: absolute;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    transform: rotateZ(45deg)
-  }
+  content: '';
+  width: 10px;
+  height: 10px;
+  background-color: #caf5ff;
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  transform: rotateZ(45deg);
+}
 
 .search-type-toggle-nudge.nudge-hide {
   opacity: 0;
@@ -189,7 +217,6 @@ h2 {
   color: var(--primary-color);
   text-underline-offset: 0.6ch;
   text-decoration: underline dotted;
-  
 }
 
 .search-type-toggle-item.selected {

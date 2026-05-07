@@ -1,0 +1,19 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: "10MB"
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/kochbuch_dev
+      database: kochbuch_dev
+jwt:
+  secret: dev-only-not-a-real-secret
+
+server:
+  # ssl:
+  #   key-store: classpath:keystore.jks
+  #   key-store-password: Z*EhJDbgz6
+  #   key-store-type: JKS
+  #   key-alias: kochbuch.io
+  #   enabled: true
+  port: 8080

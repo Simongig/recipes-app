@@ -41,105 +41,97 @@
     <div v-if="0 < foundRecipes.length" class="search-results-wrapper">
       <h2>Suchergebnisse:</h2>
       <div class="card-grid">
-        <recipe-card
-          v-for="element in foundRecipes"
-          :key="element"
-          :recipe="element"
-        />
+        <recipe-card v-for="element in foundRecipes" :key="element" :recipe="element" />
       </div>
     </div>
   </section>
 </template>
 
 <script>
-import SearchChip from './SearchChip.vue';
-import RecipeCard from './RecipeCard-v2.vue';
-const axios = require("axios");
+import SearchChip from './SearchChip.vue'
+import RecipeCard from './RecipeCard-v2.vue'
+import axios from 'axios'
 
 export default {
   components: { SearchChip, RecipeCard },
-  name: "searchInputIngredients",
+  name: 'searchInputIngredients',
   data() {
     return {
       elements: [],
       selectedIngredients: new Set(),
-      searchInput: "",
+      searchInput: '',
       searchResults: [],
       foundRecipes: [],
-    };
+    }
   },
   methods: {
     sendSearchQuery() {
-      axios.get("/api/v1/recipe/all").then((response) => {
-        console.log(response);
-      });
+      axios.get('/api/v1/recipe/all').then((response) => {
+        console.log(response)
+      })
     },
     findRecipes() {
-      let selectedIngredientsArr = Array.from(this.selectedIngredients);
-      const jsonString = JSON.stringify(selectedIngredientsArr);
-      console.log(jsonString);
-      const data = new Blob([jsonString], { type: "application/json" });
-      console.log(data);
+      let selectedIngredientsArr = Array.from(this.selectedIngredients)
+      const jsonString = JSON.stringify(selectedIngredientsArr)
+      console.log(jsonString)
+      const data = new Blob([jsonString], { type: 'application/json' })
+      console.log(data)
       axios
-        .post("/api/v1/recipe/find", data, {
+        .post('/api/v1/recipe/find', data, {
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         })
         .then((response) => {
-          console.log(this.foundRecipes);
-          console.log(response.data);
-          this.foundRecipes = response.data;
-          console.log(this.foundRecipes);
-        });
+          console.log(this.foundRecipes)
+          console.log(response.data)
+          this.foundRecipes = response.data
+          console.log(this.foundRecipes)
+        })
     },
     addIngredient(event) {
-      this.selectedIngredients.add(event.target.getAttribute('ingredient-name'));
-      let search_input = document.querySelector('#search-input');
-      this.searchInput = "";
-      search_input.focus();
-    }
+      this.selectedIngredients.add(event.target.getAttribute('ingredient-name'))
+      let search_input = document.querySelector('#search-input')
+      this.searchInput = ''
+      search_input.focus()
+    },
   },
   mounted() {
-    document.querySelector("#query-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-    });
+    document.querySelector('#query-form').addEventListener('submit', (e) => {
+      e.preventDefault()
+    })
   },
   watch: {
     searchInput() {
-      console.log("Current Search Input:", this.searchInput);
+      console.log('Current Search Input:', this.searchInput)
       if (this.searchInput.length == 0) {
-        this.searchResults = [];
-        return;
+        this.searchResults = []
+        return
       }
-      axios.get("api/v1/ingredient/all").then((results) => {
-        console.log(results.data);
+      axios.get('api/v1/ingredient/all').then((results) => {
+        console.log(results.data)
         this.searchResults = results.data.filter((ingredient) => {
-          return (
-            -1 <
-            ingredient.name
-              .toLowerCase()
-              .indexOf(this.searchInput.toLowerCase())
-          );
-        });
-      });
+          return -1 < ingredient.name.toLowerCase().indexOf(this.searchInput.toLowerCase())
+        })
+      })
     },
     selectedIngredients: {
       handler() {
         if (this.selectedIngredients.size != 0) {
-          this.findRecipes();
+          this.findRecipes()
         } else {
-          this.foundRecipes.length = 0;
+          this.foundRecipes.length = 0
         }
       },
       deep: true,
     },
   },
-};
+}
 </script>
 
 <style scoped>
-.search, .search-wrapper {
+.search,
+.search-wrapper {
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
@@ -229,7 +221,7 @@ input#search-input:focus {
 }
 
 .search ion-icon.search-icon {
-	padding: 0 1rem;
+  padding: 0 1rem;
   cursor: pointer;
 }
 
@@ -241,14 +233,14 @@ input#search-input:focus {
   font-size: 1.2rem;
   text-overflow: ellipsis;
 }
-.search input[type="search"] {
+.search input[type='search'] {
   background-color: transparent !important;
 }
 
-.search input[type="search"]::-moz-search-decoration {
+.search input[type='search']::-moz-search-decoration {
   display: none;
 }
-.search input[type="search"]::-webkit-search-decoration {
+.search input[type='search']::-webkit-search-decoration {
   display: none;
 }
 

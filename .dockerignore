@@ -1,0 +1,19 @@
+# Keeps the Docker build context small — Docker sends everything not listed here
+# to the Docker daemon before building. Large ignored dirs speed up every build.
+
+.git/
+**/.env
+**/.env.*
+
+# Build outputs — Docker builds these itself in the image stages
+frontend/dist/
+frontend/node/
+frontend/target/
+backend/target/
+**/node_modules/
+
+# IDE and OS noise
+.idea/
+.vscode/
+**/*.iml
+.DS_Store

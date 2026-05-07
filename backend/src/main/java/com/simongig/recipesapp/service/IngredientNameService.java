@@ -3,12 +3,11 @@ package com.simongig.recipesapp.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.simongig.recipesapp.dao.IngredientNameDao;
-import com.simongig.recipesapp.model.IngredientName;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import com.simongig.recipesapp.dao.IngredientNameDao;
+import com.simongig.recipesapp.model.IngredientName;
 
 
 @Service
@@ -16,7 +15,6 @@ public class IngredientNameService {
     
     private final IngredientNameDao ingredientNameDao;
 
-    @Autowired
     public IngredientNameService(@Qualifier("MongoAtlas-IngredientNames") IngredientNameDao ingredientNameDao) {
         this.ingredientNameDao = ingredientNameDao;
     }

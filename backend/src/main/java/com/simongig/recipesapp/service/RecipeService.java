@@ -1,17 +1,16 @@
 package com.simongig.recipesapp.service;
 
-import com.simongig.recipesapp.dao.IngredientNameDao;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
 import com.simongig.recipesapp.dao.RecipeDao;
 import com.simongig.recipesapp.model.Ingredient;
 import com.simongig.recipesapp.model.IngredientName;
 import com.simongig.recipesapp.model.Recipe;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class RecipeService {
@@ -19,10 +18,9 @@ public class RecipeService {
     private final RecipeDao recipeDao;
     private final IngredientNameService ingredientNameService;
 
-    @Autowired
-    public RecipeService(@Qualifier("MongoAtlas-Recipes") RecipeDao recipeDao, @Qualifier("MongoAtlas-IngredientNames") IngredientNameDao ingredientNameDao) {
+    public RecipeService(@Qualifier("MongoAtlas-Recipes") RecipeDao recipeDao, IngredientNameService ingredientService) {
         this.recipeDao = recipeDao;
-        this.ingredientNameService = new IngredientNameService(ingredientNameDao);
+        this.ingredientNameService = ingredientService;
     }
 
     public void addRecipe(Recipe recipe) {

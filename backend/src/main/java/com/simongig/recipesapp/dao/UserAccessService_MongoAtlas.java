@@ -5,9 +5,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.bson.conversions.Bson;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -28,14 +29,17 @@ public class UserAccessService_MongoAtlas implements UserDao, UserDetailsService
     private MongoCollection<User> userCollection;
     private MongoCollection<UserRole> userRoleCollection;
 
+    @Value("${spring.data.mongodb.database}")
+    private String databaseName;
+
     public UserAccessService_MongoAtlas(MongoClient mongoClient) {
         this.client = mongoClient;
     }
 
     @PostConstruct
     void init() {
-        userCollection = client.getDatabase("database").getCollection("User", User.class);
-        userRoleCollection = client.getDatabase("database").getCollection("UserRole", UserRole.class);
+        userCollection = client.getDatabase(databaseName).getCollection("User", User.class);
+        userRoleCollection = client.getDatabase(databaseName).getCollection("UserRole", UserRole.class);
     }
 
     @Override

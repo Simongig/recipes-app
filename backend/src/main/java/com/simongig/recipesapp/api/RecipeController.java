@@ -1,21 +1,27 @@
 package com.simongig.recipesapp.api;
 
-import com.simongig.recipesapp.model.Recipe;
-import com.simongig.recipesapp.service.RecipeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.lang.Nullable;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.simongig.recipesapp.model.Recipe;
+import com.simongig.recipesapp.service.RecipeService;
 
 @RequestMapping("api/v1/recipe")
 @RestController
 public class RecipeController {
     private final RecipeService recipeService;
 
-    @Autowired
     public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }

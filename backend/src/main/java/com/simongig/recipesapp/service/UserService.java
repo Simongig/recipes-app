@@ -2,14 +2,14 @@ package com.simongig.recipesapp.service;
 
 import java.util.List;
 import java.util.Optional;
-import com.simongig.recipesapp.dao.UserDao;
-import com.simongig.recipesapp.model.User;
-import com.simongig.recipesapp.model.UserRole;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.simongig.recipesapp.dao.UserDao;
+import com.simongig.recipesapp.model.User;
+import com.simongig.recipesapp.model.UserRole;
 
 @Service
 public class UserService {
@@ -17,7 +17,6 @@ public class UserService {
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
     public UserService(@Qualifier("MongoAtlas-User") UserDao userDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;

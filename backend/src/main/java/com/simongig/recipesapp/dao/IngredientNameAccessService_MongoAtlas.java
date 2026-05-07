@@ -1,22 +1,20 @@
 package com.simongig.recipesapp.dao;
 
-import static com.mongodb.client.model.Filters.eq;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.bson.conversions.Bson;
-import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import static com.mongodb.client.model.Filters.eq;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
-import com.simongig.recipesapp.model.Ingredient;
 import com.simongig.recipesapp.model.IngredientName;
 
 @Repository("MongoAtlas-IngredientNames")
@@ -25,15 +23,20 @@ public class IngredientNameAccessService_MongoAtlas implements IngredientNameDao
     private final MongoClient client;
     private MongoCollection<IngredientName> ingredientNameCollection;
 
+
+    @Value("${spring.data.mongodb.database}")
+    private String dbName;
+
     public IngredientNameAccessService_MongoAtlas(MongoClient mongoClient) {
         this.client = mongoClient;
     }
     
     @PostConstruct
     void init() {
-        ingredientNameCollection = client.getDatabase("database").getCollection("IngredientName",IngredientName.class);
+        ingredientNameCollection = client.getDatabase(dbName).getCollection("IngredientName",IngredientName.class);
     }
 
+    @Override
     public void insertIngredientName(IngredientName ingredient) {
         ingredientNameCollection.insertOne(ingredient);
     }

@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="{path: 'recipe/id/' + recipe.id}">
+  <router-link :to="{ path: 'recipe/id/' + recipe.id }">
     <section class="card">
       <div class="img-wrapper">
         <img
@@ -26,9 +26,9 @@
 
 <script>
 export default {
-  name: "RecipCard",
-  props: ["recipe"],
-};
+  name: 'RecipCard',
+  props: ['recipe'],
+}
 </script>
 
 <style>
@@ -66,16 +66,13 @@ h2 {
   padding: initial;
 }
 
-
 .img-wrapper {
   overflow: hidden;
 }
 
 img {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
 }
-
-
 </style>

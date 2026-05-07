@@ -2,18 +2,21 @@ package com.simongig.recipesapp.api;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.simongig.recipesapp.model.IngredientName;
 import com.simongig.recipesapp.service.IngredientNameService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("api/v1/ingredient")
 @RestController
 public class IngredientController {
     private final IngredientNameService ingredientService;
 
-    @Autowired
     public IngredientController(IngredientNameService ingredientService) {
         this.ingredientService = ingredientService;
     }

@@ -1,14 +1,7 @@
 <template>
-  <button
-    v-if="isInputType === false"
-    :class="buttonClasses"
-    :style="buttonStyles"
-  >
+  <button v-if="isInputType === false" :class="buttonClasses" :style="buttonStyles">
     <span v-if="icon_placement == 'left'">
-      <ion-icon
-        class="hydrated {{buttonClasses}}"
-        name="{{icon_name}}"
-      ></ion-icon>
+      <ion-icon class="hydrated {{buttonClasses}}" name="{{icon_name}}"></ion-icon>
       {{ text }}
     </span>
     <span v-else>
@@ -17,13 +10,7 @@
     </span>
   </button>
 
-  <input
-    v-else
-    :type="inputType"
-    :value="text"
-    :class="buttonClasses"
-    :style="buttonStyles"
-  />
+  <input v-else :type="inputType" :value="text" :class="buttonClasses" :style="buttonStyles" />
 </template>
 
 <script>
@@ -31,11 +18,11 @@ export default {
   props: {
     text: {
       type: String,
-      default: "",
+      default: '',
     },
     bgColor: {
       type: String,
-      default: "#f5f5f5",
+      default: '#f5f5f5',
     },
     fullWidth: {
       type: Boolean,
@@ -47,7 +34,7 @@ export default {
     },
     iconPosition: {
       type: String,
-      default: "left", // other options: 'right'
+      default: 'left', // other options: 'right'
     },
     isInputType: {
       type: Boolean,
@@ -55,29 +42,29 @@ export default {
     },
     inputType: {
       type: String,
-      default: "button", // other options could be 'submit', etc.
+      default: 'button', // other options could be 'submit', etc.
     },
   },
   computed: {
     buttonStyles() {
       return {
         backgroundColor: this.bgColor,
-        width: this.fullWidth ? "100%" : "auto",
-      };
+        width: this.fullWidth ? '100%' : 'auto',
+      }
     },
     buttonClasses() {
       return {
-        "has-icon": this.icon,
-      };
+        'has-icon': this.icon,
+      }
     },
     iconClasses() {
       return {
-        "icon-left": this.iconPosition === "left",
-        "icon-right": this.iconPosition === "right",
-      };
+        'icon-left': this.iconPosition === 'left',
+        'icon-right': this.iconPosition === 'right',
+      }
     },
   },
-};
+}
 </script>
 
 <style>

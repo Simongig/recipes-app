@@ -1,12 +1,6 @@
 <template>
-  <router-link
-    class="card-wrapper"
-    :to="{ name: 'recipePdp', params: { id: recipe.id } }"
-  >
-    <section
-      class="card"
-      :style="`background-image: url(${recipe.imagePaths[0]})`"
-    >
+  <router-link class="card-wrapper" :to="{ name: 'recipePdp', params: { id: recipe.id } }">
+    <section class="card" :style="`background-image: url(${recipe.imagePaths[0]})`">
       <div class="card-content">
         <h2>{{ recipe.title }}</h2>
         <span>Dauer: {{ recipe.duration }} min</span>
@@ -18,9 +12,9 @@
 
 <script>
 export default {
-  name: "RecipCard",
-  props: ["recipe"],
-};
+  name: 'RecipCard',
+  props: ['recipe'],
+}
 </script>
 
 <style>
@@ -46,11 +40,7 @@ export default {
   flex-direction: column;
   justify-content: space-evenly;
   background: rgb(1, 1, 1);
-  background: linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.89) 50%,
-    rgba(1, 1, 1, 0) 100%
-  );
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.89) 50%, rgba(1, 1, 1, 0) 100%);
 }
 
 .card-content .recipe-author {
