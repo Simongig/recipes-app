@@ -36,7 +36,7 @@ jobs:
           host: ${{ secrets.DROPLET_HOST }}
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
-          passphrawe: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
+          passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
           script: |
             cd /opt/recipes-app
             docker compose -f docker-compose.prod.yml pull
