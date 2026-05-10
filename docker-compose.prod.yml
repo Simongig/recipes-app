@@ -1,6 +1,6 @@
 services:
   backend:
-    build: ./backend
+    image: simongigl/kochbuch.io-backend:latest
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: prod
@@ -9,7 +9,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
 
   frontend:
-    build: ./frontend
+    image: simongigl/kochbuch.io-frontend:latest
     restart: unless-stopped
     ports:
       - "80:8080"

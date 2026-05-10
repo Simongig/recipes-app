@@ -30,6 +30,16 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/kochbuch.io-frontend:latest
 
+      - name: Copy compose file to Droplet
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
+          source: docker-compose.prod.yml
+          target: /srv/recipes-app
+
       - name: Deploy to Droplet
         uses: appleboy/ssh-action@v1
         with:
