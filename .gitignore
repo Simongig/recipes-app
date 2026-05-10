@@ -64,3 +64,7 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+CLAUDE.md
+
+/bin/
