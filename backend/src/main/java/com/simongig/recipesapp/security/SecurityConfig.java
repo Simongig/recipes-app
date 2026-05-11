@@ -62,7 +62,9 @@ public class SecurityConfig {
                     "/api/v1/auth/user/**")
                     .permitAll()
                 .requestMatchers( // content
-                     "/api/v1/recipe/all")
+                    HttpMethod.GET,
+                     "/api/v1/recipe/all", 
+                     "/api/v1/recipe/id/*")
                      .permitAll()
                 .requestMatchers(HttpMethod.POST, // content
                     "/api/v1/recipe/add")

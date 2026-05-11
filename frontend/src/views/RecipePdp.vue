@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     toggleIngredientsDropDown() {
-      document.querySelector('.ingredients-wrapper-sticky').classList.toggle('dropdown-closed')
+      document.querySelector('.ingredients-wrapper-sticky')?.classList.toggle('dropdown-closed')
     },
     makeIngredientsSticky() {
       let ingredients_elem = document.querySelector('.ingredients-wrapper')
@@ -90,11 +90,9 @@ export default {
     },
   },
   mounted() {
-    const urlPath = document.location.pathname
     axios
-      .get('/api/v1' + urlPath)
+      .get('/api/v1/recipe/id/' + this.$route.params.id)
       .then((response) => {
-        console.log('/api/v1' + urlPath)
         this.recipe = response.data
         document.title = 'kochbuch.io - ' + this.recipe.title
       })
