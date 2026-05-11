@@ -1,8 +1,7 @@
 services:
-  mongo:
-    image: mongo:7
+  mongodb:
+    image: mongo
     ports: ["27017:27017"]
-    volumes: [mongo-dev-data:/data/db]
-
-volumes:
-  mongo-dev-data:
+    volumes: 
+     - ./data:/data/db
+     - ./scripts:/docker-entrypoint-initdb.d

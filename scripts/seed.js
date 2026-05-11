@@ -1,0 +1,111 @@
+db = db.getSiblingDB('kochbuch_dev');
+
+db.Recipe.insertMany([
+  {
+    _id: new ObjectId().toString(),
+    title: "Spaghetti Carbonara",
+    duration: 25,
+    portions: 2,
+    imagePaths: ["https://picsum.photos/seed/carbonara/800/600"],
+    ingredients: [
+      { name: "Spaghetti", quantity: 200, unit: "g" },
+      { name: "Speck", quantity: 100, unit: "g" },
+      { name: "Eier", quantity: 2, unit: "Stück" },
+      { name: "Parmesan", quantity: 50, unit: "g" },
+      { name: "Schwarzer Pfeffer", quantity: 1, unit: "TL" },
+    ],
+    preparationSteps: [
+      { title: "Nudeln kochen", content: "Spaghetti in reichlich Salzwasser al dente kochen." },
+      { title: "Speck anbraten", content: "Speck in einer Pfanne ohne Öl knusprig ausbraten." },
+      { title: "Sauce mischen", content: "Eier mit geriebenem Parmesan und Pfeffer verquirlen." },
+      { title: "Fertigstellen", content: "Nudeln vom Herd nehmen, Ei-Mischung unterrühren und sofort servieren." },
+    ],
+  },
+  {
+    _id: new ObjectId().toString(),
+    title: "Tomatensuppe",
+    duration: 40,
+    portions: 4,
+    imagePaths: ["https://picsum.photos/seed/tomatensuppe/800/600"],
+    ingredients: [
+      { name: "Tomaten", quantity: 800, unit: "g" },
+      { name: "Zwiebel", quantity: 1, unit: "Stück" },
+      { name: "Knoblauch", quantity: 2, unit: "Zehen" },
+      { name: "Gemüsebrühe", quantity: 500, unit: "ml" },
+      { name: "Olivenöl", quantity: 2, unit: "EL" },
+      { name: "Basilikum", quantity: 1, unit: "Handvoll" },
+    ],
+    preparationSteps: [
+      { title: "Anrösten", content: "Zwiebel und Knoblauch in Olivenöl glasig dünsten." },
+      { title: "Tomaten hinzufügen", content: "Tomaten grob hacken und mit in den Topf geben." },
+      { title: "Köcheln", content: "Brühe angießen und 20 Minuten köcheln lassen." },
+      { title: "Pürieren", content: "Suppe mit einem Stabmixer fein pürieren und mit Basilikum servieren." },
+    ],
+  },
+  {
+    _id: new ObjectId().toString(),
+    title: "Avocado Toast",
+    duration: 10,
+    portions: 1,
+    imagePaths: ["https://picsum.photos/seed/avocadotoast/800/600"],
+    ingredients: [
+      { name: "Brot", quantity: 2, unit: "Scheiben" },
+      { name: "Avocado", quantity: 1, unit: "Stück" },
+      { name: "Zitronensaft", quantity: 1, unit: "TL" },
+      { name: "Chiliflocken", quantity: 0.5, unit: "TL" },
+      { name: "Salz", quantity: 1, unit: "Prise" },
+    ],
+    preparationSteps: [
+      { title: "Brot toasten", content: "Brotscheiben im Toaster goldbraun rösten." },
+      { title: "Avocado vorbereiten", content: "Avocado halbieren, Kern entfernen und Fruchtfleisch mit einer Gabel zerdrücken." },
+      { title: "Würzen", content: "Avocadomasse mit Zitronensaft, Salz und Chiliflocken abschmecken." },
+      { title: "Anrichten", content: "Avocadomasse auf dem Toast verteilen und sofort servieren." },
+    ],
+  },
+  {
+    _id: new ObjectId().toString(),
+    title: "Hähnchen-Curry",
+    duration: 45,
+    portions: 4,
+    imagePaths: ["https://picsum.photos/seed/curry/800/600"],
+    ingredients: [
+      { name: "Hähnchenbrustfilet", quantity: 600, unit: "g" },
+      { name: "Kokosmilch", quantity: 400, unit: "ml" },
+      { name: "Currypaste", quantity: 2, unit: "EL" },
+      { name: "Zwiebel", quantity: 1, unit: "Stück" },
+      { name: "Knoblauch", quantity: 3, unit: "Zehen" },
+      { name: "Ingwer", quantity: 1, unit: "TL" },
+      { name: "Basmati Reis", quantity: 300, unit: "g" },
+    ],
+    preparationSteps: [
+      { title: "Hähnchen schneiden", content: "Hähnchenbrustfilet in mundgerechte Stücke schneiden." },
+      { title: "Aromaten anbraten", content: "Zwiebel, Knoblauch und Ingwer in Öl anbraten bis sie duften." },
+      { title: "Curry hinzufügen", content: "Currypaste einrühren und 1 Minute mitbraten." },
+      { title: "Hähnchen garen", content: "Hähnchen hinzufügen und rundum anbraten." },
+      { title: "Köcheln", content: "Kokosmilch angießen und 20 Minuten bei mittlerer Hitze köcheln lassen." },
+      { title: "Servieren", content: "Mit Basmati-Reis servieren." },
+    ],
+  },
+  {
+    _id: new ObjectId().toString(),
+    title: "Pfannkuchen",
+    duration: 20,
+    portions: 4,
+    imagePaths: ["https://picsum.photos/seed/pfannkuchen/800/600"],
+    ingredients: [
+      { name: "Mehl", quantity: 200, unit: "g" },
+      { name: "Milch", quantity: 400, unit: "ml" },
+      { name: "Eier", quantity: 2, unit: "Stück" },
+      { name: "Butter", quantity: 20, unit: "g" },
+      { name: "Salz", quantity: 1, unit: "Prise" },
+    ],
+    preparationSteps: [
+      { title: "Teig anrühren", content: "Mehl, Milch, Eier und Salz zu einem glatten Teig verrühren. 10 Minuten ruhen lassen." },
+      { title: "Pfanne vorbereiten", content: "Butter in einer Pfanne bei mittlerer Hitze schmelzen." },
+      { title: "Backen", content: "Teig portionsweise in die Pfanne geben und von beiden Seiten goldbraun backen." },
+      { title: "Servieren", content: "Mit Apfelmus, Zucker oder Marmelade servieren." },
+    ],
+  },
+]);
+
+print("✓ Seeded 5 recipes into Recipe collection");

@@ -66,6 +66,10 @@ public class SecurityConfig {
                      "/api/v1/recipe/all", 
                      "/api/v1/recipe/id/*")
                      .permitAll()
+                .requestMatchers( // content
+                    HttpMethod.POST,
+                     "/api/v1/recipe/search")
+                     .permitAll()
                 .requestMatchers(HttpMethod.POST, // content
                     "/api/v1/recipe/add")
                     .hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
