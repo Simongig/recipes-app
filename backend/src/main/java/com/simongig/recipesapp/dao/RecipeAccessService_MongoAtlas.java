@@ -59,12 +59,12 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
     @Override
     public List<Recipe> search(String searchTerm) {
         System.out.println("------- Search Recipes By Name -------");
-        Document searchOptions = new Document("compound", new Document()
+        Document compoundClause = new Document()
             .append("should", Arrays.asList(
                 new Document("text", new Document()
                     .append("query", searchTerm)
                     .append("path", "title")
-                    .append("score", new Document("boost", new Document("value", 3))) // title ranked higher
+                    .append("score", new Document("boost", new Document("value", 3)))
                     .append("fuzzy", new Document())),
                 new Document("text", new Document()
                     .append("query", searchTerm)
@@ -73,10 +73,8 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
                 new Document("text", new Document()
                     .append("query", searchTerm)
                     .append("path", "ingredients._id"))
-                )
-            )
-        );
-        Document agg = new Document("$search", new Document("index", "Recipes").append("compound", searchOptions));
+            ));
+        Document agg = new Document("$search", new Document("index", "Recipes").append("compound", compoundClause));
         List<Recipe> search_results = recipeCollection.aggregate(Arrays.asList(agg, new Document("$limit", 20))).into(new ArrayList<>());
         return search_results;
     }

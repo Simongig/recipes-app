@@ -55,7 +55,7 @@ export default {
             searchResults.value = results
           })
       },
-      { debounce: 500, maxWait: 1000 }
+      { debounce: 500, maxWait: 3000 }
     )
 
     return { searchInput, searchResults }
