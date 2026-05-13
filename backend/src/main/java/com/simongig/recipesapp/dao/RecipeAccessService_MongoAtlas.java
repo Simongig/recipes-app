@@ -60,19 +60,16 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
     public List<Recipe> search(String searchTerm) {
         System.out.println("------- Search Recipes By Name -------");
         Document compoundClause = new Document()
+            .append("minimumShouldMatch", 1)
             .append("should", Arrays.asList(
-                new Document("text", new Document()
+                new Document("autocomplete", new Document()
                     .append("query", searchTerm)
                     .append("path", "title")
-                    .append("score", new Document("boost", new Document("value", 3)))
-                    .append("fuzzy", new Document())),
+                    .append("score", new Document("boost", new Document("value", 3)))),
                 new Document("text", new Document()
                     .append("query", searchTerm)
                     .append("path", "description")
-                    .append("fuzzy", new Document())),
-                new Document("text", new Document()
-                    .append("query", searchTerm)
-                    .append("path", "ingredients._id"))
+                    .append("fuzzy", new Document().append("maxEdits", 1).append("prefixLength", 2)))
             ));
         Document agg = new Document("$search", new Document("index", "Recipes").append("compound", compoundClause));
         List<Recipe> search_results = recipeCollection.aggregate(Arrays.asList(agg, new Document("$limit", 20))).into(new ArrayList<>());
