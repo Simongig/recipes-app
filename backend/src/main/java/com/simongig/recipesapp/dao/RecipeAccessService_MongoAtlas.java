@@ -5,25 +5,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.annotation.PostConstruct;
-
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
-
-import static com.mongodb.client.model.Filters.*;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import static com.mongodb.client.model.Filters.all;
+import static com.mongodb.client.model.Filters.eq;
 import com.simongig.recipesapp.model.Recipe;
+
+import jakarta.annotation.PostConstruct;
 
 
 @Repository("MongoAtlas-Recipes")
+@Profile("!dev")
 public class RecipeAccessService_MongoAtlas implements RecipeDao {
-    
+
     private final MongoClient client;
-    private MongoCollection<Recipe> recipeCollection;
+    protected MongoCollection<Recipe> recipeCollection;
 
     @Value("${spring.data.mongodb.database}")
     private String databaseName;
@@ -45,11 +47,6 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
 
     @Override
     public List<Recipe> findAll() {
-        List<Recipe> allRecipes = recipeCollection.find().into(new ArrayList<>());
-        for (Recipe recipe: allRecipes) {
-            System.out.println(recipe.getImagePaths());
-            System.out.println(recipe.getPreparationSteps());
-        }
         return recipeCollection.find().into(new ArrayList<>());
     }
 
@@ -59,14 +56,32 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
         return Optional.ofNullable(recipeCollection.find(matchId).first());
     }
 
-    public List<Recipe> search(String search_term) {
+    @Override
+    public List<Recipe> search(String searchTerm) {
         System.out.println("------- Search Recipes By Name -------");
-        Document search_options = new Document("query", search_term).append("path", "title").append("fuzzy", new Document());
-        Document agg = new Document("$search", new Document("index", "Recipes").append("text",search_options));
-        List<Recipe> search_results = recipeCollection.aggregate(Arrays.asList(agg)).into(new ArrayList<>());
+        Document searchOptions = new Document("compound", new Document()
+            .append("should", Arrays.asList(
+                new Document("text", new Document()
+                    .append("query", searchTerm)
+                    .append("path", "title")
+                    .append("score", new Document("boost", new Document("value", 3))) // title ranked higher
+                    .append("fuzzy", new Document())),
+                new Document("text", new Document()
+                    .append("query", searchTerm)
+                    .append("path", "description")
+                    .append("fuzzy", new Document())),
+                new Document("text", new Document()
+                    .append("query", searchTerm)
+                    .append("path", "ingredients._id"))
+                )
+            )
+        );
+        Document agg = new Document("$search", new Document("index", "Recipes").append("compound", searchOptions));
+        List<Recipe> search_results = recipeCollection.aggregate(Arrays.asList(agg, new Document("$limit", 20))).into(new ArrayList<>());
         return search_results;
     }
     
+    @Override
     public List<Recipe> selectByIngredients(String[] ingredients) {
         System.out.println("------- Search Recipes By Ingredients -------");
         System.out.println(Arrays.toString(ingredients));

@@ -1,8 +1,8 @@
 <template>
   <main class="recipes-list-page">
     <h1>Alle Rezepte</h1>
-    <article v-if="0 < elements.length" class="card-grid">
-      <recipe-card v-for="element in elements" :key="element.id" :recipe="element" />
+    <article v-if="0 < allRecipes.length" class="card-grid">
+      <recipe-card v-for="element in allRecipes" :key="element.id" :recipe="element" />
     </article>
     <div v-else>No elements found</div>
   </main>
@@ -10,20 +10,20 @@
 
 <script>
 import RecipeCard from '../components/RecipeCard-v2.vue'
-import axios from 'axios'
+import { useRecipeStore } from '@/stores/recipeStore'
+
 export default {
   name: 'RecipeListPage',
   components: { RecipeCard },
-  data() {
-    return {
-      elements: new Array(),
-    }
+  setup() {
+    const recipeStore = useRecipeStore()
+    return { recipeStore }
+  },
+  computed: {
+    allRecipes() { return this.recipeStore.recipes }
   },
   mounted() {
-    axios.get('/api/v1/recipe/all').then((response) => {
-      console.log(response.data)
-      this.elements = response.data
-    })
+    this.recipeStore.fetchRecipes()
   },
 }
 </script>

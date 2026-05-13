@@ -10,24 +10,26 @@
 <script>
 import axios from 'axios'
 import router from '../router'
-import { mapActions } from 'pinia'
-import useStore from '../stores'
+import { useAuthStore } from '@/stores/authStore'
+
 
 export default {
   name: 'login-form',
+  setup() {
+    const authStore = useAuthStore()
+    return {authStore}
+  },
   mounted() {
     document.querySelector('#login-form').addEventListener('submit', (e) => {
       e.preventDefault()
     })
   },
   methods: {
-    ...mapActions(useStore, ['setToLoggedIn']),
+    
     submitForm() {
       const params = new URLSearchParams()
       const form = document.querySelector('#login-form')
       const formData = new FormData(form)
-      console.log('username', formData.get('username'))
-      console.log('password', formData.get('password'))
       params.append('username', formData.get('username'))
       params.append('password', formData.get('password'))
       axios
@@ -37,14 +39,14 @@ export default {
           },
         })
         .then((response) => {
-          if (200 == response.status) {
-            alert('Super! Dein Login war erfolgreich!')
-          } else {
+          if (200 != response.status) {
             alert('Oh nein! Irgendwas ist beim Login schiefgelaufen :( \n Code: ' + response.status)
-          }
+            return;
+          } 
+          alert('Super! Dein Login war erfolgreich!')
           localStorage.setItem('user', JSON.stringify(response.data))
           if (response.data.access_token) {
-            this.setToLoggedIn()
+            this.authStore.setToLoggedIn();
           }
           router.push({ path: '/' })
         })

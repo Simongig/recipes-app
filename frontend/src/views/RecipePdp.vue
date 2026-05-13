@@ -18,7 +18,7 @@
       </div>
       <div class="content-wrapper">
         <section class="preparationSteps-wrapper" v-if="recipe.preparationSteps">
-          <h2>Zubereitung</h2>
+          <h2 @click="toggleIngredientsDropDown">Zubereitung</h2>
           <table>
             <div
               class="preparationStep"
@@ -66,7 +66,9 @@ export default {
   },
   methods: {
     toggleIngredientsDropDown() {
-      document.querySelector('.ingredients-wrapper-sticky')?.classList.toggle('dropdown-closed')
+      const sticky_ingredients_el = document.querySelector('.ingredients-wrapper-sticky')
+      if( !sticky_ingredients_el ) return;
+      sticky_ingredients_el.classList.toggle('dropdown-closed')
     },
     makeIngredientsSticky() {
       let ingredients_elem = document.querySelector('.ingredients-wrapper')
@@ -81,9 +83,6 @@ export default {
       if (scrolldepth_lower_than_element) {
         ingredients_elem_sticky.classList.add('visible')
         ingredients_elem_sticky.classList.add('dropdown-closed')
-        ingredients_elem_sticky
-          .querySelector('h2')
-          .addEventListener('click', this.toggleIngredientsDropDown)
       } else {
         ingredients_elem_sticky.classList.remove('visible')
       }

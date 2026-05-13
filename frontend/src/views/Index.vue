@@ -82,10 +82,11 @@
 import SearchInputIngredients from '../components/SearchInputIngredients.vue'
 import SearchInputRecipes from '../components/SearchInputRecipes.vue'
 import RecipeCard from '../components/RecipeCard-v2.vue'
-import axios from 'axios'
+import { useRecipeStore } from '@/stores/recipeStore'
 import { register } from 'swiper/element/bundle'
 register()
 // import Categories from "../components/Categories.vue";
+
 
 import 'swiper/swiper.css'
 
@@ -96,29 +97,34 @@ export default {
     SearchInputRecipes,
   },
   name: 'Index',
+  setup() {
+    const recipeStore = useRecipeStore()
+    return { recipeStore }
+  },
+  computed: {
+    suggestedRecipes() {
+      return this.recipeStore.recipes.slice(-5)
+    },
+  },
   data() {
     return {
-      suggestedRecipes: [],
       searchType: null,
       swiper: null,
       search_type: 'recipes',
     }
   },
   methods: {
-    hideNudeAfterTimeout() {
+    hideNudgeAfterTimeout() {
       setTimeout(
-        () => document.querySelector('.search-type-toggle-nudge').classList.add('nudge-hide'),
+        () => {const nudge = document.querySelector('.search-type-toggle-nudge')
+        if (nudge) nudge.classList.add('nudge-hide')},
         5000,
       )
     },
   },
   mounted() {
-    axios.get('/api/v1/recipe/all').then((response) => {
-      console.log(response.data)
-      this.suggestedRecipes = response.data.reverse().slice(0, 5)
-    })
-    this.hideNudeAfterTimeout()
-    // this.swiper = new window.Swiper('.swiper')
+    this.recipeStore.fetchRecipes()
+    this.hideNudgeAfterTimeout()
   },
 }
 </script>

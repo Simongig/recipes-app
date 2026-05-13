@@ -38,13 +38,17 @@
 </template>
 
 <script>
-import { mapState } from 'pinia'
-import useStore from '../stores'
+import { useAuthStore } from '@/stores/authStore'
+
 
 export default {
   name: 'Navbar',
+  setup() {
+    const authStore = useAuthStore()
+    return { authStore }
+  },
   computed: {
-    ...mapState(useStore, ['isLoggedIn']),
+    isLoggedIn() { return this.authStore.isLoggedIn}
   },
   methods: {
     toggleNav(event) {

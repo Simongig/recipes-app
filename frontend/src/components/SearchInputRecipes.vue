@@ -9,6 +9,7 @@
             name="q"
             placeholder="z.B. Pfannkuchen, Lasagne etc."
             :value="searchInput"
+            autocomplete="off"
             aria-label="Search through site content"
             @input="(event) => (searchInput = event.target.value)"
           />
@@ -29,48 +30,49 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { watchDebounced } from '@vueuse/core'
+import { ref } from 'vue';
 
 export default {
   name: 'searchInputRecipes',
+  setup() {
+    const searchInput = ref('')
+    const searchResults = ref([])
+
+    watchDebounced(
+      searchInput,
+      () => {
+        if (!searchInput.value) {
+          searchResults.value = []
+          return
+        }
+        fetch('/api/v1/recipe/search', {
+          method: 'POST',
+          body: searchInput.value.trim(),
+        })
+          .then((response) => response.json())
+          .then((results) => {
+            searchResults.value = results
+          })
+      },
+      { debounce: 500, maxWait: 1000 }
+    )
+
+    return { searchInput, searchResults }
+  },
   data() {
     return {
       elements: new Array(),
-      searchInput: '',
-      searchResults: [],
       foundRecipes: [],
     }
   },
   methods: {
-    sendSearchQuery() {
-      axios.get('/api/v1/recipe/all').then((response) => {
-        console.log(response)
-      })
-    },
   },
   mounted() {
     document.querySelector('#query-form').addEventListener('submit', (e) => {
       e.preventDefault()
     })
-  },
-  watch: {
-    searchInput() {
-      console.log(this.searchInput)
-      if (this.searchInput.length != 0) {
-        fetch('/api/v1/recipe/search', {
-          method: 'POST',
-          body: this.searchInput.trim(),
-        })
-          .then((response) => response.json())
-          .then((results) => {
-            console.log(results)
-            this.searchResults = results
-          })
-      } else {
-        this.searchResults = []
-      }
-    },
-  },
+  }
 }
 </script>
 

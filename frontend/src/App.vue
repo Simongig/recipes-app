@@ -9,10 +9,10 @@
 </template>
 
 <script>
-import { mapActions } from 'pinia'
-import useStore from './stores'
+import { useAuthStore } from '@/stores/authStore'
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
+
 
 export default {
   name: 'App',
@@ -21,13 +21,14 @@ export default {
       testCookie: -1 < document.cookie.indexOf('testCookie=true'),
     }
   },
-  methods: {
-    ...mapActions(useStore, ['setToLoggedIn']),
+  setup(){
+    const authStore = useAuthStore();
+    return { authStore }
   },
   mounted() {
     var user_data = JSON.parse(localStorage.getItem('user'))
     if (null != user_data) {
-      this.setToLoggedIn()
+      authStore.setToLoggedIn()
     }
   },
   components: {
