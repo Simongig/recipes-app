@@ -69,3 +69,9 @@ CLAUDE.md
 
 /bin/
 /data/
+
+
+# Python
+
+*/__pycache__/
+.venv
