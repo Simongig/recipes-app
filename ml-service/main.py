@@ -11,7 +11,7 @@ class QueryRequest(BaseModel):
 async def root():
     return {"message": "OK"}
 
-@app.post("/v1/recipe/search")
+@app.post("/v1/recipe/search-similar")
 async def search_recipes(request: QueryRequest):
     print("Search Query:", QueryRequest)
     result = await agent.ainvoke({"messages": [{"role": "user", "content": request.query}]})
