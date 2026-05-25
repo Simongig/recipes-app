@@ -7,6 +7,10 @@ services:
       SPRING_DATA_MONGODB_URI: ${MONGODB_URI}
       SPRING_DATA_MONGODB_DATABASE: ${MONGODB_DATABASE}
       JWT_SECRET: ${JWT_SECRET}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      HF_TOKEN: ${HF_TOKEN}
 
   frontend:
     image: simongigl/kochbuch.io-frontend:latest

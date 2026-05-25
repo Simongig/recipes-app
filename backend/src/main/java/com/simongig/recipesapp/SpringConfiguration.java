@@ -18,7 +18,10 @@ import com.simongig.recipesapp.dao.UserDao;
 import com.simongig.recipesapp.model.User;
 import com.simongig.recipesapp.service.UserService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Configuration
+@Slf4j
 public class SpringConfiguration {
 
     @Value("${spring.data.mongodb.uri}")
@@ -53,7 +56,9 @@ public class SpringConfiguration {
 
         @Override
         public void run(String... args) {
+            log.info("Checking for admin user...");
             if (userDao.findById(adminUsername).isEmpty()) {
+                log.info("Creating Admin user with username: {}", this.adminUsername);
                 User admin = new User(adminUsername, "Admin", "", "", adminPassword, null);
                 userService.saveAsAdmin(admin); // see below
             }
