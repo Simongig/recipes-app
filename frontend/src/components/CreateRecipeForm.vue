@@ -108,6 +108,7 @@
 
 <script>
 import axios from 'axios'
+import api from '../services/api'
 import ImageUploadPreview from './ImageUploadPreview.vue'
 import router from '../router'
 // import IngredientFormInput from "./IngredientFormInput.vue";
@@ -199,11 +200,10 @@ export default {
       const data = new Blob([jsonString], { type: 'application/json' })
 
       formData.append('data', data)
-      axios
+      api
         .post('/api/v1/recipe/add', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: 'Bearer ' + this.getAccessToken(),
           },
         })
         .then((response) => {
