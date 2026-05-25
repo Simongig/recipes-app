@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mongodb.lang.NonNull;
+import com.simongig.recipesapp.model.UserRole.RoleName;
 
 public class User {
 
@@ -20,7 +21,7 @@ public class User {
     private String lastName;
     private String email;
     private String password;
-    private List<Recipe> Recipes;
+    private List<Recipe> recipes;
     private Collection<UserRole> roles;
 
     public User(
@@ -35,7 +36,7 @@ public class User {
         this.email = email;
         this.username = username;
         this.password = password;
-        if (null == roles || 0 == roles.size()) {
+        if (null == roles || roles.isEmpty()) {
             this.roles = new ArrayList<>();
         } else {
             this.roles = roles;
@@ -45,8 +46,12 @@ public class User {
     public User() {
     }
 
+    public String getFullName() {
+        return String.format("%s %s", getName(), getLastName());
+    }
+
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -62,7 +67,7 @@ public class User {
     }
 
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
     public void setEmail(String email) {
@@ -70,7 +75,7 @@ public class User {
     }
 
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     public void setUsername(String username) {
@@ -78,7 +83,7 @@ public class User {
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     public void setPassword(String password) {
@@ -86,15 +91,15 @@ public class User {
     }
 
     public List<Recipe> getRecipes() {
-        return Recipes;
+        return this.recipes;
     }
 
     public void setRecipes(List<Recipe> recipes) {
-        Recipes = recipes;
+        this.recipes = recipes;
     }
 
     public Collection<UserRole> getRoles() {
-        return roles;
+        return this.roles;
     }
 
     public void setRoles(List<UserRole> roles) {
@@ -103,5 +108,9 @@ public class User {
 
     public void addRole(UserRole newRole) {
         this.roles.add(newRole);
+    }
+
+    public boolean isAdmin() {
+        return this.roles.stream().anyMatch(r -> r.getName() == RoleName.ROLE_ADMIN);
     }
 }

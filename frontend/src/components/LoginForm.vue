@@ -33,7 +33,7 @@ export default {
       params.append('username', formData.get('username'))
       params.append('password', formData.get('password'))
       axios
-        .post('/api/auth/login', params, {
+        .post('/api/v1/auth/login', params, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
@@ -44,7 +44,8 @@ export default {
             return;
           } 
           alert('Super! Dein Login war erfolgreich!')
-          localStorage.setItem('user', JSON.stringify(response.data))
+          localStorage.setItem('access_token', response.data.access_token)
+          localStorage.setItem('refresh_token', response.data.refresh_token)
           if (response.data.access_token) {
             this.authStore.setToLoggedIn();
           }

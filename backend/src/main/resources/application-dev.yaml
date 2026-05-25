@@ -8,3 +8,8 @@ spring:
       database: kochbuch_dev
 jwt:
   secret: dev-only-not-a-real-secret
+
+app:
+  admin:
+    username: admin
+    password: password

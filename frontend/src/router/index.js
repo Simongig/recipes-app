@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import RecipePdp from '../views/RecipePdp.vue'
 import RecipesPlp from '../views/RecipesPlp.vue'
 import Impressum from '../views/Impressum.vue'
+import Profile from '@/views/Profile.vue'
 
 const routes = [
   {
@@ -48,6 +49,11 @@ const routes = [
     name: 'error',
     component: Index,
   },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: Profile
+  }
 ]
 
 const router = createRouter({

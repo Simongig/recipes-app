@@ -44,13 +44,11 @@ public class RecipeController {
 
     @PostMapping("/search")
     public List<Recipe> search(@RequestBody String search_term) {
-        System.out.println(search_term);
         return recipeService.search(search_term);
     }
 
     @GetMapping("/id/{id}")
     public Recipe getRecipe(@PathVariable("id") String id) {
-        System.out.println(recipeService.getRecipeById(id));
         return recipeService.getRecipeById(id)
                 .orElse(null);
     }

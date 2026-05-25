@@ -7,18 +7,23 @@ import org.springframework.data.annotation.Id;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mongodb.lang.NonNull;
 
-
 public class UserRole {
+
+   public enum RoleName {
+      ROLE_USER,
+      ROLE_ADMIN,
+      ROLE_EDITOR
+   }
 
    @Id
    @BsonId
    private String id;
-   private String name;
+   private RoleName name;
 
    public UserRole() {
    }
 
-   public UserRole(@JsonProperty("name") @NonNull String name) {
+   public UserRole(@JsonProperty("name") @NonNull RoleName name) {
       this.id = new ObjectId().toString();
       this.name = name;
    }
@@ -31,11 +36,11 @@ public class UserRole {
       this.id = id;
   }
 
-   public String getName() {
+   public RoleName getName() {
       return name;
    }
 
-   public void setName(String name) {
+   public void setName(RoleName name) {
       this.name = name;
    }
 }

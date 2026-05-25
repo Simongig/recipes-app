@@ -26,9 +26,9 @@ export default {
     return { authStore }
   },
   mounted() {
-    var user_data = JSON.parse(localStorage.getItem('user'))
+    var user_data = localStorage.getItem('access_token');
     if (null != user_data) {
-      authStore.setToLoggedIn()
+      this.authStore.setToLoggedIn();
     }
   },
   components: {
@@ -75,6 +75,10 @@ ion-icon {
 h1,
 h2 {
   padding-bottom: 1rem;
+}
+
+.app-container > div {
+  min-height: 100vh;
 }
 
 main {

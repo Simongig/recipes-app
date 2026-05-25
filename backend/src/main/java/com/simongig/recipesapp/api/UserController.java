@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,8 +30,11 @@ import com.simongig.recipesapp.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
-@RequestMapping("api/v1/auth")
+
+@Slf4j
+@RequestMapping("api/v1")
 @RestController
 public class UserController {
 
@@ -39,6 +44,11 @@ public class UserController {
     public UserController(UserService userService, Algorithm algorithm) {
         this.userService = userService;
         this.algorithm = algorithm;
+    }
+
+    @GetMapping("/user/me")
+    public Optional<User> getProfile() {
+        return userService.getProfile();
     }
 
     @GetMapping("/users")
@@ -59,13 +69,12 @@ public class UserController {
     @PostMapping("/user/addRole")
     public void addRole(@RequestBody addRoleToUserForm form) {
         userService.addRoleToUser(form.getUsername(), form.getRole());
-
     }
 
-    @PostMapping("/token/refresh")
+    @PostMapping("/auth/token/refresh")
     public void generateRefreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        
+        log.debug("Generate refresh_token");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 String token = authorizationHeader.substring("Bearer ".length());
@@ -98,8 +107,8 @@ public class UserController {
                     response.setContentType("application/json");
                     new ObjectMapper().writeValue(response.getOutputStream(), tokens);
                 }
-            } catch (Exception exception) {
-                System.out.println("Error loggin in: " + exception.getMessage());
+            } catch (JWTCreationException | JWTVerificationException | IOException | IllegalArgumentException exception) {
+                log.error("Error loggin in: " + exception.getMessage());
                 response.setHeader("error", exception.getMessage());
                 response.sendError(FORBIDDEN.value());
             }

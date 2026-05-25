@@ -39,7 +39,6 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
         recipeCollection = client.getDatabase(databaseName).getCollection("Recipe", Recipe.class);
     }
 
-    
     @Override
     public void insert(Recipe recipe) {
         recipeCollection.insertOne(recipe);

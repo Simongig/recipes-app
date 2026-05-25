@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.annotation.PostConstruct;
-
 import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,12 +13,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 
-import static com.mongodb.client.model.Filters.*;
-
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import static com.mongodb.client.model.Filters.eq;
 import com.simongig.recipesapp.model.User;
 import com.simongig.recipesapp.model.UserRole;
+
+import jakarta.annotation.PostConstruct;
 
 @Repository("MongoAtlas-User")
 public class UserAccessService_MongoAtlas implements UserDao, UserDetailsService {
@@ -61,10 +60,6 @@ public class UserAccessService_MongoAtlas implements UserDao, UserDetailsService
 
     @Override
     public void save(User user) {
-        //default add User Role
-        Bson roleFilter =  eq("name", "ROLE_USER");
-        UserRole newRole = userRoleCollection.find(roleFilter).first();
-        user.addRole(newRole);
         userCollection.insertOne(user);
     }
 
@@ -78,7 +73,7 @@ public class UserAccessService_MongoAtlas implements UserDao, UserDetailsService
         User user = userOptional.get();
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         user.getRoles().forEach(role -> {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
+            authorities.add(new SimpleGrantedAuthority(role.getName().name()));
         });
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 authorities);

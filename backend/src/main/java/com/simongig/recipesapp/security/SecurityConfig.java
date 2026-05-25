@@ -1,5 +1,8 @@
 package com.simongig.recipesapp.security;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,12 +16,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.auth0.jwt.algorithms.Algorithm;
 import com.simongig.recipesapp.filter.CustomAuthenticationFilter;
-import com.simongig.recipesapp.filter.CustomAuthorizationFilter;
+import static com.simongig.recipesapp.model.UserRole.RoleName.ROLE_ADMIN;
+import static com.simongig.recipesapp.model.UserRole.RoleName.ROLE_USER;
 
 @Configuration
 @EnableWebSecurity
@@ -44,47 +51,25 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) 
             throws Exception {
         CustomAuthenticationFilter authFilter = new CustomAuthenticationFilter(authenticationManager, jwtAlgorithm());
-        authFilter.setFilterProcessesUrl("/api/auth/login");
+        authFilter.setFilterProcessesUrl("/api/v1/auth/login");
 
         http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.POST, // auth
-                    "/api/auth/login",
-                    "/api/v1/auth/token/refresh/**",
-                    "/api/v1/auth/token/refresh",
-                    "/api/v1/auth/user/**")
-                    .permitAll()
-                .requestMatchers(HttpMethod.GET, // auth
-                    "/api/auth/login",
-                    "/api/v1/auth/token/refresh/**",
-                    "/api/v1/auth/user/**")
-                    .permitAll()
-                .requestMatchers( // content
-                    HttpMethod.GET,
-                     "/api/v1/recipe/all", 
-                     "/api/v1/recipe/id/*")
-                     .permitAll()
-                .requestMatchers( // content
-                    HttpMethod.POST,
-                     "/api/v1/recipe/search")
-                     .permitAll()
-                .requestMatchers(HttpMethod.POST, // content
-                    "/api/v1/recipe/add")
-                    .hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
-                .requestMatchers(HttpMethod.GET, 
-                    "/api/v1/auth/user/**")
-                    .hasAnyAuthority("ROLE_USER")
-                .requestMatchers(HttpMethod.POST, 
-                    "/api/v1/auth/user/save/**")
-                    .hasAnyAuthority("ROLE_ADMIN")
-                .anyRequest()
-                .authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/token/refresh").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/auth/login").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/recipe/all", "/api/v1/recipe/id/*").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/recipe/search").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/recipe/add").hasAnyAuthority(ROLE_USER.name(), ROLE_ADMIN.name())
+                .requestMatchers(HttpMethod.GET,  "/api/v1/user**").hasAnyAuthority(ROLE_USER.name())
+                .requestMatchers(HttpMethod.POST, "/api/v1/user/save/**").hasAnyAuthority(ROLE_ADMIN.name())
+                .anyRequest().authenticated()
             )
             .addFilter(authFilter)
-            .addFilterBefore(new CustomAuthorizationFilter(jwtAlgorithm()),
-                UsernamePasswordAuthenticationFilter.class);
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+            );
 
         return http.build();
     }
@@ -92,5 +77,22 @@ public class SecurityConfig {
     @Bean
     public Algorithm jwtAlgorithm() {
         return Algorithm.HMAC256(jwtSecret.getBytes());
+    }
+
+    private JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        // Keeps your exact string mapping (e.g. "ROLE_USER") without appending unwanted prefixes
+        grantedAuthoritiesConverter.setAuthorityPrefix(""); 
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        SecretKey secretKey = new SecretKeySpec(jwtSecret.getBytes(), "HmacSHA256");
+        return NimbusJwtDecoder.withSecretKey(secretKey).build();
     }
 }

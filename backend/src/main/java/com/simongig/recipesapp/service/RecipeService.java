@@ -5,12 +5,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.simongig.recipesapp.dao.RecipeDao;
 import com.simongig.recipesapp.model.Ingredient;
 import com.simongig.recipesapp.model.IngredientName;
 import com.simongig.recipesapp.model.Recipe;
+import com.simongig.recipesapp.model.UserRole;
 
 @Service
 public class RecipeService {
@@ -24,16 +27,25 @@ public class RecipeService {
     }
 
     public void addRecipe(Recipe recipe) {
-        List<IngredientName> aIngredientNames = ingredientNameService.getAllIngredientNames();
+        List<IngredientName> ingredientNames = ingredientNameService.getAllIngredientNames();
         for(Ingredient ingredient: recipe.getIngredients()) {
             System.out.println("Ingredient:" + ingredient);
-            List<IngredientName> filteredIngredients = aIngredientNames.stream().filter(c -> c.getName().equals(ingredient.getName())).collect(Collectors.toList());
+            List<IngredientName> filteredIngredients = ingredientNames.stream().filter(c -> c.getName().equals(ingredient.getName())).collect(Collectors.toList());
             System.out.println("All IngredientNames: " + filteredIngredients);
-            if(0 < filteredIngredients.size()) {
-                ingredientNameService.incrementIngredientNamePopularityByName(ingredient.getName());
-            } else {
+            if(filteredIngredients.isEmpty()) {
                 ingredientNameService.addIngredientName(new IngredientName(ingredient.getName()));
+            } else {
+                ingredientNameService.incrementIngredientNamePopularityByName(ingredient.getName());
             }
+        }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String callerUsername = auth.getName(); // the JWT subject
+        boolean isAdmin = auth.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals(UserRole.RoleName.ROLE_ADMIN.name()));
+        
+        recipe.setCreatedBy(callerUsername);
+        if (!isAdmin) { // Curated recipes from the platform don't get a specific ownerId, only custom recipes
+            recipe.setOwnerId(callerUsername);
         }
         this.recipeDao.insert(recipe);
     }
