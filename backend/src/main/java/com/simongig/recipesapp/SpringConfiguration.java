@@ -12,8 +12,14 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.simongig.recipesapp.dao.UserDao;
+import com.simongig.recipesapp.model.User;
+import com.simongig.recipesapp.service.UserService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
+@Slf4j
 public class SpringConfiguration {
 
     @Value("${spring.data.mongodb.uri}")
@@ -27,6 +33,34 @@ public class SpringConfiguration {
                                                       .applyConnectionString(new ConnectionString(connectionString))
                                                       .codecRegistry(codecRegistry)
                                                       .build());
+    }
+
+    @Component
+    public class DataInitializer implements CommandLineRunner {
+
+        private final UserService userService;
+        private final UserDao userDao;
+
+        @Value("${app.admin.username}")
+        private String adminUsername;
+
+        @Value("${app.admin.password}")
+        private String adminPassword;
+
+        public DataInitializer(UserService userService, UserDao userDao) {
+            this.userService = userService;
+            this.userDao = userDao;
+        }
+
+        @Override
+        public void run(String... args) {
+            log.info("Checking for admin user...");
+            if (userDao.findById(adminUsername).isEmpty()) {
+                log.info("Creating Admin user with username: {}", this.adminUsername);
+                User admin = new User(adminUsername, "Admin", "", "", adminPassword, null);
+                userService.saveAsAdmin(admin); // see below
+            }
+        }
     }
 
 }
