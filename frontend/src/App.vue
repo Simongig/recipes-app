@@ -60,11 +60,6 @@ ion-icon {
   color: var(--dark-grey);
 }
 
-* {
-  padding: 0;
-  margin: 0;
-}
-
 *,
 *:before,
 *:after {

@@ -12,6 +12,7 @@
         <div class="nav-links">
           <router-link class="nav-item" to="/recipe/all">Alle Rezepte</router-link>
           <router-link class="nav-item" to="/recipe/categories">Kategorien</router-link>
+          <router-link class="nav-item" to="/mealplans">Meal Planer</router-link>
           <router-link class="nav-item" v-if="isLoggedIn" to="/createRecipe"
             >Erstellen</router-link
           >

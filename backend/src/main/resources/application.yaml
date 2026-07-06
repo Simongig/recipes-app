@@ -14,6 +14,9 @@ app:
     username: ${ADMIN_USERNAME}
     password: ${ADMIN_PASSWORD}
 
+ml-service:
+  base-url: ${ML_SERVICE_URL:http://localhost:8000}
+
 server:
   # ssl:
   #   key-store: classpath:keystore.jks

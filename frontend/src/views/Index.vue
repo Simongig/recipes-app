@@ -84,6 +84,7 @@ import SearchInputRecipes from '../components/SearchInputRecipes.vue'
 import RecipeCard from '../components/RecipeCard-v2.vue'
 import { useRecipeStore } from '@/stores/recipeStore'
 import { register } from 'swiper/element/bundle'
+
 register()
 // import Categories from "../components/Categories.vue";
 

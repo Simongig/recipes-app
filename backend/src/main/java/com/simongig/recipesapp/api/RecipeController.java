@@ -3,6 +3,7 @@ package com.simongig.recipesapp.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
