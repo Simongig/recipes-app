@@ -10,6 +10,11 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+    --sg-main-color: var(--sg-main-color);
+    --sg-secondary-color: var(--sg-secondary-color);
+    --sg-tertiary-color: var(--sg-tertiary-color);
+    --sg-dark-grey: var(--sg-dark-grey);
+    --sg-light-grey: var(--sg-light-grey);
     --font-sans: 'Geist Variable', sans-serif;
     --font-heading: var(--font-sans);
     --color-sidebar-ring: var(--sidebar-ring);
@@ -50,6 +55,12 @@
 }
 
 :root {
+    --sg-main-color: hex(#212e2f);
+    --sg-secondary-color: #c3a452;
+    --sg-tertiary-color: #fdfdfa;
+    --sg-dark-grey: #333333;
+    --sg-light-grey: #e3e3e3;
+    --sg-light-font: #fdfdfa;
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);

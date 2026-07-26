@@ -16,6 +16,7 @@ app:
 
 ml-service:
   base-url: ${ML_SERVICE_URL:http://localhost:8000}
+  api-key: ${ML_SERVICE_API_KEY}
 
 server:
   # ssl:

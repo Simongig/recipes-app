@@ -10,7 +10,7 @@
           <h2>Zutaten</h2>
           <table>
             <tr v-for="ingredient in recipe.ingredients" :key="ingredient.name">
-              <td>{{ ingredient.quantity }} {{ ingredient.unit }}</td>
+              <td>{{ formatIngredientQuantity(ingredient) }}</td>
               <td>{{ ingredient.name }}</td>
             </tr>
           </table>
@@ -44,7 +44,7 @@
       </h2>
       <table>
         <tr v-for="ingredient in recipe.ingredients" :key="ingredient.name">
-          <td>{{ ingredient.quantity }} {{ ingredient.unit }}</td>
+          <td>{{ formatIngredientQuantity(ingredient) }}</td>
           <td>{{ ingredient.name }}</td>
         </tr>
       </table>
@@ -57,6 +57,7 @@
 <script>
 // import Button from '../components/Button.vue';
 import axios from 'axios'
+import { formatIngredientQuantity } from '../utils/ingredients'
 export default {
   // components: { Button },
   data() {
@@ -65,6 +66,7 @@ export default {
     }
   },
   methods: {
+    formatIngredientQuantity,
     toggleIngredientsDropDown() {
       const sticky_ingredients_el = document.querySelector('.ingredients-wrapper-sticky')
       if( !sticky_ingredients_el ) return;

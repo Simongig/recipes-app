@@ -1,23 +1,21 @@
 package com.simongig.recipesapp.model;
 
-import org.bson.codecs.pojo.annotations.BsonId;
-import org.springframework.data.annotation.Id;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.simongig.recipesapp.util.IngredientNormalizer;
 
 public class Ingredient {
 
-    @Id
-    @BsonId
     private String name;
+    private String normalizedKey;
     private double quantity;
-    private String unit;
+    private Unit unit;
 
     public Ingredient() {}
 
     public Ingredient(@JsonProperty("name") String name, @JsonProperty("quantity") double quantity,
-            @JsonProperty("unit") String unit) {
-        this.name = name;
+            @JsonProperty("unit") Unit unit) {
+        this.setName(name);
         this.quantity = quantity;
         this.unit = unit;
     }
@@ -51,24 +49,50 @@ public class Ingredient {
         return name;
     }
 
-    public double getQuantity() {
-        return quantity;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
     public void setName(String name) {
         this.name = name;
+        this.normalizedKey = IngredientNormalizer.normalize(name);
+    }
+
+    @JsonIgnore
+    public String getNormalizedKey() {
+        return normalizedKey;
+    }
+
+    public void setNormalizedKey(String normalizedKey) {
+        this.normalizedKey = normalizedKey;
+    }
+
+    public double getQuantity() {
+        return quantity;
     }
 
     public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
 
-    public void setUnit(String unit) {
+    public Unit getUnit() {
+        return unit;
+    }
+
+    public void setUnit(Unit unit) {
         this.unit = unit;
+    }
+
+    // Both computed, not persisted (no backing field, so the Mongo POJO codec ignores them):
+    // PIECE reads more naturally without a unit word ("1 Tomate" rather than "1 Stück Tomate").
+    public String getUnitLabel() {
+        if (unit == null || unit == Unit.PIECE) {
+            return "";
+        }
+        return unit.getLabel();
+    }
+
+    public String getUnitAbbreviation() {
+        if (unit == null || unit == Unit.PIECE) {
+            return "";
+        }
+        return unit.getAbbreviation();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.simongig.recipesapp.dao;
 
-import java.time.Instant;
 import java.util.Optional;
 
 import org.bson.conversions.Bson;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import static com.mongodb.client.model.Filters.eq;
-import com.mongodb.client.model.Updates;
 import com.simongig.recipesapp.model.MealPlanGenerationJob;
 
 import jakarta.annotation.PostConstruct;
@@ -48,12 +46,8 @@ public class MealPlanGenerationJobAccessService_MongoAtlas implements MealPlanGe
     }
 
     @Override
-    public void updateStatus(String jobId, String status, String error) {
-        Bson matchId = eq("_id", jobId);
-        Bson update = Updates.combine(
-                Updates.set("status", status),
-                Updates.set("error", error),
-                Updates.set("updatedAt", Instant.now()));
-        jobCollection.updateOne(matchId, update);
+    public void save(MealPlanGenerationJob job) {
+        Bson matchId = eq("_id", job.getId());
+        jobCollection.replaceOne(matchId, job);
     }
 }

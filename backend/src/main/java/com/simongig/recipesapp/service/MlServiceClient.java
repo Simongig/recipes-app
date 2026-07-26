@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.ClientHttpRequestFactories;
 import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -17,7 +18,7 @@ public class MlServiceClient {
 
     private final RestClient restClient;
 
-    public MlServiceClient(@Value("${ml-service.base-url}") String baseUrl) {
+    public MlServiceClient(@Value("${ml-service.base-url}") @NonNull String baseUrl) {
         ClientHttpRequestFactory requestFactory = ClientHttpRequestFactories.get(
                 ClientHttpRequestFactorySettings.DEFAULTS
                         .withConnectTimeout(Duration.ofSeconds(2))

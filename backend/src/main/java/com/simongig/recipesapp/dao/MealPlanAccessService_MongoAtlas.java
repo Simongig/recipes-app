@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import static com.mongodb.client.model.Filters.eq;
-import com.mongodb.client.model.ReplaceOptions;
 import com.simongig.recipesapp.model.MealPlan;
 
 import jakarta.annotation.PostConstruct;
@@ -33,14 +32,25 @@ public class MealPlanAccessService_MongoAtlas implements MealPlanDao {
     }
 
     @Override
+    public Optional<MealPlan> findLastCreatedByOwnerId(String ownerId) {
+        Bson matchOwner = eq("ownerId", ownerId);
+        return Optional.ofNullable(mealPlanCollection.find(matchOwner).sort(eq("startDate", -1)).first());
+    }
+
+    @Override
     public Optional<MealPlan> findByOwnerId(String ownerId) {
         Bson matchOwner = eq("ownerId", ownerId);
         return Optional.ofNullable(mealPlanCollection.find(matchOwner).first());
     }
 
     @Override
+    public Optional<MealPlan> findById(String id) {
+        Bson matchId = eq("_id", id);
+        return Optional.ofNullable(mealPlanCollection.find(matchId).first());
+    }
+
+    @Override
     public void save(MealPlan plan) {
-        Bson matchOwner = eq("ownerId", plan.getOwnerId());
-        mealPlanCollection.replaceOne(matchOwner, plan, new ReplaceOptions().upsert(true));
+        mealPlanCollection.insertOne(plan);
     }
 }

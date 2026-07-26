@@ -3,7 +3,6 @@ package com.simongig.recipesapp.api;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.simongig.recipesapp.dao.RecipeSummary;
 import com.simongig.recipesapp.model.Recipe;
 import com.simongig.recipesapp.service.RecipeService;
 
@@ -57,6 +57,11 @@ public class RecipeController {
     @DeleteMapping("/delete/{id}")
     public void deleteRecipeById(@PathVariable("id") String id) {
         recipeService.deleteRecipe(id);
+    }
+
+    @PostMapping("/ids")
+    public List<RecipeSummary> getRecipesByIds(@RequestBody String[] ids) {
+        return recipeService.getRecipeSummaryByIds(java.util.Arrays.asList(ids));
     }
 
     // @PutMapping("/update/{id}")

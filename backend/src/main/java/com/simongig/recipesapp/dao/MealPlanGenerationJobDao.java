@@ -10,5 +10,5 @@ public interface MealPlanGenerationJobDao {
 
     Optional<MealPlanGenerationJob> findById(String jobId);
 
-    void updateStatus(String jobId, String status, String error);
+    void save(MealPlanGenerationJob job);
 }

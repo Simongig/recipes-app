@@ -1,44 +1,35 @@
 package com.simongig.recipesapp.api;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.simongig.recipesapp.model.IngredientName;
-import com.simongig.recipesapp.service.IngredientNameService;
+import com.simongig.recipesapp.model.Unit;
+import com.simongig.recipesapp.service.RecipeService;
 
 @RequestMapping("api/v1/ingredient")
 @RestController
 public class IngredientController {
-    private final IngredientNameService ingredientService;
+    private final RecipeService recipeService;
 
-    public IngredientController(IngredientNameService ingredientService) {
-        this.ingredientService = ingredientService;
+    public IngredientController(RecipeService recipeService) {
+        this.recipeService = recipeService;
     }
+
+    public record UnitOption(String value, String label, String abbreviation) {}
 
     @GetMapping("/all")
-    public List<IngredientName> getAllRecipes() {
-        return ingredientService.getAllIngredientNames();
+    public List<String> getAllIngredientNames() {
+        return recipeService.getDistinctIngredientNames();
     }
 
-    @GetMapping("/{id}")
-    public IngredientName getIngredientName(@PathVariable String id) {
-        return ingredientService.getIngredientNameById(id)
-                .orElse(null);
-    }
-
-    // @PutMapping("/{id}")
-    // public int incrementIngredientNamePopularityByName(@PathVariable("id") String id) {
-    //     return ingredientService.incrementIngredientNamePopularityByName(id);
-    // }
-
-    @PutMapping("/{id}")
-    public void increaseIngredientNamePopularityByName(@PathVariable("name") String id, @RequestBody int popularityIncrease) {
-        ingredientService.increaseIngredientNamePopularityByName(id, popularityIncrease);
+    @GetMapping("/units")
+    public List<UnitOption> getUnitOptions() {
+        return Arrays.stream(Unit.values())
+                .map(unit -> new UnitOption(unit.name(), unit.getLabel(), unit.getAbbreviation()))
+                .toList();
     }
 }

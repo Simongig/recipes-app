@@ -29,10 +29,10 @@
             <li
               @click="addIngredient"
               v-for="result in searchResults"
-              :key="result.name"
-              :ingredient-name="result.name"
+              :key="result"
+              :ingredient-name="result"
             >
-              {{ result.name }}
+              {{ result }}
             </li>
           </ol>
         </div>
@@ -109,9 +109,8 @@ export default {
         return
       }
       axios.get('api/v1/ingredient/all').then((results) => {
-        console.log(results.data)
         this.searchResults = results.data.filter((ingredient) => {
-          return -1 < ingredient.name.toLowerCase().indexOf(this.searchInput.toLowerCase())
+          return -1 < ingredient.toLowerCase().indexOf(this.searchInput.toLowerCase())
         })
       })
     },

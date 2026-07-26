@@ -5,13 +5,23 @@ import java.util.List;
 
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+// Collection name must match the hand-rolled DAOs' getCollection("Recipe", ...) exactly:
+// Spring Data's default (no @Document) is the uncapitalized class name ("recipe"), which
+// is a different, empty collection from the one every other Recipe DAO actually uses.
+@Document(collection = "Recipe")
 public class Recipe {
 
-    @Id
+    // MongoId(FieldType.STRING), not plain @Id: existing Recipe docs were inserted via the
+    // raw MongoClient/PojoCodecProvider path with _id stored as a plain BSON string. Spring
+    // Data's default @Id handling auto-converts 24-hex-char String ids to ObjectId before
+    // querying, which silently matches nothing against these string-typed _ids.
+    @MongoId(FieldType.STRING)
     @BsonId
     private String id;
 

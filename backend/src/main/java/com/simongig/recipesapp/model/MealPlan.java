@@ -1,13 +1,12 @@
 package com.simongig.recipesapp.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MealPlan {
 
@@ -16,22 +15,20 @@ public class MealPlan {
     private String id;
 
     private String ownerId; // username; one plan document per user
+    private LocalDate startDate;
+    private LocalDate endDate;
     private List<MealPlanEntry> entries;
+    private MealPlanProvenance provenance; // null for manually built plans
 
     public MealPlan() {}
 
-    public MealPlan(String ownerId) {
-        this.id = new ObjectId().toString();
+    public MealPlan(String ownerId, String id, List<MealPlanEntry> entries, LocalDate startDate, LocalDate endDate, MealPlanProvenance provenance) {
+        this.id = id != null && !id.isEmpty() ? id : new ObjectId().toString();
         this.ownerId = ownerId;
-        this.entries = new ArrayList<>();
-    }
-
-    public MealPlan(
-            @JsonProperty("ownerId") String ownerId,
-            @JsonProperty("entries") List<MealPlanEntry> entries) {
-        this.id = new ObjectId().toString();
-        this.ownerId = ownerId;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.entries = entries != null ? entries : new ArrayList<>();
+        this.provenance = provenance;
     }
 
     public String getId() {
@@ -56,5 +53,29 @@ public class MealPlan {
 
     public void setEntries(List<MealPlanEntry> entries) {
         this.entries = entries;
+    }
+
+    public MealPlanProvenance getProvenance() {
+        return provenance;
+    }
+
+    public void setProvenance(MealPlanProvenance provenance) {
+        this.provenance = provenance;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 }

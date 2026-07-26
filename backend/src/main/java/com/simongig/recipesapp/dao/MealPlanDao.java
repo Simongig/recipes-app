@@ -8,5 +8,9 @@ public interface MealPlanDao {
 
     Optional<MealPlan> findByOwnerId(String ownerId);
 
+    Optional<MealPlan> findById(String id);
+
     void save(MealPlan plan);
+
+    Optional<MealPlan> findLastCreatedByOwnerId(String ownerId);
 }

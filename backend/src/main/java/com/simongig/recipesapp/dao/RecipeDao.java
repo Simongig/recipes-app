@@ -1,9 +1,10 @@
 package com.simongig.recipesapp.dao;
 
-import com.simongig.recipesapp.model.Recipe;
-
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import com.simongig.recipesapp.model.Recipe;
 
 public interface RecipeDao {
 
@@ -13,6 +14,8 @@ public interface RecipeDao {
 
     Optional<Recipe> findById(String id);
 
+    List<Recipe> findByIds(Collection<String> ids);
+
     List<Recipe> search(String search_term);
 
     void deleteById(String id);
@@ -20,4 +23,6 @@ public interface RecipeDao {
     void updateById(String id, Recipe recipe);
 
     List<Recipe> selectByIngredients(String[] ingredients);
+
+    List<String> selectDistinctIngredientNames();
 }

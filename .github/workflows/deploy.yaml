@@ -30,6 +30,13 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/kochbuch.io-frontend:latest
 
+      - name: Build and push ml-service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ml-service
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/kochbuch.io-ml-service:latest
+
       - name: Copy compose file to Droplet
         uses: appleboy/scp-action@v0.1.7
         with:

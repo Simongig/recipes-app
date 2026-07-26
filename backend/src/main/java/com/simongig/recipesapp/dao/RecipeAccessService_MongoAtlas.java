@@ -2,8 +2,10 @@ package com.simongig.recipesapp.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -15,7 +17,9 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import static com.mongodb.client.model.Filters.all;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
 import com.simongig.recipesapp.model.Recipe;
+import com.simongig.recipesapp.util.IngredientNormalizer;
 
 import jakarta.annotation.PostConstruct;
 
@@ -56,6 +60,12 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
     }
 
     @Override
+    public List<Recipe> findByIds(Collection<String> ids) {
+        if (ids == null || ids.isEmpty()) return List.of();
+        return recipeCollection.find(in("_id", ids)).into(new ArrayList<>());
+    }
+
+    @Override
     public List<Recipe> search(String searchTerm) {
         System.out.println("------- Search Recipes By Name -------");
         Document compoundClause = new Document()
@@ -77,12 +87,24 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
     
     @Override
     public List<Recipe> selectByIngredients(String[] ingredients) {
-        System.out.println("------- Search Recipes By Ingredients -------");
-        System.out.println(Arrays.toString(ingredients));
-        Bson matchIngredients = all("ingredients._id", ingredients);
-        List<Recipe> recipes = recipeCollection.find(matchIngredients, Recipe.class).into(new ArrayList<>());
-        System.out.println(recipes);
-        return recipes;
+        String[] normalizedIngredients = Arrays.stream(ingredients)
+                .map(IngredientNormalizer::normalize)
+                .toArray(String[]::new);
+        Bson matchIngredients = all("ingredients.normalizedKey", normalizedIngredients);
+        return recipeCollection.find(matchIngredients, Recipe.class).into(new ArrayList<>());
+    }
+
+    @Override
+    public List<String> selectDistinctIngredientNames() {
+        List<Bson> pipeline = Arrays.asList(
+                new Document("$unwind", "$ingredients"),
+                new Document("$group", new Document("_id", "$ingredients.normalizedKey")
+                        .append("name", new Document("$first", "$ingredients.name"))),
+                new Document("$sort", new Document("name", 1)));
+        return recipeCollection.aggregate(pipeline, Document.class).into(new ArrayList<>())
+                .stream()
+                .map(doc -> doc.getString("name"))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -95,4 +117,5 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
     public void updateById(String id, Recipe recipe) {
     }
 
+    
 }

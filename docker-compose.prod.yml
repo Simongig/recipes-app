@@ -11,6 +11,19 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       HF_TOKEN: ${HF_TOKEN}
+      ML_SERVICE_URL: http://ml-service:8000
+      ML_SERVICE_API_KEY: ${ML_SERVICE_API_KEY}
+    depends_on: [ml-service]
+
+  ml-service:
+    image: simongigl/kochbuch.io-ml-service:latest
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: ${MONGODB_URI}
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      HF_TOKEN: ${HF_TOKEN}
+      ML_SERVICE_API_KEY: ${ML_SERVICE_API_KEY}
 
   frontend:
     image: simongigl/kochbuch.io-frontend:latest

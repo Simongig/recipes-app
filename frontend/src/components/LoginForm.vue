@@ -53,7 +53,7 @@ export default {
         })
         .catch((e) => {
           alert('Oh nein! Irgendwas ist beim Login schiefgelaufen :(')
-          console.log(e)
+          console.error(e)
         })
     },
   },

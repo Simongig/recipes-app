@@ -62,6 +62,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/recipe/all", "/api/v1/recipe/id/*").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/recipe/search").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/recipe/add").hasAnyAuthority(ROLE_USER.name(), ROLE_ADMIN.name())
+                // ml-service calls this back with generation results; it has no user JWT,
+                // so it's authenticated via a shared secret header instead (see MealPlannerController).
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/mealplans/jobs/*").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/api/v1/user**").hasAnyAuthority(ROLE_USER.name())
                 .requestMatchers(HttpMethod.POST, "/api/v1/user/save/**").hasAnyAuthority(ROLE_ADMIN.name())
                 .anyRequest().authenticated()

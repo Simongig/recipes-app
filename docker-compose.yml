@@ -1,7 +1,16 @@
 services:
   mongodb:
-    image: mongo
+    # mongodb-atlas-local bundles mongot, so it supports the $vectorSearch/$search
+    # aggregation stages the ml-service needs (plain community mongo does not).
+    image: mongodb/mongodb-atlas-local
+    hostname: mongodb
     ports: ["27017:27017"]
-    volumes: 
+    volumes:
      - ./data:/data/db
      - ./scripts:/docker-entrypoint-initdb.d
+     - mongodb_configdb:/data/configdb
+     - mongodb_mongot:/data/mongot
+
+volumes:
+  mongodb_configdb:
+  mongodb_mongot:

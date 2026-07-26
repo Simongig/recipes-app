@@ -1,8 +1,8 @@
 package com.simongig.recipesapp.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
@@ -10,8 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.simongig.recipesapp.dao.RecipeDao;
-import com.simongig.recipesapp.model.Ingredient;
-import com.simongig.recipesapp.model.IngredientName;
+import com.simongig.recipesapp.dao.RecipeRepository;
+import com.simongig.recipesapp.dao.RecipeSummary;
 import com.simongig.recipesapp.model.Recipe;
 import com.simongig.recipesapp.model.UserRole;
 
@@ -19,25 +19,14 @@ import com.simongig.recipesapp.model.UserRole;
 public class RecipeService {
 
     private final RecipeDao recipeDao;
-    private final IngredientNameService ingredientNameService;
+    private final RecipeRepository recipeRepository;
 
-    public RecipeService(@Qualifier("MongoAtlas-Recipes") RecipeDao recipeDao, IngredientNameService ingredientService) {
+    public RecipeService(@Qualifier("MongoAtlas-Recipes") RecipeDao recipeDao, RecipeRepository recipeRepository) {
         this.recipeDao = recipeDao;
-        this.ingredientNameService = ingredientService;
+        this.recipeRepository = recipeRepository;
     }
 
     public void addRecipe(Recipe recipe) {
-        List<IngredientName> ingredientNames = ingredientNameService.getAllIngredientNames();
-        for(Ingredient ingredient: recipe.getIngredients()) {
-            System.out.println("Ingredient:" + ingredient);
-            List<IngredientName> filteredIngredients = ingredientNames.stream().filter(c -> c.getName().equals(ingredient.getName())).collect(Collectors.toList());
-            System.out.println("All IngredientNames: " + filteredIngredients);
-            if(filteredIngredients.isEmpty()) {
-                ingredientNameService.addIngredientName(new IngredientName(ingredient.getName()));
-            } else {
-                ingredientNameService.incrementIngredientNamePopularityByName(ingredient.getName());
-            }
-        }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String callerUsername = auth.getName(); // the JWT subject
         boolean isAdmin = auth.getAuthorities().stream()
@@ -58,6 +47,10 @@ public class RecipeService {
         return this.recipeDao.findById(id);
     }
 
+    public List<RecipeSummary> getRecipeSummaryByIds(Collection<String> ids) {
+        return this.recipeRepository.findByIdIn(ids);
+    }
+
     public List<Recipe> search(String searchTerm){
         return this.recipeDao.search(searchTerm);
     } 
@@ -72,5 +65,9 @@ public class RecipeService {
 
     public List<Recipe> findRecipeByIngredients(String[] ingredients) {
         return this.recipeDao.selectByIngredients(ingredients);
+    }
+
+    public List<String> getDistinctIngredientNames() {
+        return this.recipeDao.selectDistinctIngredientNames();
     }
 }

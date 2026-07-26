@@ -34,8 +34,8 @@
             id=""
           />
           <select id="" v-model="ingredients[index].unit">
-            <option v-for="option in unitOptions" :key="option">
-              {{ option }}
+            <option v-for="option in unitOptions" :key="option.value" :value="option.value">
+              {{ option.label }}
             </option>
           </select>
           <input type="text" v-model="ingredients[index].name" placeholder="Tomate" />
@@ -118,24 +118,20 @@ export default {
   data() {
     return {
       files: [],
-      ingredients: [{}],
+      ingredients: [{ name: '', unit: '', quantity: '' }],
       preparationSteps: [{}],
-      unitOptions: [
-        'Stück',
-        'Teelöffel',
-        'Esslöffel',
-        'Gramm',
-        'Kilo',
-        'Liter',
-        'Prise',
-        'Milliliter',
-        'Bündel',
-      ],
+      unitOptions: [],
     }
   },
   mounted() {
     document.querySelector('#recipe-form').addEventListener('submit', (e) => {
       e.preventDefault()
+    })
+    axios.get('/api/v1/ingredient/units').then((response) => {
+      this.unitOptions = response.data
+      if (this.ingredients[0] && !this.ingredients[0].unit) {
+        this.ingredients[0].unit = this.unitOptions[0]?.value ?? ''
+      }
     })
   },
   methods: {
@@ -149,7 +145,7 @@ export default {
     addIngredient() {
       this.ingredients.push({
         name: '',
-        unit: '',
+        unit: this.unitOptions[0]?.value ?? '',
         quantity: '',
       })
     },
