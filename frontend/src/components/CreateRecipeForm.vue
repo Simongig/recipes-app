@@ -127,7 +127,7 @@ export default {
     document.querySelector('#recipe-form').addEventListener('submit', (e) => {
       e.preventDefault()
     })
-    axios.get('/api/v1/ingredient/units').then((response) => {
+    api.get('/api/v1/ingredient/units').then((response) => {
       this.unitOptions = response.data
       if (this.ingredients[0] && !this.ingredients[0].unit) {
         this.ingredients[0].unit = this.unitOptions[0]?.value ?? ''
