@@ -15,6 +15,7 @@ export default {
 
 <style>
 footer {
+  margin-top: 2rem;
   padding: 1rem;
   border-top: 1px solid var(--light-grey);
 }

@@ -1,38 +1,31 @@
 <template>
   <nav class="header-nav">
-    <div class="nav-inner" @click="closeNavOnLinkClick">
+    <div class="nav-inner">
       <div class="nav-brand">
-        <router-link class="nav-item home-link" to="/"
-          >Kochbuch.io<sup style="font-size: x-small; font-weight: normal; margin-left: 0.25rem"
-            >beta</sup
-          ></router-link
-        >
+        <router-link class="nav-item home-link" to="/">Kochbuch.io<sup
+            style="font-size: x-small; font-weight: normal; margin-left: 0.25rem">beta</sup></router-link>
       </div>
       <div class="nav-main-container">
         <div class="nav-links">
-          <router-link class="nav-item" to="/recipe/all">Alle Rezepte</router-link>
-          <router-link class="nav-item" to="/recipe/categories">Kategorien</router-link>
-          <router-link class="nav-item" to="/mealplans">Meal Planer</router-link>
-          <router-link class="nav-item" v-if="isLoggedIn" to="/createRecipe"
-            >Erstellen</router-link
-          >
+          <router-link class="nav-item" to="/recipe/all" @click="closeNav">Alle Rezepte</router-link>
+          <router-link class="nav-item" to="/recipe/categories" @click="closeNav">Kategorien</router-link>
+          <router-link class="nav-item" to="/mealplans" @click="closeNav">Meal Planer</router-link>
+          <router-link class="nav-item" v-if="isLoggedIn" to="/createRecipe" @click="closeNav">
+            Erstellen
+          </router-link>
         </div>
         <div class="nav-extra-items">
-          <router-link
-            class="nav-item nav-profile"
-            v-if="isLoggedIn"
-            to="/profile"
-            ><ion-icon name="person-outline"></ion-icon
-          ></router-link>
+          <router-link class="nav-item nav-profile" v-if="isLoggedIn" to="/profile"><ion-icon
+              name="person-outline"></ion-icon></router-link>
 
-          <router-link class="nav-item nav-login" v-else to="/login"
-            ><ion-icon name="person-add-outline"></ion-icon
-          ></router-link>
+          <router-link class="nav-item nav-login" v-else to="/login" @click="closeNav">
+            <ion-icon name="person-add-outline"></ion-icon>
+          </router-link>
         </div>
       </div>
-      <div class="nav-mobile-menu nav-item" @click="toggleNav">
-        <ion-icon class="nav-close-icon hydrated" name="close-outline"></ion-icon>
-        <ion-icon class="nav-menu-icon hydrated" name="menu-outline"></ion-icon>
+      <div class="nav-mobile-menu nav-item">
+        <ion-icon class="nav-close-icon hydrated" name="close-outline" @click="closeNav"></ion-icon>
+        <ion-icon class="nav-menu-icon hydrated" name="menu-outline"  @click="toggleNav"></ion-icon>
       </div>
     </div>
   </nav>
@@ -49,18 +42,14 @@ export default {
     return { authStore }
   },
   computed: {
-    isLoggedIn() { return this.authStore.isLoggedIn}
+    isLoggedIn() { return this.authStore.isLoggedIn }
   },
   methods: {
     toggleNav(event) {
-      let nav_container = event.target.closest('body')
-      nav_container.classList.toggle('nav-mobile-show')
+      document.body.classList.toggle('nav-mobile-show')
     },
-    closeNavOnLinkClick(event) {
-      console.log(event.target)
-      if (event.target.closest('.nav-links .nav-item, .nav-brand') == null) return
-      let nav_container = event.target.closest('body')
-      nav_container.classList.remove('nav-mobile-show')
+    closeNav() {
+      document.body.classList.remove('nav-mobile-show')
     },
   },
 }
@@ -86,8 +75,9 @@ export default {
   text-align: center;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  max-width: 1300px;
-  margin: auto;
+  width: auto;
+  margin-left: 10vw;
+  margin-right: 10vw;
 }
 
 .header-nav a.router-link-exact-active:not(.home-link),
@@ -148,14 +138,6 @@ export default {
   display: none;
 }
 
-@media (max-width: 1500px) {
-  .header-nav .nav-inner {
-    margin-left: 10vw;
-    margin-right: 10vw;
-    width: 80vw;
-  }
-}
-
 @media (max-width: 768px) {
   .nav-mobile-menu {
     display: flex;
@@ -203,11 +185,13 @@ export default {
   .nav-mobile-show .nav-inner {
     height: 100vh;
   }
+
   .nav-mobile-show .nav-inner {
     grid-template-areas: 'brand menu' 'main main';
     grid-template-columns: 1fr auto;
     grid-template-rows: auto 1fr;
   }
+
   .nav-mobile-show .nav-main-container {
     display: flex;
     flex-direction: column;
@@ -215,14 +199,14 @@ export default {
     margin: 2rem 0 3rem 0;
   }
 
-  .nav-links > .nav-item {
+  .nav-links>.nav-item {
     font-size: 1.7rem;
     font-weight: light;
     padding-top: 1.2rem;
     padding-bottom: 1.2rem;
   }
 
-  .nav-links > .nav-item::after {
+  .nav-links>.nav-item::after {
     content: '';
     background-image: url(/img/chevron-forward-outline.65e801bd.svg);
     height: 100%;
@@ -249,6 +233,16 @@ export default {
     margin-left: 5vw;
     margin-right: 5vw;
     width: 90vw;
+  }
+}
+
+@media (min-width: 1820px) {
+  .header-nav .nav-inner {
+    width: 1600px;
+    padding-left: 160px;
+    padding-right: 160px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 </style>

@@ -2,9 +2,9 @@
   <router-link class="card-wrapper" :to="{ name: 'recipePdp', params: { id: recipe.id } }">
     <section class="card" :style="`background-image: url(${recipe.imagePaths[0]})`">
       <div class="card-content">
-        <h2>{{ recipe.title }}</h2>
-        <span>Dauer: {{ recipe.duration }} min</span>
-        <span class="recipe-author">Author <b>Simon</b></span>
+        <h2 class="max-h-[120px]">{{ recipe.title }}</h2>
+        <span v-if="recipe.duration <= 60">{{ recipe.duration }} min</span>
+        <span v-else>{{ Math.floor(recipe.duration / 60) }} h {{ recipe.duration % 60 }} min</span>
       </div>
     </section>
   </router-link>
@@ -17,7 +17,16 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+
+h2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
 .card {
   border-radius: 10px;
   overflow: hidden;

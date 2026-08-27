@@ -18,7 +18,6 @@ export default {
   name: 'App',
   data() {
     return {
-      testCookie: -1 < document.cookie.indexOf('testCookie=true'),
     }
   },
   setup(){
@@ -53,13 +52,6 @@ html {
   background-color: var(--tertiary-color);
 }
 
-*:visited,
-*:active,
-a,
-ion-icon {
-  color: var(--dark-grey);
-}
-
 *,
 *:before,
 *:after {
@@ -68,14 +60,27 @@ ion-icon {
 }
 
 .app-container > div {
-  min-height: 100vh;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+  justify-content: space-between;
 }
 
 main {
   width: auto;
-  max-width: 1300px;
+  margin-left: 10vw;
+  margin-right: 10vw;
   height: 100%;
-  margin: 10vw auto;
+}
+
+@media (min-width: 1820px) {
+  main {
+    width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 160px;
+    padding-right: 160px;
+  }
 }
 
 #app {
@@ -99,14 +104,6 @@ main {
 ion-icon {
   font-size: 1.5rem;
 }
-
-@media (max-width: 1500px) {
-  main {
-    margin-left: 10vw;
-    margin-right: 10vw;
-  }
-}
-
 @media (max-width: 550px) {
   main {
     margin-left: 5vw;

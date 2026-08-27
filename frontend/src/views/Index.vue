@@ -7,21 +7,21 @@
         <button class="search-type-button" @click="search_type = 'recipes'">
           <label
             :class="search_type == 'recipes' ? 'selected' : ''"
-            class="search-type-toggle-item"
+            class="search-type-toggle-item cursor-pointer"
             for="recipes"
             >Rezepten</label
           >
           <input v-model="search_type" name="search-type" value="recipes" type="radio" />
         </button>
         oder
-        <button
+        <button disabled
           class="search-type-button search-type-ingredients"
+          title="Suche nach Zutaten ist noch nicht verfügbar"
           @click="search_type = 'ingredients'"
         >
-          <div class="search-type-toggle-nudge">Clicke um die Suche zu wechseln</div>
           <label
             :class="search_type == 'ingredients' ? 'selected' : ''"
-            class="search-type-toggle-item"
+            class="search-type-toggle-item cursor-not-allowed text-gray-400"
             for="ingredients"
             >Zutaten</label
           >
@@ -115,22 +115,14 @@ export default {
     }
   },
   methods: {
-    hideNudgeAfterTimeout() {
-      setTimeout(
-        () => {const nudge = document.querySelector('.search-type-toggle-nudge')
-        if (nudge) nudge.classList.add('nudge-hide')},
-        5000,
-      )
-    },
   },
   mounted() {
     this.recipeStore.fetchRecipes()
-    this.hideNudgeAfterTimeout()
   },
 }
 </script>
 
-<style>
+<style scoped>
 .index-page > section + section {
   margin-top: 4rem;
 }
@@ -161,52 +153,6 @@ h2 {
   position: relative;
 }
 
-.search-type-toggle-nudge {
-  position: absolute;
-  top: -200%;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  display: block;
-  overflow: visible;
-  width: 200px;
-  background-color: #caf5ff;
-  filter: brightness(1);
-  border-radius: 0.5rem;
-  padding: 0.25rem 0.5rem;
-  box-shadow: 0px 2px 11px 0px #d1d1d1;
-  animation: nudgeBounce 1s ease-out 3;
-}
-
-@keyframes nudgeBounce {
-  0% {
-    top: -200%;
-  }
-  50% {
-    top: -180%;
-  }
-  100% {
-    top: -200%;
-  }
-}
-
-.search-type-toggle-nudge::after {
-  content: '';
-  width: 10px;
-  height: 10px;
-  background-color: #caf5ff;
-  position: absolute;
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  transform: rotateZ(45deg);
-}
-
-.search-type-toggle-nudge.nudge-hide {
-  opacity: 0;
-  transition: opacity 1s;
-}
-
 .search-type-toggle {
   display: flex;
   align-items: center;
@@ -214,14 +160,8 @@ h2 {
   margin-bottom: 1rem;
 }
 
-.search-type-button {
-  all: unset;
-}
-
 .search-type-toggle-item {
-  cursor: pointer;
   line-height: 1.6;
-  color: var(--primary-color);
   text-underline-offset: 0.6ch;
   text-decoration: underline dotted;
 }
@@ -241,20 +181,6 @@ a:not(nav a) {
   text-decoration: none;
 }
 
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  grid-auto-rows: 460px;
-  gap: 10px;
-}
-
-.card-wrapper {
-  max-width: 460px;
-  min-width: 230px;
-  height: 460px;
-  width: 100%;
-  display: inline-block;
-}
 @media (max-width: 768px) {
   .search-wrapper h1 {
     font-size: 2.2rem;

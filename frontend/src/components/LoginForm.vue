@@ -1,8 +1,8 @@
 <template>
   <form class="boxshadow login-form" id="login-form" action="/login" method="post">
     <h2>Anmeldung</h2>
-    <input type="text" name="username" placeholder="username" id="" />
-    <input type="password" placeholder="Passwort" name="password" id="" />
+    <input type="text" name="username" placeholder="Benutzername" id="" />
+    <input type="password" name="password" placeholder="Passwort" id="" />
     <input type="submit" @click="submitForm" value="Anmelden" />
   </form>
 </template>
@@ -64,8 +64,7 @@ export default {
 .login-form {
   display: grid;
   grid-auto-rows: minmax(2rem, auto);
-  max-width: 40rem;
-  min-width: 320px;
+  width: min(90vw, 400px);
   margin: auto auto;
   gap: 10px;
   border: 1px solid rgba(100, 100, 111, 0.2);

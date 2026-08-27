@@ -1,5 +1,7 @@
 <template>
-  <create-recipe-form />
+  <main>
+    <create-recipe-form />
+  </main>
 </template>
 <script>
 import CreateRecipeForm from '../components/CreateRecipeForm.vue'

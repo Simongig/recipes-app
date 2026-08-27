@@ -283,8 +283,7 @@ export default {
 .recipe-create-form {
   display: grid;
   grid-auto-rows: minmax(2rem, auto);
-  max-width: 40rem;
-  min-width: 320px;
+  width: min(90vw, 700px);
   margin: auto auto;
   gap: 10px;
   border: 1px solid rgba(100, 100, 111, 0.2);
@@ -350,11 +349,6 @@ input {
 input[type='submit'] {
   background-color: darkgreen;
   color: white;
-}
-
-form > h2 {
-  margin: 0;
-  font-size: 1.5rem;
 }
 
 textarea {

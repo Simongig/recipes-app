@@ -139,7 +139,7 @@
     }
 
     h1 {
-        @apply text-6xl font-bold;
+        @apply text-5xl font-bold;
     }
 
     h2 {
@@ -150,9 +150,23 @@
         @apply text-2xl;
     }
 
-    h1,
+    h1 {
+        @apply mb-5;
+    }
+
     h2 {
-    padding-bottom: 1rem;
+        @apply mb-3;
+    }
+
+    *:visited,
+    *:active,
+    a,
+    ion-icon {
+        color: var(--main-color);
+    }
+
+    button{
+        @apply cursor-pointer;
     }
 
     body, html {
