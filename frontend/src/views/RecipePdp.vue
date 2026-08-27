@@ -1,41 +1,45 @@
 <template>
   <main class="recipe-pdp-wrapper" v-if="recipe != null">
-    <h1 class="site-title">Rezept für {{ recipe.title }}</h1>
-    <article class="recipe-pdp-content">
-      <div class="left-column">
-        <div class="img-wrapper">
-          <img :src="recipe.imagePaths[0]" alt="" />
+    <h1 class="site-title">{{ recipe.title }}</h1>
+    <article class="grid grid-cols-12 gap-6">
+      <section class="recipe-info-wrapper col-span-12 flex justify-end">
+        <div>
+          Dauer:<br> 
+          <span v-if="recipe.duration < 60" class="font-bold">{{ recipe.duration }} min</span>
+          <span v-else class="font-bold">{{ Math.floor(recipe.duration / 60) }} h {{ recipe.duration % 60 }} min</span>
         </div>
-        <section class="ingredients-wrapper">
-          <h2>Zutaten</h2>
-          <table>
-            <tr v-for="ingredient in recipe.ingredients" :key="ingredient.name">
-              <td>{{ formatIngredientQuantity(ingredient) }}</td>
-              <td>{{ ingredient.name }}</td>
-            </tr>
-          </table>
-        </section>
-      </div>
-      <div class="content-wrapper">
-        <section class="preparationSteps-wrapper" v-if="recipe.preparationSteps">
+      </section>
+      <section class="img-wrapper col-span-12 md:max-h-[400px] lg:max-h-[500px]">
+        <img class="md:max-h-[400px] lg:max-h-[500px]" :src="recipe.imagePaths[0]" alt="" />
+      </section>
+      <section class="ingredients-wrapper col-span-12 md:col-span-6 lg:col-span-4">
+        <h2>Zutaten</h2>
+        <p>für {{ recipe.portions }} Personen</p>
+        <table>
+          <tr v-for="ingredient in recipe.ingredients" :key="ingredient.name">
+            <td>{{ formatIngredientQuantity(ingredient) }}</td>
+            <td>{{ ingredient.name }}</td>
+          </tr>
+        </table>
+      </section>
+      <section class="content-wrapper col-span-12 md:col-span-6 lg:col-span-8">
+        <div class="preparationSteps-wrapper" v-if="recipe.preparationSteps">
           <h2 @click="toggleIngredientsDropDown">Zubereitung</h2>
           <table>
-            <div
-              class="preparationStep"
-              v-for="step in recipe.preparationSteps"
-              :key="step.title"
-              :id="'step-' + step.id"
-            >
+            <div class="preparationStep" v-for="(step, index) in recipe.preparationSteps" :key="step.title"
+              :id="'step-' + index">
               <tr>
-                <th>{{ step.title }}</th>
+                <th>
+                  <h3 class="text-lg font-semibold">{{ step.title }}</h3>
+                </th>
               </tr>
               <tr>
                 <td>{{ step.content }}</td>
               </tr>
             </div>
           </table>
-        </section>
-      </div>
+        </div>
+      </section>
     </article>
     <section class="ingredients-wrapper-sticky dropdown-closed">
       <h2>
@@ -69,7 +73,7 @@ export default {
     formatIngredientQuantity,
     toggleIngredientsDropDown() {
       const sticky_ingredients_el = document.querySelector('.ingredients-wrapper-sticky')
-      if( !sticky_ingredients_el ) return;
+      if (!sticky_ingredients_el) return;
       sticky_ingredients_el.classList.toggle('dropdown-closed')
     },
     makeIngredientsSticky() {
@@ -108,13 +112,9 @@ export default {
 }
 </script>
 
-<style>
-.recipe-pdp-content {
-  width: auto;
-  height: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 2rem;
+<style scoped>
+.preparationSteps-wrapper {
+  width: 100%;
 }
 
 .ingredients-wrapper table,
@@ -125,20 +125,20 @@ export default {
   overflow-y: auto;
 }
 
-.ingredients-wrapper tr + tr,
-.ingredients-wrapper-sticky tr + tr,
-.preparationSteps-wrapper .preparationStep + .preparationStep {
+.ingredients-wrapper tr+tr,
+.ingredients-wrapper-sticky tr+tr,
+.preparationSteps-wrapper .preparationStep+.preparationStep {
   border-top: 1px solid #0000001c;
   border-collapse: collapse;
 }
 
-.preparationSteps-wrapper .preparationStep + .preparationStep {
+.preparationSteps-wrapper .preparationStep+.preparationStep {
   margin: 1rem 0;
+  padding-top: 1rem;
 }
 
 .ingredients-wrapper tr,
-.ingredients-wrapper-sticky tr,
-.preparationSteps-wrapper .preparationStep {
+.ingredients-wrapper-sticky tr {
   padding: 0.5rem;
 }
 
@@ -148,13 +148,14 @@ export default {
   padding-left: 1rem;
 }
 
-.img-wrapper > img {
-  aspect-ratio: 5/4;
-  object-fit: cover;
-  object-position: center;
+.img-wrapper {
+  width: 100%;
+  height: 100%;
 }
 
-.recipe-pdp-wrapper img {
+.img-wrapper>img {
+  object-fit: cover;
+  object-position: center;
   width: 100%;
 }
 
@@ -174,13 +175,13 @@ export default {
   display: block;
 }
 
-.ingredients-wrapper-sticky > h2 {
+.ingredients-wrapper-sticky>h2 {
   margin-left: 2rem;
   display: flex;
   align-items: center;
 }
 
-.ingredients-wrapper-sticky.dropdown-closed > h2 {
+.ingredients-wrapper-sticky.dropdown-closed>h2 {
   margin-bottom: 0;
 }
 
@@ -192,7 +193,7 @@ export default {
   margin-left: 0.5rem;
 }
 
-.ingredients-wrapper-sticky.dropdown-closed > table {
+.ingredients-wrapper-sticky.dropdown-closed>table {
   display: none;
 }
 </style>

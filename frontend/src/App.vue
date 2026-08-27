@@ -67,11 +67,6 @@ ion-icon {
   font-family: Avenir, Helvetica, Arial, sans-serif;
 }
 
-h1,
-h2 {
-  padding-bottom: 1rem;
-}
-
 .app-container > div {
   min-height: 100vh;
 }

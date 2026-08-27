@@ -58,7 +58,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 table {
     max-width: 300px;
     display: flex;
@@ -67,7 +67,6 @@ table {
 
 tr {
     display: flex;
-    
 }
 
 td {
