@@ -92,10 +92,11 @@ const isFavorite = ref(false)
 formatIngredientQuantity
 
 const route = useRoute()
-
-userStore.fetchUser().then(() => {
-  isFavorite.value = userStore.user?.recipes?.includes(route.params.id)
-})
+if (authStore.isLoggedIn) {
+  userStore.fetchUser().then(() => {
+    isFavorite.value = userStore.user?.recipes?.includes(route.params.id)
+  })
+}
 const user = ref(userStore.user)
 
 function setMetaTag(attr, key, content) {
