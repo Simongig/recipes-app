@@ -64,6 +64,11 @@ public class UserAccessService_MongoAtlas implements UserDao, UserDetailsService
     }
 
     @Override
+    public void update(User user) {
+        userCollection.replaceOne(eq("_id", user.getUsername()), user);
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userOptional = findById(username);
         if (!userOptional.isPresent()) {
@@ -87,9 +92,10 @@ public class UserAccessService_MongoAtlas implements UserDao, UserDetailsService
 
     @Override
     public void addRoleToUser(String username, String roleName) {
-        
-        Bson roleFilter =  eq("name", roleName);
+        Bson roleFilter = eq("name", roleName);
         UserRole role = userRoleCollection.find(roleFilter).first();
-        findById(username).get().getRoles().add(role);
+        User user = findById(username).get();
+        user.getRoles().add(role);
+        update(user);
     }
 }

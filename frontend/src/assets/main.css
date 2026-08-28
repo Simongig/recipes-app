@@ -160,8 +160,7 @@
 
     *:visited,
     *:active,
-    a,
-    ion-icon {
+    a {
         color: var(--main-color);
     }
 

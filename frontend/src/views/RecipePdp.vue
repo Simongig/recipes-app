@@ -1,7 +1,9 @@
 <template>
   <main class="recipe-pdp-wrapper" v-if="recipe != null">
-    <h1 class="mb-0 pb-0 text-4xl md:text-5xl md:max-w-[70%]">{{ recipe.title }}</h1>
-    <article class="grid grid-cols-12 gap-6">
+    <div class="flex items-baseline justify-between mb-3">
+      <h1 class="mb-0 pb-0 text-4xl md:text-5xl md:max-w-[70%]">{{ recipe.title }}</h1>
+      <button><Heart @click="toggleAddToFavorites" :class="isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-500'" class="w-7 h-7 mb-3 cursor-pointer" /></button>    </div>
+      <article class="grid grid-cols-12 gap-6">
       <section class="recipe-info-wrapper col-span-12 flex justify-end">
         <div>
           Dauer:<br>
@@ -50,9 +52,9 @@
     </article>
     <section class="ingredients-wrapper-sticky dropdown-closed" ref="ingredientsListSticky">
       <div @click="toggleIngredientsDropdown">
-        <h2 class="flex items-center ml-[1.4rem] mb-0" >
+        <h2 class="flex items-center ml-[1.4rem] mb-0">
           Zutaten
-          <ion-icon class="chevron-up-outline hydrated" name="chevron-up-outline"></ion-icon>
+          <ChevronUpIcon class="chevron-up-outline w-8 h-8" />
         </h2>
       </div>
       <table class="grid grid-cols-2 overflow-y-scroll max-h-[75vh] mt-3">
@@ -62,103 +64,123 @@
         </tr>
       </table>
     </section>
-    <div class="alerts-container">
-      <Alert ref="alert" class="border-green-700 bg-green-100 fixed top-[15vh] left-1/2 -translate-x-1/2 w-fit z-50"
-        v-if="alertTitle">
-        <CheckCircle2Icon />
-        <AlertTitle>{{ alertTitle }}</AlertTitle>
-      </Alert>
-    </div>
   </main>
   <div v-else>Couldn't find this recipe</div>
 </template>
 
-<script>
+<script setup>
 // import Button from '../components/Button.vue';
 import axios from 'axios'
+import api from '@/services/api'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { formatIngredientQuantity } from '../utils/ingredients'
-import { CheckCircle2Icon, CopyIcon } from '@lucide/vue'
+import { CheckCircle2Icon, CopyIcon, Heart, ChevronUpIcon } from '@lucide/vue'
 import { Alert, AlertTitle } from "@/components/ui/alert"
-export default {
-  components: { Alert, AlertTitle, CheckCircle2Icon, CopyIcon },
-  data() {
-    return {
-      recipe: null,
-      alertTitle: '',
+import { useAlertStore } from '@/stores/alertStore'
+import { useAuthStore } from '@/stores/authStore'
+import { useUserStore } from '@/stores/userStore'
+import { useRoute } from "vue-router";
+
+const recipe = ref(null)
+const ingredientsTable = ref(null)
+const alertStore = useAlertStore()
+const authStore = useAuthStore()
+const userStore = useUserStore()
+const ingredientsListSticky = ref(null)
+const isFavorite = ref(false)
+  
+formatIngredientQuantity
+
+const route = useRoute()
+
+userStore.fetchUser().then(() => {
+  isFavorite.value = userStore.user?.recipes?.includes(route.params.id)
+})
+const user = ref(userStore.user)
+
+onMounted(() => {
+  axios
+    .get('/api/v1/recipe/id/' + route.params.id)
+    .then((response) => {
+      recipe.value = response.data
+      document.title = 'kochbuch.io - ' + recipe.value.title
+    })
+    .catch((reason) => {
+      console.error(reason)
+    })
+  document.addEventListener('scroll', makeIngredientsSticky)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('scroll', makeIngredientsSticky)
+})
+
+function toggleIngredientsDropdown() {
+  const ingredients_sticky_el = ingredientsListSticky.value;
+  if (!ingredients_sticky_el) return;
+  ingredients_sticky_el.classList.toggle('dropdown-closed')
+}
+
+function makeIngredientsSticky() {
+  let ingredients_elem = document.querySelector('.ingredients-wrapper')
+  let ingredients_elem_sticky = ingredientsListSticky.value
+
+  if (null == ingredients_elem || null == ingredients_elem_sticky) {
+    return
+  }
+  let scrolldepth_lower_than_element =
+    window.scrollY > ingredients_elem.offsetTop + ingredients_elem.offsetHeight
+  if (scrolldepth_lower_than_element) {
+    ingredients_elem_sticky.classList.add('visible')
+    document.body.classList.add('ingredients-sticky-visible')
+    ingredients_elem_sticky.classList.add('dropdown-closed')
+  } else {
+    document.body.classList.remove('ingredients-sticky-visible')
+    ingredients_elem_sticky.classList.remove('visible')
+  }
+}
+
+function toggleAddToFavorites() {
+  if (!authStore.isLoggedIn) {
+    alertStore.addAlert({ title: 'Nicht authentifiziert', message: 'Bitte melden Sie sich an, um Rezepte zu Ihren Favoriten hinzuzufügen.', type: 'error' })
+    return
+  }
+  api.patch('/api/v1/user/updateRecipe', { recipeId: recipe.value.id, add: !isFavorite.value })
+    .then((response) => {
+      if (200 != response.status) {
+        alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Hinzufügen zu den Favoriten schiefgelaufen :( \n Code: ' + response.status, type: 'error' })
+        return;
+      }
+      userStore.setUser(response.data) // TODO: Validate UserDTO structure
+      isFavorite.value = !isFavorite.value
+      })
+    .catch((e) => {
+      alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Hinzufügen zu den Favoriten schiefgelaufen :(', type: 'error' })
+      console.error(e)
+    })
+}
+
+function copyToClipboard() {
+  let ingredients_elem = ingredientsTable.value
+  if (null == ingredients_elem) {
+    return
+  }
+  let ingredients_text = ''
+  for (let i = 0; i < ingredients_elem.rows.length; i++) {
+    let row = ingredients_elem.rows[i]
+    let quantity = row.cells[0].innerText
+    let name = row.cells[1].innerText
+    ingredients_text += `${quantity} ${name}\n`
+  }
+  navigator.clipboard.writeText(ingredients_text).then(
+    () => {
+      alertStore.addAlert({ title: 'Zutaten kopiert', duration: 1.5, type: 'success' })
+    },
+    (err) => {
+      console.error('Could not copy text: ', err)
+      alertStore.addAlert({ title: 'Konnte Zutaten nicht kopieren', type: 'error' })
     }
-  },
-  methods: {
-    formatIngredientQuantity,
-    toggleIngredientsDropdown() {
-      const ingredients_sticky_el = this.$refs.ingredientsListSticky;
-      if (!ingredients_sticky_el) return;
-      ingredients_sticky_el.classList.toggle('dropdown-closed')
-    },
-    makeIngredientsSticky() {
-      let ingredients_elem = document.querySelector('.ingredients-wrapper')
-      let ingredients_elem_sticky = this.$refs.ingredientsListSticky
-
-      if (null == ingredients_elem || null == ingredients_elem_sticky) {
-        return
-      }
-      let scrolldepth_lower_than_element =
-        window.scrollY > ingredients_elem.offsetTop + ingredients_elem.offsetHeight
-      if (scrolldepth_lower_than_element) {
-        ingredients_elem_sticky.classList.add('visible')
-        document.body.classList.add('ingredients-sticky-visible')
-        ingredients_elem_sticky.classList.add('dropdown-closed')
-      } else {
-        document.body.classList.remove('ingredients-sticky-visible')
-        ingredients_elem_sticky.classList.remove('visible')
-      }
-    },
-    copyToClipboard() {
-      let ingredients_elem = this.$refs.ingredientsTable
-      if (null == ingredients_elem) {
-        return
-      }
-      let ingredients_text = ''
-      for (let i = 0; i < ingredients_elem.rows.length; i++) {
-        let row = ingredients_elem.rows[i]
-        let quantity = row.cells[0].innerText
-        let name = row.cells[1].innerText
-        ingredients_text += `${quantity} ${name}\n`
-      }
-      navigator.clipboard.writeText(ingredients_text).then(
-        () => {
-          this.alertTitle = 'Zutatenliste kopiert'
-          setTimeout(() => {
-            this.alertTitle = ''
-            this.alertDescription = ''
-          }, 5000)
-        },
-        (err) => {
-          console.error('Could not copy text: ', err)
-          this.alertTitle = 'Fehler beim Kopieren'
-          setTimeout(() => {
-            this.alertTitle = ''
-            this.alertDescription = ''
-
-          }, 5000)
-        }
-      )
-    },
-  },
-  mounted() {
-    axios
-      .get('/api/v1/recipe/id/' + this.$route.params.id)
-      .then((response) => {
-        this.recipe = response.data
-        document.title = 'kochbuch.io - ' + this.recipe.title
-      })
-      .catch((reason) => {
-        console.error(reason)
-      })
-    document.addEventListener('scroll', this.makeIngredientsSticky)
-  },
-  beforeUnmount() {
-    document.removeEventListener('scroll', this.makeIngredientsSticky)
-  },
+  )
 }
 </script>
 
@@ -217,7 +239,7 @@ export default {
 }
 
 :global(.ingredients-sticky-visible) {
-	padding-bottom: 4rem;
+  padding-bottom: 4rem;
 }
 
 .ingredients-wrapper-sticky.dropdown-closed>h2 {

@@ -13,7 +13,7 @@
             aria-label="Search through site content"
             @input="(event) => (searchInput = event.target.value)"
           />
-          <ion-icon name="search-outline" class="search-icon hydrated"></ion-icon>
+          <Search class="search-icon hydrated mx-4"></Search>
         </div>
         <div v-if="0 < searchResults.length" class="search-result-wrapper">
           <ol class="results">
@@ -32,9 +32,11 @@
 <script>
 import { watchDebounced } from '@vueuse/core'
 import { ref } from 'vue';
+import { Search } from '@lucide/vue'
 
 export default {
   name: 'searchInputRecipes',
+  components: { Search },
   setup() {
     const searchInput = ref('')
     const searchResults = ref([])
@@ -108,12 +110,6 @@ export default {
   margin-right: 10px;
 }
 
-.search svg {
-  box-sizing: border-box;
-  color: #fff;
-  margin: 5px;
-}
-
 ol.results > li {
   cursor: pointer;
   padding: 0.25rem 0;
@@ -160,11 +156,6 @@ ol.results > li:hover {
 
 input#search-input:focus {
   outline: none;
-}
-
-.search ion-icon.search-icon {
-  padding: 0 1rem;
-  cursor: pointer;
 }
 
 .search input {

@@ -2,6 +2,14 @@
   <div class="app-container">
     <div>
       <navbar></navbar>
+      <div v-for="alert in alertStore.alerts" :key="alert.id" class="alerts-container">
+        <Alert ref="alert" class="border-green-700 bg-green-100 fixed top-[15vh] left-1/2 -translate-x-1/2 w-fit z-50"
+          v-if="alert.title">
+          <CheckCircle2Icon />
+          <AlertTitle>{{ alert.title }}</AlertTitle>
+          <AlertDescription>{{ alert.message }}</AlertDescription>
+        </Alert>
+      </div>
       <router-view></router-view>
       <Footer></Footer>
     </div>
@@ -9,30 +17,27 @@
 </template>
 
 <script>
-import { useAuthStore } from '@/stores/authStore'
+import { useAuthStore} from '@/stores/authStore'
+import { useAlertStore} from '@/stores/alertStore'
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
+import { CheckCircle2Icon } from '@lucide/vue'
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 
 
 export default {
   name: 'App',
-  data() {
-    return {
-    }
-  },
+  components: { Alert, AlertTitle, AlertDescription, CheckCircle2Icon, Navbar, Footer },
   setup(){
     const authStore = useAuthStore();
-    return { authStore }
+    const alertStore = useAlertStore();
+    return { authStore, alertStore }
   },
   mounted() {
     var user_data = localStorage.getItem('access_token');
     if (null != user_data) {
       this.authStore.setToLoggedIn();
     }
-  },
-  components: {
-    Navbar,
-    Footer,
   },
 }
 </script>
@@ -97,12 +102,8 @@ main {
   align-items: center;
 }
 
-.app-container > div > *:nth-child(2) {
+.app-container > div > main{
   margin-top: 10rem;
-}
-
-ion-icon {
-  font-size: 1.5rem;
 }
 @media (max-width: 550px) {
   main {

@@ -22,7 +22,7 @@
             aria-label="Search through site content"
             @input="(event) => (searchInput = event.target.value)"
           />
-          <ion-icon name="search-outline" class="search-icon hydrated"></ion-icon>
+          <Search class="search-icon hydrated mx-4"></Search>
         </div>
         <div v-if="0 < searchResults.length" class="search-result-wrapper">
           <ol class="results">
@@ -51,9 +51,10 @@
 import SearchChip from './SearchChip.vue'
 import RecipeCard from './RecipeCard-v2.vue'
 import axios from 'axios'
+import { Search } from '@lucide/vue'
 
 export default {
-  components: { SearchChip, RecipeCard },
+  components: { SearchChip, RecipeCard, Search },
   name: 'searchInputIngredients',
   data() {
     return {
@@ -217,11 +218,6 @@ ol.results > li:hover {
 
 input#search-input:focus {
   outline: none;
-}
-
-.search ion-icon.search-icon {
-  padding: 0 1rem;
-  cursor: pointer;
 }
 
 .search input {

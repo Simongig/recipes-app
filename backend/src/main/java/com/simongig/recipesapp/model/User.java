@@ -21,7 +21,7 @@ public class User {
     private String lastName;
     private String email;
     private String password;
-    private List<Recipe> recipes;
+    private List<String> recipes;
     private Collection<UserRole> roles;
 
     public User(
@@ -90,11 +90,25 @@ public class User {
         this.password = password;
     }
 
-    public List<Recipe> getRecipes() {
+    public List<String> getRecipes() {
         return this.recipes;
     }
 
-    public void setRecipes(List<Recipe> recipes) {
+    public void addRecipe(String recipeId) {
+        if (this.recipes == null) {
+            this.recipes = new ArrayList<>();
+        }
+        this.recipes.add(recipeId);
+    }
+
+    public void removeRecipe(String recipeId) {
+        if (this.recipes == null) {
+            return;
+        }
+        this.recipes.remove(recipeId);
+    }
+
+    public void setRecipes(List<String> recipes) {
         this.recipes = recipes;
     }
 

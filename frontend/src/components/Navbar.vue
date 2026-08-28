@@ -2,30 +2,32 @@
   <nav class="header-nav">
     <div class="nav-inner">
       <div class="nav-brand">
-        <router-link class="nav-item home-link" to="/">Kochbuch.io<sup
+        <router-link class="nav-item home-link" to="/" @click="closeNav">Kochbuch.io<sup
             style="font-size: x-small; font-weight: normal; margin-left: 0.25rem">beta</sup></router-link>
       </div>
       <div class="nav-main-container">
         <div class="nav-links">
           <router-link class="nav-item" to="/recipe/all" @click="closeNav">Alle Rezepte</router-link>
-          <router-link class="nav-item" to="/recipe/categories" @click="closeNav">Kategorien</router-link>
+          <!-- <router-link class="nav-item" to="/recipe/categories" @click="closeNav">Kategorien</router-link> -->
+          <div disabled class="nav-item color-gray cursor-not-allowed">Kategorien</div>
           <router-link class="nav-item" to="/mealplans" @click="closeNav">Meal Planer</router-link>
           <router-link class="nav-item" v-if="isLoggedIn" to="/createRecipe" @click="closeNav">
             Erstellen
           </router-link>
         </div>
         <div class="nav-extra-items">
-          <router-link class="nav-item nav-profile" v-if="isLoggedIn" to="/profile"><ion-icon
-              name="person-outline"></ion-icon></router-link>
+          <router-link class="nav-profile" v-if="isLoggedIn" to="/profile" @click="closeNav">
+            <UserRound class="w-7 h-7" />
+          </router-link>
 
-          <router-link class="nav-item nav-login" v-else to="/login" @click="closeNav">
-            <ion-icon name="person-add-outline"></ion-icon>
+          <router-link class="nav-login" v-else to="/login" @click="closeNav">
+            <UserRoundPlus class="w-7 h-7" />
           </router-link>
         </div>
       </div>
       <div class="nav-mobile-menu nav-item">
-        <ion-icon class="nav-close-icon hydrated" name="close-outline" @click="closeNav"></ion-icon>
-        <ion-icon class="nav-menu-icon hydrated" name="menu-outline"  @click="toggleNav"></ion-icon>
+        <button><X class="nav-close-icon w-6 h-6" @click="toggleNav"></X></button>
+        <button><Menu class="nav-menu-icon w-6 h-6" @click="toggleNav"></Menu></button>
       </div>
     </div>
   </nav>
@@ -33,10 +35,12 @@
 
 <script>
 import { useAuthStore } from '@/stores/authStore'
+import {  UserRoundPlus, UserRound, X, Menu } from '@lucide/vue'
 
 
 export default {
   name: 'Navbar',
+  components: { UserRoundPlus, UserRound, X, Menu },
   setup() {
     const authStore = useAuthStore()
     return { authStore }
@@ -67,7 +71,6 @@ export default {
   margin-bottom: 3rem;
   box-shadow: 0px 0px 22px -2px #cecece;
   z-index: 100;
-  color: white;
   backdrop-filter: blur(20px);
 }
 
@@ -112,13 +115,6 @@ export default {
 .nav-item {
   padding: 0.5rem 0.5rem 0.5rem 0;
   text-decoration: none;
-  cursor: pointer;
-}
-
-.nav-profile {
-  background-color: var(--light-grey);
-  border-radius: 50%;
-  padding: 0.5rem;
 }
 
 .nav-mobile-menu {
@@ -205,17 +201,6 @@ export default {
     padding-top: 1.2rem;
     padding-bottom: 1.2rem;
   }
-
-  .nav-links>.nav-item::after {
-    content: '';
-    background-image: url(/img/chevron-forward-outline.65e801bd.svg);
-    height: 100%;
-    display: inline-block;
-    width: 20px;
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-
   .nav-mobile-show .nav-links {
     flex-direction: column;
     align-items: flex-start;

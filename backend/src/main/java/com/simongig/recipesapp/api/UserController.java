@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,7 +48,7 @@ public class UserController {
     }
 
     @GetMapping("/user/me")
-    public Optional<User> getProfile() {
+    public Optional<UserService.UserDTO> getProfile() {
         return userService.getProfile();
     }
 
@@ -64,6 +65,15 @@ public class UserController {
     @PostMapping("/role/save")
     public void saveRole(@RequestBody UserRole role) {
         userService.saveUserRole(role);
+    }
+
+
+    @PatchMapping("/user/updateRecipe")
+    public void updateRecipe(@RequestBody UpdateRecipeForm form) {
+        userService.updateRecipeInUser(form.recipeId(), form.add());
+    }
+
+    public record UpdateRecipeForm(String recipeId, boolean add) {
     }
 
     @PostMapping("/user/addRole")
@@ -119,7 +129,7 @@ public class UserController {
         }
     }
 
-    class addRoleToUserForm {
+    public class addRoleToUserForm {
         private String username;
         private String role;
 

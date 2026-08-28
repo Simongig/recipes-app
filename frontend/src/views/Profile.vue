@@ -24,10 +24,10 @@
             </tr>
         </table>
         
-        <section class="profile_recipes-section" v-if="recipes">
-            <h2>Your Recipes ({{ recipes.length }})</h2>
-            <ul v-for="recipe in recipes">
-                <li>recipe</li>
+        <section class="profile_recipes-section" v-if="user.recipes">
+            <h2>Deine Rezepte ({{ user.recipes.length }})</h2>
+            <ul>
+                <li v-for="recipe in user.recipes" :key="recipe.id"><router-link :to="`/recipe/id/${recipe}`">{{ recipe }}</router-link></li>
             </ul>
         </section>
     </main>

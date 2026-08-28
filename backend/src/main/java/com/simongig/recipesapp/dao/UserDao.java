@@ -19,6 +19,8 @@ public interface UserDao {
 
     void save(User user);
 
+    void update(User user);
+
     void saveRole(UserRole role);
 
     void addRoleToUser(String username, String roleName);

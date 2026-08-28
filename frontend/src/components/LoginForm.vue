@@ -1,62 +1,61 @@
 <template>
-  <form class="boxshadow login-form" id="login-form" action="/login" method="post">
-    <h2>Anmeldung</h2>
-    <input type="text" name="username" placeholder="Benutzername" id="" />
-    <input type="password" name="password" placeholder="Passwort" id="" />
-    <input type="submit" @click="submitForm" value="Anmelden" />
-  </form>
+  <section>
+    <form class="boxshadow login-form" ref="login-form" id="login-form" action="/login" method="post">
+      <h2>Anmeldung</h2>
+      <input type="text" name="username" placeholder="Benutzername" id="" />
+      <input type="password" name="password" placeholder="Passwort" id="" />
+      <input type="submit" @click="submitForm" value="Anmelden" />
+    </form>
+  </section>
 </template>
 
-<script>
+<script setup lang="ts">
 import axios from 'axios'
 import router from '../router'
 import { useAuthStore } from '@/stores/authStore'
+import { useAlertStore } from '@/stores/alertStore'
+import { onMounted, ref } from 'vue'
 
 
-export default {
-  name: 'login-form',
-  setup() {
-    const authStore = useAuthStore()
-    return {authStore}
-  },
-  mounted() {
-    document.querySelector('#login-form').addEventListener('submit', (e) => {
-      e.preventDefault()
+const name = 'login-form'
+const authStore = useAuthStore()
+const alertStore = useAlertStore()
+
+const loginForm = ref<HTMLFormElement | null>(null)
+
+function submitForm() {
+  const params = new URLSearchParams()
+  const form = loginForm.value
+  if (!form) {
+    alertStore.addAlert({ title: 'Fehler', message: 'Ein Fehler ist aufgetreten. Bitte versuche es erneut', type: 'error' })
+    return
+  }
+  const formData = new FormData(form)
+  params.append('username', String(formData.get('username') ?? ''))
+  params.append('password', String(formData.get('password') ?? ''))
+  axios
+    .post('/api/v1/auth/login', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     })
-  },
-  methods: {
-    
-    submitForm() {
-      const params = new URLSearchParams()
-      const form = document.querySelector('#login-form')
-      const formData = new FormData(form)
-      params.append('username', formData.get('username'))
-      params.append('password', formData.get('password'))
-      axios
-        .post('/api/v1/auth/login', params, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-        })
-        .then((response) => {
-          if (200 != response.status) {
-            alert('Oh nein! Irgendwas ist beim Login schiefgelaufen :( \n Code: ' + response.status)
-            return;
-          } 
-          alert('Super! Dein Login war erfolgreich!')
-          localStorage.setItem('access_token', response.data.access_token)
-          localStorage.setItem('refresh_token', response.data.refresh_token)
-          if (response.data.access_token) {
-            this.authStore.setToLoggedIn();
-          }
-          router.push({ path: '/' })
-        })
-        .catch((e) => {
-          alert('Oh nein! Irgendwas ist beim Login schiefgelaufen :(')
-          console.error(e)
-        })
-    },
-  },
+    .then((response) => {
+      if (200 != response.status) {
+        alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Login schiefgelaufen :( \n Code: ' + response.status, type: 'error' })
+        return;
+      }
+      localStorage.setItem('access_token', response.data.access_token)
+      localStorage.setItem('refresh_token', response.data.refresh_token)
+      if (response.data.access_token) {
+        alertStore.addAlert({ title: 'Erfolg', message: 'Erfolgreich eingeloggt!', type: 'success' })
+        authStore.setToLoggedIn();
+      }
+      router.push({ path: '/' })
+    })
+    .catch((e) => {
+      alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Login schiefgelaufen :(', type: 'error' })
+      console.error(e)
+    })
 }
 </script>
 

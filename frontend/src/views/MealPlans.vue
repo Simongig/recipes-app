@@ -1,6 +1,6 @@
 <template>
   <main class="mx-auto max-w-6xl px-4 py-8">
-    <h1 class="mb-6 text-6xl font-bold">Dein Wochenplan</h1>
+    <h1 class="">Dein Wochenplan</h1>
 
     <section class="grid md:grid-cols-1 gap-4 lg:grid-cols-[1fr_1fr_1fr]">
       <Card class="mb-6 p-[1rem_2rem]">
@@ -66,7 +66,8 @@
           </CardTitle>
         </CardHeader>
         <CardContent class="space-y-3 col-span-3">
-          <MealPlanRecipeCard :recipe="mealPlan.recipes[mealId]" :mealSlot="mealSlot" v-for="(mealId, mealSlot) in day.meals" :key="mealSlot" />
+          <MealPlanRecipeCard v-if="Object.entries(mealPlan.recipes).length > 0" :recipe="mealPlan.recipes[mealId]" :mealSlot="mealSlot" v-for="(mealId, mealSlot) in day.meals" :key="mealSlot" />
+          <p v-else class="text-muted-foreground">No recipes available for this day.</p>    
         </CardContent>
       </Card>
     </div>
@@ -84,8 +85,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Calendar } from '@/components/ui/calendar'
 import { Textarea } from '@/components/ui/textarea'
 import { useAuthStore } from '@/stores/authStore'
+import { useAlertStore } from '@/stores/alertStore'
 
 const authStore = useAuthStore()
+const alertStore = useAlertStore()
 
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 
@@ -113,8 +116,6 @@ interface MealPlan {
   recipes: Record<string, { id: string; title: string; description: string, imagePaths: string[], portions: number, duration: number }>
   provenance: MealPlanProvenance | null
 }
-
-
 
 const generationQuery = ref('')
 const job = ref<GenerationJob | null>(null)
@@ -207,62 +208,7 @@ function fetchCurrentMealPlan() {
     })
     .catch((error) => {
       console.error('Error fetching current meal plan, falling back to dummy meal plan:', error)
-      mealPlan.value = buildDummyMealPlan()
     })
-}
-
-// Fallback so the page always has something to show (e.g. on a fresh production
-// deployment with no meal plan generated yet). Never persisted — display only.
-function buildDummyMealPlan(): MealPlan {
-  const monday = getMonday(new Date())
-  const dummyRecipes: MealPlan['recipes'] = {
-    'dummy-recipe-1': {
-      id: 'dummy-recipe-1',
-      title: 'Porridge mit Beeren',
-      description: 'Haferflocken mit Milch, Honig und frischen Beeren.',
-      imagePaths: [],
-      portions: 2,
-      duration: 10,
-    },
-    'dummy-recipe-2': {
-      id: 'dummy-recipe-2',
-      title: 'Linsensuppe',
-      description: 'Herzhafte Linsensuppe mit Karotten und Sellerie.',
-      imagePaths: [],
-      portions: 4,
-      duration: 40,
-    },
-    'dummy-recipe-3': {
-      id: 'dummy-recipe-3',
-      title: 'Gebratener Lachs mit Gemüse',
-      description: 'Lachsfilet mit Ofengemüse und Kräuterbutter.',
-      imagePaths: [],
-      portions: 2,
-      duration: 30,
-    },
-  }
-
-  const entries = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(monday.getTime() + i * 24 * 60 * 60 * 1000)
-    return {
-      date: toIsoDate(date),
-      meals: {
-        BREAKFAST: 'dummy-recipe-1',
-        LUNCH: 'dummy-recipe-2',
-        DINNER: 'dummy-recipe-3',
-      },
-    }
-  })
-
-  return {
-    id: 'dummy-meal-plan',
-    ownerId: 'dummy-owner',
-    entries,
-    startDate: entries[0].date,
-    endDate: entries[entries.length - 1].date,
-    recipes: dummyRecipes,
-    provenance: null,
-  }
 }
 
 function fetchGeneratedMealPlanById() {
