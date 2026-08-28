@@ -98,12 +98,30 @@ userStore.fetchUser().then(() => {
 })
 const user = ref(userStore.user)
 
+function setMetaTag(attr, key, content) {
+  if (!content) return
+  let el = document.querySelector(`meta[${attr}="${key}"]`)
+  if (!el) {
+    el = document.createElement('meta')
+    el.setAttribute(attr, key)
+    document.head.appendChild(el)
+  }
+  el.setAttribute('content', content)
+}
+
 onMounted(() => {
   axios
     .get('/api/v1/recipe/id/' + route.params.id)
     .then((response) => {
       recipe.value = response.data
-      document.title = 'kochbuch.io - ' + recipe.value.title
+      const title = 'kochbuch.io - ' + recipe.value.title
+      document.title = title
+      setMetaTag('property', 'og:title', title)
+      setMetaTag('name', 'twitter:title', title)
+      const image = recipe.value.imagePaths?.[0]
+      setMetaTag('property', 'og:image', image)
+      setMetaTag('name', 'twitter:image', image)
+      setMetaTag('property', 'og:url', window.location.href)
     })
     .catch((reason) => {
       console.error(reason)

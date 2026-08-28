@@ -60,6 +60,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/token/refresh").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/recipe/all", "/api/v1/recipe/id/*").permitAll()
+                // Server-side Open Graph preview for social-media crawlers, see RecipeSocialPreviewController.
+                .requestMatchers(HttpMethod.GET, "/recipe/id/*").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/recipe/search").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/recipe/add").hasAnyAuthority(ROLE_USER.name(), ROLE_ADMIN.name())
                 // ml-service calls this back with generation results; it has no user JWT,

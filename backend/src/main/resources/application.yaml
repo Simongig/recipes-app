@@ -10,6 +10,7 @@ jwt:
   secret: ${JWT_SECRET}
 
 app:
+  base-url: ${APP_BASE_URL:http://localhost:8081}
   admin:
     username: ${ADMIN_USERNAME}
     password: ${ADMIN_PASSWORD}
@@ -17,6 +18,11 @@ app:
 ml-service:
   base-url: ${ML_SERVICE_URL:http://localhost:8000}
   api-key: ${ML_SERVICE_API_KEY}
+
+frontend:
+  # SPA shell (index.html) is fetched from here for social-preview meta-tag injection.
+  # In prod this is the internal nginx service; locally it's the Vite dev server.
+  internal-url: ${FRONTEND_INTERNAL_URL:http://localhost:8081}
 
 server:
   # ssl:

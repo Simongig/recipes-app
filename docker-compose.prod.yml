@@ -13,6 +13,8 @@ services:
       HF_TOKEN: ${HF_TOKEN}
       ML_SERVICE_URL: http://ml-service:8000
       ML_SERVICE_API_KEY: ${ML_SERVICE_API_KEY}
+      APP_BASE_URL: https://kochbuch.io
+      FRONTEND_INTERNAL_URL: http://frontend:8080
     # depends_on: [ml-service]
 
   # ml-service:
