@@ -5,7 +5,7 @@ interface Alert {
   title: string
   message?: string
   duration?: number
-  type?: 'success' | 'error' | 'info'
+  variant?: 'success' | 'destructive' | 'info'
 }
 
 type AlertInput = Omit<Alert, 'id'>
@@ -21,6 +21,7 @@ export const useAlertStore = defineStore('alertStore', {
   actions: {
     addAlert(alert: AlertInput) {
       const id = nextAlertId++
+      this.alerts = this.alerts.slice(-2) // Keep only the last 2 alerts -> Only three in total
       this.alerts.push({ ...alert, id })
 
       const alertDuration = (alert.duration ?? 3) * 1000

@@ -1,6 +1,6 @@
 <template>
   <main class="recipe-pdp-wrapper" v-if="recipe != null">
-    <div class="flex items-baseline justify-between mb-3">
+    <div class="flex items-baseline justify-between mb-3 gap-3">
       <h1 class="mb-0 pb-0 text-4xl md:text-5xl md:max-w-[70%]">{{ recipe.title }}</h1>
       <button><Heart @click="toggleAddToFavorites" :class="isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-500'" class="w-7 h-7 mb-3 cursor-pointer" /></button>    </div>
       <article class="grid grid-cols-12 gap-6">
@@ -161,20 +161,20 @@ function makeIngredientsSticky() {
 
 function toggleAddToFavorites() {
   if (!authStore.isLoggedIn) {
-    alertStore.addAlert({ title: 'Nicht authentifiziert', message: 'Bitte melden Sie sich an, um Rezepte zu Ihren Favoriten hinzuzufügen.', type: 'error' })
+    alertStore.addAlert({ title: 'Bitte melden Sie sich an', variant: 'destructive' })
     return
   }
   api.patch('/api/v1/user/updateRecipe', { recipeId: recipe.value.id, add: !isFavorite.value })
     .then((response) => {
       if (200 != response.status) {
-        alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Hinzufügen zu den Favoriten schiefgelaufen :( \n Code: ' + response.status, type: 'error' })
+        alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Hinzufügen zu den Favoriten schiefgelaufen :( \n Code: ' + response.status, variant: 'destructive' })
         return;
       }
       userStore.setUser(response.data) // TODO: Validate UserDTO structure
       isFavorite.value = !isFavorite.value
       })
     .catch((e) => {
-      alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Hinzufügen zu den Favoriten schiefgelaufen :(', type: 'error' })
+      alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Hinzufügen zu den Favoriten schiefgelaufen :(', variant: 'destructive' })
       console.error(e)
     })
 }
@@ -193,11 +193,11 @@ function copyToClipboard() {
   }
   navigator.clipboard.writeText(ingredients_text).then(
     () => {
-      alertStore.addAlert({ title: 'Zutaten kopiert', duration: 1.5, type: 'success' })
+      alertStore.addAlert({ title: 'Zutaten kopiert', duration: 1.5, variant: 'success' })
     },
     (err) => {
       console.error('Could not copy text: ', err)
-      alertStore.addAlert({ title: 'Konnte Zutaten nicht kopieren', type: 'error' })
+      alertStore.addAlert({ title: 'Konnte Zutaten nicht kopieren', variant: 'destructive' })
     }
   )
 }

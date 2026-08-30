@@ -2,10 +2,11 @@
   <div class="app-container">
     <div>
       <navbar></navbar>
-      <div v-for="alert in alertStore.alerts" :key="alert.id" class="alerts-container">
-        <Alert ref="alert" class="border-green-700 bg-green-100 fixed top-[15vh] left-1/2 -translate-x-1/2 w-fit z-50"
-          v-if="alert.title">
-          <CheckCircle2Icon />
+      <div class="alerts-container fixed top-[15vh] w-full flex flex-col gap-4 justify-center items-center">
+        <Alert ref="alert" v-for="alert in alertStore.alerts" :key="alert.id" class="mx-auto w-fit z-50"
+          :variant="alert.variant">
+          <CheckCircle2Icon v-if="alert.variant === 'success'" />
+          <CircleAlertIcon v-if="alert.variant === 'destructive'" />
           <AlertTitle>{{ alert.title }}</AlertTitle>
           <AlertDescription>{{ alert.message }}</AlertDescription>
         </Alert>
@@ -17,18 +18,18 @@
 </template>
 
 <script>
-import { useAuthStore} from '@/stores/authStore'
-import { useAlertStore} from '@/stores/alertStore'
+import { useAuthStore } from '@/stores/authStore'
+import { useAlertStore } from '@/stores/alertStore'
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
-import { CheckCircle2Icon } from '@lucide/vue'
+import { CheckCircle2Icon, CircleAlertIcon } from '@lucide/vue'
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 
 
 export default {
   name: 'App',
-  components: { Alert, AlertTitle, AlertDescription, CheckCircle2Icon, Navbar, Footer },
-  setup(){
+  components: { Alert, AlertTitle, AlertDescription, CheckCircle2Icon, CircleAlertIcon, Navbar, Footer },
+  setup() {
     const authStore = useAuthStore();
     const alertStore = useAlertStore();
     return { authStore, alertStore }
@@ -64,10 +65,10 @@ html {
   font-family: Avenir, Helvetica, Arial, sans-serif;
 }
 
-.app-container > div {
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
+.app-container>div {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
 }
 
@@ -102,9 +103,10 @@ main {
   align-items: center;
 }
 
-.app-container > div > main{
+.app-container>div>main {
   margin-top: 10rem;
 }
+
 @media (max-width: 550px) {
   main {
     margin-left: 5vw;

@@ -14,6 +14,7 @@ const props = defineProps<{
   <div
     data-slot="alert"
     :class="cn(alertVariants({ variant }), props.class)"
+    class="max-w-[90vw] sm:max-w-sm"
     role="alert"
   >
     <slot />

@@ -27,7 +27,7 @@ function submitForm() {
   const params = new URLSearchParams()
   const form = loginForm.value
   if (!form) {
-    alertStore.addAlert({ title: 'Fehler', message: 'Ein Fehler ist aufgetreten. Bitte versuche es erneut', type: 'error' })
+    alertStore.addAlert({ title: 'Fehler', message: 'Ein Fehler ist aufgetreten. Bitte versuche es erneut', variant: 'error' })
     return
   }
   const formData = new FormData(form)
@@ -41,19 +41,19 @@ function submitForm() {
     })
     .then((response) => {
       if (200 != response.status) {
-        alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Login schiefgelaufen :( \n Code: ' + response.status, type: 'error' })
+        alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Login schiefgelaufen :( \n Code: ' + response.status, variant: 'error' })
         return;
       }
       localStorage.setItem('access_token', response.data.access_token)
       localStorage.setItem('refresh_token', response.data.refresh_token)
       if (response.data.access_token) {
-        alertStore.addAlert({ title: 'Erfolg', message: 'Erfolgreich eingeloggt!', type: 'success' })
+        alertStore.addAlert({ title: 'Erfolg', message: 'Erfolgreich eingeloggt!', variant: 'success' })
         authStore.setToLoggedIn();
       }
       router.push({ path: '/' })
     })
     .catch((e) => {
-      alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Login schiefgelaufen :(', type: 'error' })
+      alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Login schiefgelaufen :(', variant: 'error' })
       console.error(e)
     })
 }
