@@ -1,11 +1,6 @@
 <template>
-  <form
-    id="recipe-form"
-    method="post"
-    action="api/v1/recipe/add"
-    class="boxshadow recipe-create-form"
-    enctype="multipart/form-data"
-  >
+  <form id="recipe-form" method="post" action="api/v1/recipe/add" class="boxshadow recipe-create-form"
+    enctype="multipart/form-data">
     <h2>Fügen Sie Ihr Rezept hinzu</h2>
     <div class="form-field-wrapper">
       <input type="text" required name="title" placeholder="*not-shown*" id="" />
@@ -25,14 +20,8 @@
       <legend>Zutaten</legend>
       <div class="ingredients-grid">
         <div class="ingredient" v-for="(ingredient, index) in ingredients" :key="index">
-          <input
-            type="text"
-            inputmode="numeric"
-            placeholder="1"
-            v-model="ingredients[index].quantity"
-            min="0.000001"
-            id=""
-          />
+          <input type="text" inputmode="numeric" placeholder="1" v-model="ingredients[index].quantity" min="0.000001"
+            id="" />
           <select id="" v-model="ingredients[index].unit">
             <option v-for="option in unitOptions" :key="option.value" :value="option.value">
               {{ option.label }}
@@ -42,182 +31,133 @@
         </div>
       </div>
       <div class="add-element-wrapper">
-        <input
-          type="button"
-          @click="addIngredient()"
-          class="add-element"
-          value="Zutat hinzufügen"
-        />
+        <input type="button" @click="addIngredient()" class="add-element" value="Zutat hinzufügen" />
       </div>
     </fieldset>
     <fieldset class="form-section">
       <legend>Zubereitungsschritte</legend>
       <div class="preparationSteps-grid">
-        <div
-          class="preparationStep"
-          v-for="(preparationStep, index) in preparationSteps"
-          :key="index"
-        >
-          <input
-            type="text"
-            required
-            placeholder="Vorbereitung"
-            id=""
-            v-model="preparationSteps[index].title"
-          />
-          <textarea
-            id=""
-            required
-            cols="30"
-            rows="10"
+        <div class="preparationStep" v-for="(preparationStep, index) in preparationSteps" :key="index">
+          <input type="text" required placeholder="Vorbereitung" id="" v-model="preparationSteps[index].title" />
+          <textarea id="" required cols="30" rows="10"
             placeholder="Wasser in einen Topf füllen und reichlich Salz dazu geben"
-            v-model="preparationSteps[index].content"
-          ></textarea>
+            v-model="preparationSteps[index].content"></textarea>
         </div>
         <div class="add-element-wrapper">
-          <input
-            type="button"
-            @click="addPreparationStep()"
-            class="add-element"
-            value="Zubereitungsschritt hinzufügen"
-          />
+          <input type="button" @click="addPreparationStep()" class="add-element"
+            value="Zubereitungsschritt hinzufügen" />
         </div>
       </div>
     </fieldset>
-    <div class="custom-file-input" v-if="false">
-      <input
-        type="button"
-        class="custom-file-input-button"
-        value="Bilder hinzufügen"
-        @click="updateFiles()"
-      />
-      <input
-        type="file"
-        class="custom-file-input"
-        multiple
-        name="images"
-        id="file-input"
-        required
-        @change="updateFilesArray()"
-      />
-    </div>
-    <image-upload-preview v-if="false" :images="files" />
+    <fieldset class="form-section custom-file-input">
+      <legend>Bilder hinzufügen</legend>
+      <input type="button" class="custom-file-input-button" value="Bilder hinzufügen" @click="updateFiles()" />
+      <input type="file" ref="fileInput" class="custom-file-input" multiple name="images" id="file-input" required
+        @change="updateFilesArray()" />
+    </fieldset>
+    <image-upload-preview :images="files" />
     <input @click="sendForm()" type="submit" value="Rezept hinzufügen" />
   </form>
 </template>
 
-<script>
+<script setup>
 import axios from 'axios'
 import api from '../services/api'
 import ImageUploadPreview from './ImageUploadPreview.vue'
 import router from '../router'
-// import IngredientFormInput from "./IngredientFormInput.vue";
-export default {
-  name: 'createRecipeForm',
-  components: { ImageUploadPreview },
-  data() {
-    return {
-      files: [],
-      ingredients: [{ name: '', unit: '', quantity: '' }],
-      preparationSteps: [{}],
-      unitOptions: [],
-    }
-  },
-  mounted() {
-    document.querySelector('#recipe-form').addEventListener('submit', (e) => {
-      e.preventDefault()
+import { ref } from 'vue'
+
+const name = 'createRecipeForm'
+
+const files = ref([]);
+const ingredients = ref([{ name: '', unit: '', quantity: '' }]);
+const preparationSteps = ref([{}]);
+const unitOptions = ref([]);
+const fileInput = ref<HTMLInputElement | null>(null)
+
+api.get('/api/v1/ingredient/units').then((response) => {
+  unitOptions.value = response.data
+  if (ingredients.value[0] && !ingredients.value[0].unit) {
+    ingredients.value[0].unit = unitOptions.value[0]?.value ?? ''
+  }
+})
+
+function updateFilesArray() {
+  files.value = []
+  let files = fileInput.value?.files
+  if (!files) return
+  for (let i = 0; i < files.length; i++) {
+    files.value.push(files[i])
+  }
+}
+
+function addIngredient() {
+  ingredients.value.push({
+    name: '',
+    unit: unitOptions.value[0]?.value ?? '',
+    quantity: '',
+  })
+}
+
+function addPreparationStep() {
+  preparationSteps.value.push({
+    title: '',
+    content: '',
+  })
+}
+
+function updateFiles() {
+  document.getElementById('file-input').click()
+}
+
+async function sendForm() {
+  const form = document.querySelector('form')
+  const formData = new FormData(form)
+
+  const imageURL = await axios
+    .get(
+      'https://api.unsplash.com/search/photos?client_id=ZlrYQ-virrK3j1gPYVdac_pQQ63rplNe52KDDdubxb0&query=' +
+      formData.get('title').trim().replace(' ', '-') +
+      '&collections=food-drinks',
+    )
+    .then((value) => {
+      if (value.data.results == null) return ''
+      return value.data.results[0].urls.regular
     })
-    api.get('/api/v1/ingredient/units').then((response) => {
-      this.unitOptions = response.data
-      if (this.ingredients[0] && !this.ingredients[0].unit) {
-        this.ingredients[0].unit = this.unitOptions[0]?.value ?? ''
-      }
+  const imageURLArr = new Array()
+  imageURLArr.push(imageURL)
+  console.log(imageURLArr)
+  var jsonString = JSON.stringify({
+    title: formData.get('title'),
+    duration: formData.get('duration'),
+    portions: formData.get('portions'),
+    ingredients: ingredients.value,
+    preparationSteps: preparationSteps.value,
+    imagePaths: imageURLArr,
+  })
+  const data = new Blob([jsonString], { type: 'application/json' })
+
+  formData.append('data', data)
+  api
+    .post('/api/v1/recipe/add', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     })
-  },
-  methods: {
-    updateFilesArray() {
-      this.files = []
-      let files = document.getElementById('file-input').files
-      for (let i = 0; i < files.length; i++) {
-        this.files.push(files[i])
-      }
-    },
-    addIngredient() {
-      this.ingredients.push({
-        name: '',
-        unit: this.unitOptions[0]?.value ?? '',
-        quantity: '',
-      })
-    },
-    addPreparationStep() {
-      this.preparationSteps.push({
-        title: '',
-        content: '',
-      })
-    },
-    getAccessToken() {
-      let user = JSON.parse(localStorage.getItem('user'))
-      if (user && user.access_token) {
-        // for Node.js Express back-end
-        console.log(user.access_token)
-        return user.access_token
+    .then((response) => {
+      if (200 == response.status) {
+        alert('Dein Rezpet wurde erfolgreich hochgeladen!')
       } else {
-        return {}
-      }
-    },
-    updateFiles() {
-      document.getElementById('file-input').click()
-    },
-    async sendForm() {
-      const form = document.querySelector('form')
-      const formData = new FormData(form)
-
-      const imageURL = await axios
-        .get(
-          'https://api.unsplash.com/search/photos?client_id=ZlrYQ-virrK3j1gPYVdac_pQQ63rplNe52KDDdubxb0&query=' +
-            formData.get('title').trim().replace(' ', '-') +
-            '&collections=food-drinks',
+        alert(
+          'Oh nein! Irgendwas ist beim Upload schiefgelaufen :( \n Code: ' + response.status,
         )
-        .then((value) => {
-          if (value.data.results == null) return ''
-          return value.data.results[0].urls.regular
-        })
-      const imageURLArr = new Array()
-      imageURLArr.push(imageURL)
-      console.log(imageURLArr)
-      var jsonString = JSON.stringify({
-        title: formData.get('title'),
-        duration: formData.get('duration'),
-        portions: formData.get('portions'),
-        ingredients: this.ingredients,
-        preparationSteps: this.preparationSteps,
-        imagePaths: imageURLArr,
-      })
-      const data = new Blob([jsonString], { type: 'application/json' })
-
-      formData.append('data', data)
-      api
-        .post('/api/v1/recipe/add', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-        .then((response) => {
-          if (200 == response.status) {
-            alert('Dein Rezpet wurde erfolgreich hochgeladen!')
-          } else {
-            alert(
-              'Oh nein! Irgendwas ist beim Upload schiefgelaufen :( \n Code: ' + response.status,
-            )
-          }
-          router.push({ path: '/' })
-        })
-        .catch((e) => {
-          alert('Oh nein! Irgendwas ist beim Upload schiefgelaufen :(')
-          console.log(e)
-        })
-    },
-  },
+      }
+      router.push({ path: '/' })
+    })
+    .catch((e) => {
+      alert('Oh nein! Irgendwas ist beim Upload schiefgelaufen :(')
+      console.log(e)
+    })
 }
 </script>
 
@@ -240,7 +180,7 @@ export default {
   align-items: center;
 }
 
-.form-field-wrapper > label {
+.form-field-wrapper>label {
   position: absolute;
   left: 0.5rem;
   top: 50%;
@@ -250,8 +190,8 @@ export default {
   font-size: small;
 }
 
-.form-field-wrapper > input:focus + label,
-.form-field-wrapper > input:not(:placeholder-shown) + label {
+.form-field-wrapper>input:focus+label,
+.form-field-wrapper>input:not(:placeholder-shown)+label {
   top: -25%;
   transform: translateY(0);
   background-color: white;
@@ -259,11 +199,11 @@ export default {
   font-size: x-small;
 }
 
-.form-field-wrapper > input::placeholder {
+.form-field-wrapper>input::placeholder {
   color: transparent;
 }
 
-.form-field-wrapper > input {
+.form-field-wrapper>input {
   width: 100%;
   height: 100%;
 }

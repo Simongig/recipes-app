@@ -1,9 +1,9 @@
 <template>
   <section>
-    <form class="boxshadow login-form" ref="login-form" id="login-form" action="/login" method="post">
+    <form class="boxshadow login-form" ref="loginForm" id="login_form" action="/login" method="post">
       <h2>Anmeldung</h2>
       <input type="text" name="username" placeholder="Benutzername" id="" />
-      <input type="password" name="password" placeholder="Passwort" id="" />
+       <input type="password" name="password" placeholder="Passwort" id="" />
       <input type="submit" @click="submitForm" value="Anmelden" />
     </form>
   </section>
@@ -23,11 +23,13 @@ const alertStore = useAlertStore()
 
 const loginForm = ref<HTMLFormElement | null>(null)
 
-function submitForm() {
+function submitForm(ev: Event) {
+  ev.preventDefault()
+
   const params = new URLSearchParams()
   const form = loginForm.value
   if (!form) {
-    alertStore.addAlert({ title: 'Fehler', message: 'Ein Fehler ist aufgetreten. Bitte versuche es erneut', variant: 'error' })
+    alertStore.addAlert({ title: 'Fehler', message: 'Ein Fehler ist aufgetreten. Bitte versuche es erneut', variant: 'destructive' })
     return
   }
   const formData = new FormData(form)
@@ -41,19 +43,19 @@ function submitForm() {
     })
     .then((response) => {
       if (200 != response.status) {
-        alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Login schiefgelaufen :( \n Code: ' + response.status, variant: 'error' })
+        alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Login schiefgelaufen :( \n Code: ' + response.status, variant: 'destructive' })
         return;
       }
       localStorage.setItem('access_token', response.data.access_token)
       localStorage.setItem('refresh_token', response.data.refresh_token)
       if (response.data.access_token) {
-        alertStore.addAlert({ title: 'Erfolg', message: 'Erfolgreich eingeloggt!', variant: 'success' })
+        alertStore.addAlert({ title: 'Du hast dich erfolgreich eingeloggt', variant: 'success' })
         authStore.setToLoggedIn();
       }
       router.push({ path: '/' })
     })
     .catch((e) => {
-      alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Login schiefgelaufen :(', variant: 'error' })
+      alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Login schiefgelaufen :(', variant: 'destructive' })
       console.error(e)
     })
 }

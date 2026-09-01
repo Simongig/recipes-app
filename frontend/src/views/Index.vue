@@ -40,7 +40,7 @@
     <section class="suggestions-slider">
       <h2>Neue Rezepte</h2>
       <swiper-container
-        class="swiper"
+        class="swiper w-full"
         :slides-per-view="1.2"
         :spaceBetween="20"
         :pagination="{
@@ -125,10 +125,6 @@ export default {
 <style scoped>
 .index-page > section + section {
   margin-top: 4rem;
-}
-
-.swiper {
-  width: 100%;
 }
 
 .home-search-wrapper {

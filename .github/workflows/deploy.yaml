@@ -1,4 +1,4 @@
-name: Deploy to DigitalOcean Droplet
+name: Deploy to Hetzner Cloud
 
 on:
   push:
@@ -37,23 +37,23 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/kochbuch.io-ml-service:latest
 
-      - name: Copy compose file to Droplet
+      - name: Copy compose file to Server
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.DROPLET_HOST }}
-          username: ${{ secrets.DROPLET_USER }}
-          key: ${{ secrets.DROPLET_SSH_KEY }}
-          passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
           source: docker-compose.prod.yml
           target: /srv/recipes-app
 
-      - name: Deploy to Droplet
+      - name: Deploy to Server
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.DROPLET_HOST }}
-          username: ${{ secrets.DROPLET_USER }}
-          key: ${{ secrets.DROPLET_SSH_KEY }}
-          passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
           script: |
             cd /srv/recipes-app
             docker compose -f docker-compose.prod.yml pull
