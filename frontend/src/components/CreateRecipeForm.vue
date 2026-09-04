@@ -3,7 +3,7 @@
     enctype="multipart/form-data">
     <h2>Fügen Sie Ihr Rezept hinzu</h2>
     <div class="form-field-wrapper">
-      <input type="text" required name="title" placeholder="*not-shown*" id="" />
+      <input type="text" ref="recipeTitle" required name="title" placeholder="*not-shown*" id="" />
       <label for="title">Wie heißt das Rezept?</label>
     </div>
     <div class="form-field-wrapper">
@@ -31,7 +31,10 @@
         </div>
       </div>
       <div class="add-element-wrapper">
-        <input type="button" @click="addIngredient()" class="add-element" value="Zutat hinzufügen" />
+        <Button @click="addIngredient()" variant="outline" class="add-element">
+          <Plus class="size-5" />
+          Zutat hinzufügen
+        </Button>
       </div>
     </fieldset>
     <fieldset class="form-section">
@@ -44,19 +47,34 @@
             v-model="preparationSteps[index].content"></textarea>
         </div>
         <div class="add-element-wrapper">
-          <input type="button" @click="addPreparationStep()" class="add-element"
-            value="Zubereitungsschritt hinzufügen" />
+          <Button @click="addPreparationStep()" variant="outline" class="add-element"
+            value="" >
+            <Plus class="size-5" />
+            Schritt hinzufügen
+          </Button>
         </div>
       </div>
     </fieldset>
-    <fieldset class="form-section custom-file-input">
-      <legend>Bilder hinzufügen</legend>
-      <input type="button" class="custom-file-input-button" value="Bilder hinzufügen" @click="updateFiles()" />
-      <input type="file" ref="fileInput" class="custom-file-input" multiple name="images" id="file-input" required
-        @change="updateFilesArray()" />
+    <fieldset class="form-section custom-file-input-container">
+      <legend>Bilder</legend>
+      <ImageUploadPreview :images="images" />
+      <div class="add-element-wrapper flex gap-2 align-center justify-center">
+        <Button variant="outline" type="button" class="custom-file-input-button flex flex-col p-8 h-auto" value="Eigene Bilder hinzufügen" @click="updateFilesCustom()">
+          <Plus class="size-10 p-2 border-1 border-black/30 rounded-full" />
+          Eigene Bilder hinzufügen
+        </Button>
+        <Button variant="outline" type="button" class="custom-file-input-button flex flex-col p-8 h-auto" @click="updateFilesStock()">
+          <Plus class="size-10 p-2 border-1 border-black/30 rounded-full" />
+          Stockbilder hinzufügen
+        </Button>
+        <input type="file" ref="fileInput" class="custom-file-input" multiple name="images" id="file-input" required
+          @change="updateFilesArray()" />
+      </div>
     </fieldset>
-    <image-upload-preview :images="files" />
-    <input @click="sendForm()" type="submit" value="Rezept hinzufügen" />
+    <Button @click="sendForm()"
+      type="button" class="submit-button bg-green-700 hover:bg-green-600 font-bold text-white" value="Rezept hochladen">
+      Rezept hochladen
+    </Button>
   </form>
 </template>
 
@@ -64,16 +82,22 @@
 import axios from 'axios'
 import api from '../services/api'
 import ImageUploadPreview from './ImageUploadPreview.vue'
+import { Plus } from '@lucide/vue'
+import { Button } from '@/components/ui/button'
 import router from '../router'
 import { ref } from 'vue'
+import { useAlertStore } from '@/stores/alertStore'
 
 const name = 'createRecipeForm'
 
-const files = ref([]);
+const alertStore = useAlertStore()
+
+const images = ref([]);
 const ingredients = ref([{ name: '', unit: '', quantity: '' }]);
 const preparationSteps = ref([{}]);
 const unitOptions = ref([]);
-const fileInput = ref<HTMLInputElement | null>(null)
+const fileInput = ref(null);
+const recipeTitle = ref(null);
 
 api.get('/api/v1/ingredient/units').then((response) => {
   unitOptions.value = response.data
@@ -82,12 +106,37 @@ api.get('/api/v1/ingredient/units').then((response) => {
   }
 })
 
+async function updateFilesStock() {
+  const input = recipeTitle.value?.value.trim()
+  if (!input) {
+    alertStore.addAlert({ title: 'Fehler', message: 'Bitte geben Sie einen Rezepttitel ein, um passende Stockbilder zu finden.', variant: 'destructive' })
+    return
+  }
+  const query = input.replace(/\s+/g, '-')
+  const response = await axios
+    .get(
+      'https://api.unsplash.com/search/photos?client_id=ZlrYQ-virrK3j1gPYVdac_pQQ63rplNe52KDDdubxb0&query=' +
+      query +
+      '&collections=food-drinks',
+    )
+  const images = response.data.results.map((result) => { return { url: result.urls.small, file: null, selected: false } })
+  images.value = images  
+}
+
+function updateFilesCustom() {
+  fileInput.value?.click()
+}
+
 function updateFilesArray() {
-  files.value = []
-  let files = fileInput.value?.files
-  if (!files) return
-  for (let i = 0; i < files.length; i++) {
-    files.value.push(files[i])
+  images.value = []
+  const addedFiles = fileInput.value?.files
+  if (!addedFiles) return
+  for (let i = 0; i < addedFiles.length; i++) {
+    images.value.push({
+      url: null,
+      file: addedFiles[i],
+      selected: false
+    })
   }
 }
 
@@ -106,27 +155,22 @@ function addPreparationStep() {
   })
 }
 
-function updateFiles() {
-  document.getElementById('file-input').click()
+function getSelectedImages() {
+  return images.value.filter((image) => image.selected)
 }
 
 async function sendForm() {
   const form = document.querySelector('form')
   const formData = new FormData(form)
 
-  const imageURL = await axios
-    .get(
-      'https://api.unsplash.com/search/photos?client_id=ZlrYQ-virrK3j1gPYVdac_pQQ63rplNe52KDDdubxb0&query=' +
-      formData.get('title').trim().replace(' ', '-') +
-      '&collections=food-drinks',
-    )
-    .then((value) => {
-      if (value.data.results == null) return ''
-      return value.data.results[0].urls.regular
-    })
-  const imageURLArr = new Array()
-  imageURLArr.push(imageURL)
-  console.log(imageURLArr)
+  const imageURLArr = getSelectedImages().map((image) => {
+    if (image.url) {
+      return image.url
+    } else if (image.file) {
+      return getImageURLfromFile(image.file)
+    }
+  })
+
   var jsonString = JSON.stringify({
     title: formData.get('title'),
     duration: formData.get('duration'),
@@ -146,16 +190,14 @@ async function sendForm() {
     })
     .then((response) => {
       if (200 == response.status) {
-        alert('Dein Rezpet wurde erfolgreich hochgeladen!')
+        alertStore.addAlert({ title: 'Dein Rezpet wurde erfolgreich hochgeladen!', variant: 'success' })
       } else {
-        alert(
-          'Oh nein! Irgendwas ist beim Upload schiefgelaufen :( \n Code: ' + response.status,
-        )
+        alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Upload schiefgelaufen :( \n Code: ' + response.status, variant: 'destructive' })
       }
       router.push({ path: '/' })
     })
     .catch((e) => {
-      alert('Oh nein! Irgendwas ist beim Upload schiefgelaufen :(')
+      alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Upload schiefgelaufen :(', variant: 'destructive' })
       console.log(e)
     })
 }
@@ -163,7 +205,6 @@ async function sendForm() {
 
 <style>
 .add-element-wrapper {
-  height: 2rem;
   margin: 15px 10px 0 10px;
   display: flex;
   text-align: center;
@@ -208,18 +249,6 @@ async function sendForm() {
   height: 100%;
 }
 
-.add-element {
-  height: inherit;
-  padding-left: 2.5rem;
-  background-color: none;
-  background-color: transparent;
-  background: url('../assets/icons/plus.svg');
-  background-size: 15px;
-  background-repeat: no-repeat;
-  background-position: 0.7rem center;
-  text-align: center;
-}
-
 .recipe-create-form {
   display: grid;
   grid-auto-rows: minmax(2rem, auto);
@@ -249,9 +278,12 @@ async function sendForm() {
 
 input,
 textarea,
-.add-element {
+.add-element,
+select {
   border-radius: 10px;
   border: 1px solid rgba(100, 100, 111, 0.2);
+  padding: 0 0.5rem;
+  max-height: 2rem;
 }
 
 fieldset {
@@ -260,7 +292,7 @@ fieldset {
   padding: 20px;
 }
 
-.custom-file-input input[type='file'] {
+.custom-file-input-container input[type='file'] {
   display: none;
 }
 
@@ -279,16 +311,6 @@ fieldset {
   display: grid;
   grid-auto-rows: minmax(2rem, auto);
   gap: 5px;
-}
-
-input {
-  padding: 0 0.5rem;
-  max-height: 2rem;
-}
-
-input[type='submit'] {
-  background-color: darkgreen;
-  color: white;
 }
 
 textarea {

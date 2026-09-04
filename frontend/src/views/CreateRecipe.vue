@@ -1,16 +1,11 @@
 <template>
   <main>
-    <create-recipe-form />
+    <CreateRecipeForm />
   </main>
 </template>
-<script>
+<script setup lang="ts">
 import CreateRecipeForm from '../components/CreateRecipeForm.vue'
 // @ is an alias to /src
 
-export default {
-  name: 'CreateRecipe',
-  components: {
-    CreateRecipeForm,
-  },
-}
+const name = 'CreateRecipe'
 </script>
