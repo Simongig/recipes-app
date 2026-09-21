@@ -1,5 +1,6 @@
 package com.simongig.recipesapp;
 
+import java.net.URI;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -32,6 +33,13 @@ import com.simongig.recipesapp.service.MealPlanService;
 import com.simongig.recipesapp.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.checksums.RequestChecksumCalculation;
+import software.amazon.awssdk.core.checksums.ResponseChecksumValidation;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
 
 @Configuration
 @EnableMongoRepositories(basePackages = "com.simongig.recipesapp.dao")
@@ -49,6 +57,34 @@ public class SpringConfiguration {
                                                       .applyConnectionString(new ConnectionString(connectionString))
                                                       .codecRegistry(codecRegistry)
                                                       .build());
+    }
+
+    @Value("${cloudflare.r2.endpoint}")
+    private String r2Endpoint;
+    @Value("${cloudflare.r2.access-key}")
+    private String r2AccessKey;
+    @Value("${cloudflare.r2.secret-key}")
+    private String r2SecretKey;
+
+    // Cloudflare R2 speaks the S3 API, so the AWS SDK works against it with three tweaks:
+    // a custom endpoint, the fixed pseudo-region "auto", and path-style addressing.
+    @Bean
+    public S3Client s3Client() {
+        AwsBasicCredentials credentials = AwsBasicCredentials.create(r2AccessKey, r2SecretKey);
+
+        log.info("Creating S3Client for R2 with endpoint {}, access key {}, secret key {}",
+                r2Endpoint, r2AccessKey, r2SecretKey.replaceAll(".", "*"));
+
+        return S3Client.builder()
+                .credentialsProvider(StaticCredentialsProvider.create(credentials))
+                .endpointOverride(URI.create(r2Endpoint))
+                .region(Region.of("auto"))
+                .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
+                // Since SDK 2.30 the default is to add CRC32 trailer checksums to every upload,
+                // which R2 rejects. Only send/validate checksums when an operation requires them.
+                .requestChecksumCalculation(RequestChecksumCalculation.WHEN_REQUIRED)
+                .responseChecksumValidation(ResponseChecksumValidation.WHEN_REQUIRED)
+                .build();
     }
 
     @Component

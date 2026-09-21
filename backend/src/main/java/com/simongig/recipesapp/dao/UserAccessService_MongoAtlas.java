@@ -20,7 +20,9 @@ import com.simongig.recipesapp.model.User;
 import com.simongig.recipesapp.model.UserRole;
 
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j 
 @Repository("MongoAtlas-User")
 public class UserAccessService_MongoAtlas implements UserDao, UserDetailsService {
 
@@ -72,7 +74,7 @@ public class UserAccessService_MongoAtlas implements UserDao, UserDetailsService
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userOptional = findById(username);
         if (!userOptional.isPresent()) {
-            System.out.println("User not found");
+            log.error("User not found");
             throw new UsernameNotFoundException("User was not found in the Database");
         }
         User user = userOptional.get();
@@ -86,7 +88,7 @@ public class UserAccessService_MongoAtlas implements UserDao, UserDetailsService
 
     @Override
     public void saveRole(UserRole role) {
-        System.out.println(role);
+        log.info("Save User Role: {}", role.getName());
         userRoleCollection.insertOne(role);
     }
 

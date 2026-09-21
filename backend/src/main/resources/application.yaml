@@ -32,3 +32,14 @@ server:
   #   key-alias: kochbuch.io
   #   enabled: true
   port: 8080
+
+cloudflare:
+  r2:
+    # Format: https://<ACCOUNT_ID>.r2.cloudflarestorage.com
+    endpoint: https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com
+    access-key: ${R2_ACCESS_KEY_ID}
+    secret-key: ${R2_SECRET_ACCESS_KEY}
+    bucket: ${R2_BUCKET_NAME}
+    # Public base URL the browser loads images from (r2.dev subdomain or custom domain of the bucket).
+    # The S3 endpoint above is NOT publicly readable, so this is what gets stored in Recipe.imagePaths.
+    public-url: ${R2_PUBLIC_URL}

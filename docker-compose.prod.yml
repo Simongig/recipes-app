@@ -13,19 +13,24 @@ services:
       HF_TOKEN: ${HF_TOKEN}
       ML_SERVICE_URL: http://ml-service:8000
       ML_SERVICE_API_KEY: ${ML_SERVICE_API_KEY}
+      R2_ACCOUNT_ID: ${R2_ACCOUNT_ID}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY}
+      R2_BUCKET_NAME: ${R2_BUCKET_NAME}
+      R2_PUBLIC_URL: ${R2_PUBLIC_URL}
       APP_BASE_URL: https://kochbuch.io
       FRONTEND_INTERNAL_URL: http://frontend:8080
-    # depends_on: [ml-service]
+    depends_on: [ml-service]
 
-  # ml-service:
-  #   image: simongigl/kochbuch.io-ml-service:latest
-  #   restart: unless-stopped
-  #   environment:
-  #     MONGODB_URI: ${MONGODB_URI}
-  #     MONGODB_DATABASE: ${MONGODB_DATABASE}
-  #     ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-  #     HF_TOKEN: ${HF_TOKEN}
-  #     ML_SERVICE_API_KEY: ${ML_SERVICE_API_KEY}
+  ml-service:
+    image: simongigl/kochbuch.io-ml-service:latest
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: ${MONGODB_URI}
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      HF_TOKEN: ${HF_TOKEN}
+      ML_SERVICE_API_KEY: ${ML_SERVICE_API_KEY}
 
   frontend:
     image: simongigl/kochbuch.io-frontend:latest

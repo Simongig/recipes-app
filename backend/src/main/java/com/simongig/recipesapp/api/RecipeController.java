@@ -1,6 +1,6 @@
 package com.simongig.recipesapp.api;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.lang.Nullable;
@@ -27,10 +27,19 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
+    /**
+     * Adds a new recipe to the system.
+     *
+     * @param data The recipe data.
+     * @param images The image files associated with the recipe.
+     * @throws IOException If an error occurs while processing the image files.
+     */
+    // One mapping for both cases (with and without image files): two @PostMapping("/add")
+    // methods without a distinguishing condition make Spring fail at startup ("Ambiguous mapping").
     @PostMapping("/add")
-    //public void addRecipe(@RequestPart Recipe data, @RequestPart ArrayList<MultipartFile> images) throws Exception {
-    public void addRecipe(@RequestPart Recipe data,@Nullable @RequestPart ArrayList<MultipartFile> images) throws Exception {
-        recipeService.addRecipe(data);
+    public void addRecipe(@RequestPart Recipe data,
+                          @Nullable @RequestPart(name = "images", required = false) List<MultipartFile> images) throws IOException {
+        recipeService.addRecipe(data, images);
     }
 
     @GetMapping("/all")

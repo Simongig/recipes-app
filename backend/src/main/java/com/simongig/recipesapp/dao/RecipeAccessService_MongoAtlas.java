@@ -22,8 +22,9 @@ import com.simongig.recipesapp.model.Recipe;
 import com.simongig.recipesapp.util.IngredientNormalizer;
 
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j 
 @Repository("MongoAtlas-Recipes")
 @Profile("!dev")
 public class RecipeAccessService_MongoAtlas implements RecipeDao {
@@ -67,7 +68,7 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
 
     @Override
     public List<Recipe> search(String searchTerm) {
-        System.out.println("------- Search Recipes By Name -------");
+        log.info("Search Recipes By Name: {}", searchTerm);
         Document compoundClause = new Document()
             .append("minimumShouldMatch", 1)
             .append("should", Arrays.asList(

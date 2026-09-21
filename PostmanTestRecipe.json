@@ -1,0 +1,36 @@
+{
+    "title": "Test",
+    "duration": 20,
+    "preparationSteps": [
+        {
+            "title": "Lorem ipsum",
+            "content": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aliquid eum expedita doloribus laboriosam assumenda inventore tenetur modi voluptas fugiat minima?"
+        },
+        {
+            "title": "Lorem ipsum",
+            "content": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aliquid eum expedita doloribus laboriosam assumenda inventore tenetur modi voluptas fugiat minima?"
+        },
+        {
+            "title": "Lorem ipsum",
+            "content": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aliquid eum expedita doloribus laboriosam assumenda inventore tenetur modi voluptas fugiat minima?"
+        }
+    ],
+    "ingredients": [
+        {
+            "name": "Kernige Haferflocken",
+            "quantity": 1.0,
+            "unit": "CUP",
+            "unitLabel": "Tasse",
+            "unitAbbreviation": "Tasse"
+        }
+    ],
+    "portions": 2,
+    "imagePaths": [
+        "https://images.unsplash.com/photo-1620108093966-eafbe0885dc5?q=80&w=1506&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    ],
+    "id": "0000Test",
+    "ownerId": null,
+    "visibility": "PRIVATE",
+    "sourceRecipeId": null,
+    "createdBy": null
+}

@@ -58,12 +58,15 @@
     <fieldset class="form-section custom-file-input-container">
       <legend>Bilder</legend>
       <ImageUploadPreview :images="images" />
+      <p v-if="images.length > 0" class="text-sm text-muted-foreground text-center mt-4">
+        Wähle mindestens ein Bild aus
+      </p>
       <div class="add-element-wrapper flex gap-2 align-center justify-center">
-        <Button variant="outline" type="button" class="custom-file-input-button flex flex-col p-8 h-auto" value="Eigene Bilder hinzufügen" @click="updateFilesCustom()">
+        <Button variant="outline" type="button" class="custom-file-input-button flex flex-col px-4 py-2 h-auto" value="Eigene Bilder hinzufügen" @click="updateFilesCustom()">
           <Plus class="size-10 p-2 border-1 border-black/30 rounded-full" />
           Eigene Bilder hinzufügen
         </Button>
-        <Button variant="outline" type="button" class="custom-file-input-button flex flex-col p-8 h-auto" @click="updateFilesStock()">
+        <Button variant="outline" type="button" class="custom-file-input-button flex flex-col px-4 py-2 h-auto" @click="updateFilesStock()">
           <Plus class="size-10 p-2 border-1 border-black/30 rounded-full" />
           Stockbilder hinzufügen
         </Button>
@@ -71,7 +74,7 @@
           @change="updateFilesArray()" />
       </div>
     </fieldset>
-    <Button @click="sendForm()"
+    <Button @click="sendRecipe()"
       type="button" class="submit-button bg-green-700 hover:bg-green-600 font-bold text-white" value="Rezept hochladen">
       Rezept hochladen
     </Button>
@@ -95,6 +98,7 @@ const alertStore = useAlertStore()
 const images = ref([]);
 const ingredients = ref([{ name: '', unit: '', quantity: '' }]);
 const preparationSteps = ref([{}]);
+const selectedImageType = ref('');
 const unitOptions = ref([]);
 const fileInput = ref(null);
 const recipeTitle = ref(null);
@@ -107,6 +111,7 @@ api.get('/api/v1/ingredient/units').then((response) => {
 })
 
 async function updateFilesStock() {
+  selectedImageType.value = 'stock';
   const input = recipeTitle.value?.value.trim()
   if (!input) {
     alertStore.addAlert({ title: 'Fehler', message: 'Bitte geben Sie einen Rezepttitel ein, um passende Stockbilder zu finden.', variant: 'destructive' })
@@ -119,8 +124,8 @@ async function updateFilesStock() {
       query +
       '&collections=food-drinks',
     )
-  const images = response.data.results.map((result) => { return { url: result.urls.small, file: null, selected: false } })
-  images.value = images  
+  const fetchedImages = response.data.results.map((result) => { return { url: result.urls.small, file: null, selected: false } })
+  images.value = fetchedImages
 }
 
 function updateFilesCustom() {
@@ -128,6 +133,7 @@ function updateFilesCustom() {
 }
 
 function updateFilesArray() {
+  selectedImageType.value = 'custom';
   images.value = []
   const addedFiles = fileInput.value?.files
   if (!addedFiles) return
@@ -159,17 +165,29 @@ function getSelectedImages() {
   return images.value.filter((image) => image.selected)
 }
 
-async function sendForm() {
+async function sendRecipe() {
   const form = document.querySelector('form')
   const formData = new FormData(form)
+  const imageURLArr = []
 
-  const imageURLArr = getSelectedImages().map((image) => {
-    if (image.url) {
-      return image.url
-    } else if (image.file) {
-      return getImageURLfromFile(image.file)
+  if (selectedImageType.value === 'stock') {
+    const selectedImages = getSelectedImages()
+    if (selectedImages.length === 0) {
+      alertStore.addAlert({ title: 'Fehler', message: 'Bitte wählen Sie mindestens ein Stockbild aus.', variant: 'destructive' })
+      return
     }
-  })
+    imageURLArr.push(...selectedImages.map((image) => image.url))
+  } else if (selectedImageType.value === 'custom') {
+    const selectedFiles = getSelectedImages().filter((image) => image.file)
+    if (selectedFiles.length === 0) {
+      alertStore.addAlert({ title: 'Fehler', message: 'Bitte wählen Sie mindestens eine Bilddatei aus.', variant: 'destructive' })
+      return
+    }
+    formData.delete('images') // Remove existing images first
+    selectedFiles.forEach((image) => {
+      formData.append('images', image.file)
+    })
+  }
 
   var jsonString = JSON.stringify({
     title: formData.get('title'),
@@ -182,6 +200,9 @@ async function sendForm() {
   const data = new Blob([jsonString], { type: 'application/json' })
 
   formData.append('data', data)
+
+  console.debug('Sending recipe data: {}', formData)
+
   api
     .post('/api/v1/recipe/add', formData, {
       headers: {
