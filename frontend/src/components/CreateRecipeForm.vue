@@ -70,7 +70,7 @@
           <Plus class="size-10 p-2 border-1 border-black/30 rounded-full" />
           Stockbilder hinzufügen
         </Button>
-        <input type="file" ref="fileInput" class="custom-file-input" multiple name="images" id="file-input" required
+        <input type="file" ref="fileInput" accept="image/*" class="custom-file-input" multiple name="images" id="file-input" required
           @change="updateFilesArray()" />
       </div>
     </fieldset>
@@ -92,6 +92,13 @@ import { ref } from 'vue'
 import { useAlertStore } from '@/stores/alertStore'
 
 const name = 'createRecipeForm'
+
+// Upload limits. The backend allows 10MB per file and 25MB per request
+// (spring.servlet.multipart in application.yaml, client_max_body_size in
+// frontend/nginx.conf). The total is kept below 25MB so the multipart overhead and
+// the JSON 'data' part still fit — otherwise the upload dies with a bare 413.
+const MAX_FILE_BYTES = 10 * 1024 * 1024
+const MAX_TOTAL_BYTES = 20 * 1024 * 1024
 
 const alertStore = useAlertStore()
 
@@ -165,6 +172,10 @@ function getSelectedImages() {
   return images.value.filter((image) => image.selected)
 }
 
+function formatMegabytes(bytes) {
+  return `${(bytes / 1024 / 1024).toFixed(1).replace('.', ',')} MB`
+}
+
 async function sendRecipe() {
   const form = document.querySelector('form')
   const formData = new FormData(form)
@@ -181,6 +192,24 @@ async function sendRecipe() {
     const selectedFiles = getSelectedImages().filter((image) => image.file)
     if (selectedFiles.length === 0) {
       alertStore.addAlert({ title: 'Fehler', message: 'Bitte wählen Sie mindestens eine Bilddatei aus.', variant: 'destructive' })
+      return
+    }
+    const tooLarge = selectedFiles.find((image) => image.file.size > MAX_FILE_BYTES)
+    if (tooLarge) {
+      alertStore.addAlert({
+        title: 'Fehler',
+        message: `"${tooLarge.file.name}" ist mit ${formatMegabytes(tooLarge.file.size)} zu groß. Pro Bild sind maximal ${formatMegabytes(MAX_FILE_BYTES)} erlaubt.`,
+        variant: 'destructive',
+      })
+      return
+    }
+    const totalBytes = selectedFiles.reduce((sum, image) => sum + image.file.size, 0)
+    if (totalBytes > MAX_TOTAL_BYTES) {
+      alertStore.addAlert({
+        title: 'Fehler',
+        message: `Die ausgewählten Bilder sind zusammen ${formatMegabytes(totalBytes)} groß. Pro Rezept sind maximal ${formatMegabytes(MAX_TOTAL_BYTES)} erlaubt.`,
+        variant: 'destructive',
+      })
       return
     }
     formData.delete('images') // Remove existing images first
@@ -218,7 +247,12 @@ async function sendRecipe() {
       router.push({ path: '/' })
     })
     .catch((e) => {
-      alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Upload schiefgelaufen :(', variant: 'destructive' })
+      // 413 can come from nginx (client_max_body_size) or from Spring
+      // (multipart max-request-size) — for the user it's the same cause.
+      const message = e.response?.status === 413
+        ? 'Die hochgeladenen Bilder sind zu groß. Bitte wähle weniger oder kleinere Bilder aus.'
+        : 'Oh nein! Irgendwas ist beim Upload schiefgelaufen :('
+      alertStore.addAlert({ title: 'Fehler', message, variant: 'destructive' })
       console.log(e)
     })
 }

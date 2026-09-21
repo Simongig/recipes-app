@@ -2,6 +2,9 @@ spring:
   servlet:
     multipart:
       max-file-size: "10MB"
+      # Whole-request cap (several images per recipe). Must stay <= client_max_body_size
+      # in frontend/nginx.conf, otherwise nginx rejects the upload first.
+      max-request-size: "25MB"
   data:
     mongodb:
       uri: mongodb://localhost:27017/kochbuch_dev?directConnection=true

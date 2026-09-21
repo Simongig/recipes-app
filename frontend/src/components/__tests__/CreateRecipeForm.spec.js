@@ -140,4 +140,39 @@ describe('CreateRecipeForm', () => {
     await previews[0].trigger('click')
     expect(previews[0].classes()).toContain('border-blue-500')
   })
+
+  it('rejects an oversized image locally instead of running into the server 413', async () => {
+    let requests = 0
+    server.use(
+      http.post('/api/v1/recipe/add', () => {
+        requests += 1
+        return HttpResponse.json({ id: 'mock-recipe-id' }, { status: 200 })
+      }),
+    )
+
+    const { wrapper } = mountForm()
+
+    const fileInput = wrapper.find('#file-input')
+    const file = new File(['fake-image-bytes'], 'riesenfoto.jpg', { type: 'image/jpeg' })
+    // Blob.size is derived from the parts, so shadow it on the instance rather than
+    // allocating 11MB of real bytes just to cross the limit.
+    Object.defineProperty(file, 'size', { value: 11 * 1024 * 1024 })
+    Object.defineProperty(fileInput.element, 'files', { value: [file] })
+    await fileInput.trigger('change')
+    await wrapper.vm.$nextTick()
+
+    await wrapper.findAll('.preview-image')[0].trigger('click')
+
+    await wrapper.find('input[name="title"]').setValue('Zu großes Bild')
+    await wrapper.find('input[name="duration"]').setValue('20')
+    await wrapper.find('input[name="portions"]').setValue('4')
+
+    await findSubmitButton(wrapper).trigger('click')
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    const alertStore = useAlertStore()
+    expect(alertStore.alerts.at(-1)).toMatchObject({ variant: 'destructive' })
+    expect(alertStore.alerts.at(-1).message).toContain('riesenfoto.jpg')
+    expect(requests).toBe(0)
+  })
 })
