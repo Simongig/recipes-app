@@ -132,6 +132,12 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.removeEventListener('scroll', makeIngredientsSticky)
+  document.title = 'kochbuch.io'
+  setMetaTag('property', 'og:title', 'kochbuch.io')
+  setMetaTag('name', 'twitter:title', 'kochbuch.io')
+  setMetaTag('property', 'og:image', '')
+  setMetaTag('name', 'twitter:image', '')
+  setMetaTag('property', 'og:url', window.location.href)
 })
 
 function toggleIngredientsDropdown() {
