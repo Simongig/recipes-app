@@ -12,21 +12,27 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.simongig.recipesapp.dao.RecipeSummary;
 import com.simongig.recipesapp.dao.UserDao;
 import com.simongig.recipesapp.model.User;
 import com.simongig.recipesapp.model.UserRole;
 import com.simongig.recipesapp.model.UserRole.RoleName;
+import com.simongig.recipesapp.util.UserMapper;
 
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j 
 @Service
 public class UserService {
     
+    private final UserMapper userMapper;
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(@Qualifier("MongoAtlas-User") UserDao userDao, PasswordEncoder passwordEncoder) {
+    public UserService(@Qualifier("MongoAtlas-User") UserDao userDao, PasswordEncoder passwordEncoder, UserMapper userMapper) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
     }
 
     public void save(User user) {
@@ -41,22 +47,22 @@ public class UserService {
         this.userDao.save(user);
     }
 
-    public UserDTO updateRecipeInUser(String recipeId, boolean add) {
+    public UserDTO updateFavoriteInUser(String recipeId, boolean add) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String callerUsername = auth.getName(); // the JWT subject
         Optional<User> userOptional = findByUsername(callerUsername);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            if (add && user.getRecipes().contains(recipeId)) {
+            if (add && user.getFavorites().contains(recipeId)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipe already added to user.");
             }
             if (add) {
-                user.addRecipe(recipeId);
+                user.addFavorite(recipeId);
             } else {
-                user.removeRecipe(recipeId);
+                user.removeFavorite(recipeId);
             }
             this.userDao.update(user);
-            return UserDTO.fromUser(user);
+            return userMapper.toDto(user);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No matching user found.");
         }
@@ -69,26 +75,30 @@ public class UserService {
         }
         this.userDao.save(user);
     }
-
-    public record UserDTO(String username, String fullName, String firstName, String lastName, String email, List<String> recipes) {
-        public static UserDTO fromUser(User user) {
-            return new UserDTO(
-                user.getUsername(),
-                user.getFullName(),
-                user.getName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getRecipes()
-            );
-        }
-    }
+    
+    public record UserDTO(
+            String username,
+            String fullName,
+            String firstName,
+            String lastName,
+            String email,
+            List<RecipeSummary> recipes,
+            List<RecipeSummary> favorites
+    ) {}
 
     public Optional<UserDTO> getProfile() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String callerUsername = auth.getName(); // the JWT subject
-        System.out.println("getProfile - username: " + callerUsername);
-        
-        UserDTO userDTO = UserDTO.fromUser(findByUsername(callerUsername).orElse(null));
+        log.debug("getProfile - username: " + callerUsername);
+
+        User user = userDao.findById(callerUsername).orElse(null);
+        if (user == null) {
+            log.warn("User not found for username: " + callerUsername);
+            return Optional.empty();
+        }
+
+        UserDTO userDTO = userMapper.toDto(user);
+
         return Optional.ofNullable(userDTO);
     }
 

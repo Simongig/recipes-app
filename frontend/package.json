@@ -15,7 +15,7 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
-    "@lucide/vue": "^1.40.0",
+    "@lucide/vue": "^1.47.0",
     "@tailwindcss/vite": "^4.3.2",
     "axios": "^1.16.0",
     "class-variance-authority": "^0.7.1",
@@ -23,7 +23,7 @@
     "embla-carousel-vue": "^8.6.0",
     "lucide-vue-next": "^1.0.0",
     "pinia": "^3.0.4",
-    "reka-ui": "^2.10.4",
+    "reka-ui": "^2.10.5",
     "shadcn-vue": "^2.7.4",
     "swiper": "^12.1.4",
     "tailwind-merge": "^3.6.0",

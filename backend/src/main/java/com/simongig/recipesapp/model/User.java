@@ -22,6 +22,7 @@ public class User {
     private String email;
     private String password;
     private List<String> recipes;
+    private List<String> favorites;
     private Collection<UserRole> roles;
 
     public User(
@@ -126,5 +127,30 @@ public class User {
 
     public boolean isAdmin() {
         return this.roles.stream().anyMatch(r -> r.getName() == RoleName.ROLE_ADMIN);
+    }
+
+    public List<String> getFavorites() {
+        if (this.favorites == null) {
+            this.favorites = new ArrayList<>();
+        }
+        return favorites;
+    }
+
+    public void setFavorites(List<String> favorites) {
+        this.favorites = favorites;
+    }
+
+    public void addFavorite(String recipeId) {
+        if (this.favorites == null) {
+            this.favorites = new ArrayList<>();
+        }
+        this.favorites.add(recipeId);
+    }
+
+    public void removeFavorite(String recipeId) {
+        if (this.favorites == null) {
+            return;
+        }
+        this.favorites.remove(recipeId);
     }
 }

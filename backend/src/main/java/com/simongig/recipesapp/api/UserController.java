@@ -67,13 +67,12 @@ public class UserController {
         userService.saveUserRole(role);
     }
 
-
-    @PatchMapping("/user/updateRecipe")
-    public void updateRecipe(@RequestBody UpdateRecipeForm form) {
-        userService.updateRecipeInUser(form.recipeId(), form.add());
+    @PatchMapping("/user/updateFavorite")
+    public void updateFavorite(@RequestBody UpdateFavoriteForm form) {
+        userService.updateFavoriteInUser(form.recipeId(), form.add());
     }
 
-    public record UpdateRecipeForm(String recipeId, boolean add) {
+    public record UpdateFavoriteForm(String recipeId, boolean add) {
     }
 
     @PostMapping("/user/addRole")
