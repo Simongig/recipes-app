@@ -39,13 +39,10 @@
     </section>
     <section class="suggestions-slider">
       <h2>Neue Rezepte</h2>
-      <swiper-container
+      <Swiper
         class="swiper w-full"
         :slides-per-view="1.2"
         :spaceBetween="20"
-        :pagination="{
-          hideOnClick: true,
-        }"
         :breakpoints="{
           // when window width is >= 320px
           480: {
@@ -63,17 +60,13 @@
             slidesPerView: 5,
           },
         }"
-        :navigation="{
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        }"
         @progress="onProgress"
         @slidechange="onSlideChange"
       >
-        <swiper-slide v-for="element in suggestedRecipes" :key="element">
+        <SwiperSlide v-for="element in suggestedRecipes" :key="element">
           <recipe-card :recipe="element" />
-        </swiper-slide>
-      </swiper-container>
+        </SwiperSlide>
+      </Swiper>
     </section>
   </main>
 </template>
@@ -83,19 +76,20 @@ import SearchInputIngredients from '../components/SearchInputIngredients.vue'
 import SearchInputRecipes from '../components/SearchInputRecipes.vue'
 import RecipeCard from '../components/RecipeCard-v2.vue'
 import { useRecipeStore } from '@/stores/recipeStore'
-import { register } from 'swiper/element/bundle'
 
-register()
-// import Categories from "../components/Categories.vue";
+import { Swiper, SwiperSlide } from 'swiper/vue';
 
 
-import 'swiper/swiper.css'
+import 'swiper/css'
+import 'swiper/css/pagination'
 
 export default {
   components: {
     RecipeCard,
     SearchInputIngredients,
     SearchInputRecipes,
+    Swiper,
+    SwiperSlide,
   },
   name: 'Index',
   setup() {
