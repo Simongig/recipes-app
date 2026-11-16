@@ -82,3 +82,7 @@ CLAUDE.md
 
 */__pycache__/
 .venv
+
+# Task backlog (Backlog.md): its own private repository, checked out into this folder.
+# It lists open security work, so it must not end up in this public repo.
+backlog/
