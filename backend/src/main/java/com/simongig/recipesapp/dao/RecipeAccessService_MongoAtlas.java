@@ -16,8 +16,10 @@ import org.springframework.stereotype.Repository;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import static com.mongodb.client.model.Filters.all;
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.in;
+import com.mongodb.client.model.Aggregates;
 import com.simongig.recipesapp.model.Recipe;
 import com.simongig.recipesapp.util.IngredientNormalizer;
 
@@ -50,8 +52,9 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
     }
 
     @Override
-    public List<Recipe> findAll() {
-        return recipeCollection.find().into(new ArrayList<>());
+    public List<Recipe> findAll(RecipeViewer viewer) {
+        Bson visible = viewer.filter();
+        return (visible == null ? recipeCollection.find() : recipeCollection.find(visible)).into(new ArrayList<>());
     }
 
     @Override
@@ -61,13 +64,13 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
     }
 
     @Override
-    public List<Recipe> findByIds(Collection<String> ids) {
+    public List<Recipe> findByIds(Collection<String> ids, RecipeViewer viewer) {
         if (ids == null || ids.isEmpty()) return List.of();
-        return recipeCollection.find(in("_id", ids)).into(new ArrayList<>());
+        return recipeCollection.find(restrict(in("_id", ids), viewer)).into(new ArrayList<>());
     }
 
     @Override
-    public List<Recipe> search(String searchTerm) {
+    public List<Recipe> search(String searchTerm, RecipeViewer viewer) {
         log.info("Search Recipes By Name: {}", searchTerm);
         Document compoundClause = new Document()
             .append("minimumShouldMatch", 1)
@@ -82,17 +85,30 @@ public class RecipeAccessService_MongoAtlas implements RecipeDao {
                     .append("fuzzy", new Document().append("maxEdits", 1).append("prefixLength", 2)))
             ));
         Document agg = new Document("$search", new Document("index", "Recipes").append("compound", compoundClause));
-        List<Recipe> search_results = recipeCollection.aggregate(Arrays.asList(agg, new Document("$limit", 20))).into(new ArrayList<>());
-        return search_results;
+        // $search must be the first stage; the visibility $match goes before $limit so that
+        // hidden recipes don't eat into the 20 result slots.
+        List<Bson> pipeline = new ArrayList<>(List.of(agg));
+        Bson visible = viewer.filter();
+        if (visible != null) {
+            pipeline.add(Aggregates.match(visible));
+        }
+        pipeline.add(new Document("$limit", 20));
+        return recipeCollection.aggregate(pipeline).into(new ArrayList<>());
     }
     
     @Override
-    public List<Recipe> selectByIngredients(String[] ingredients) {
+    public List<Recipe> selectByIngredients(String[] ingredients, RecipeViewer viewer) {
         String[] normalizedIngredients = Arrays.stream(ingredients)
                 .map(IngredientNormalizer::normalize)
                 .toArray(String[]::new);
         Bson matchIngredients = all("ingredients.normalizedKey", normalizedIngredients);
-        return recipeCollection.find(matchIngredients, Recipe.class).into(new ArrayList<>());
+        return recipeCollection.find(restrict(matchIngredients, viewer), Recipe.class).into(new ArrayList<>());
+    }
+
+    /** Combines a query filter with the viewer's visibility filter (if any). */
+    protected static Bson restrict(Bson filter, RecipeViewer viewer) {
+        Bson visible = viewer.filter();
+        return visible == null ? filter : and(filter, visible);
     }
 
     @Override

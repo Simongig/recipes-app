@@ -1,11 +1,13 @@
 import axios from 'axios';
+import { useAuthStore } from '@/stores/authStore';
 
 const api = axios.create();
 
 api.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem('access_token');
-    if (accessToken) {
+    // _anonymous: replay of a request as a guest, see the response interceptor.
+    if (accessToken && !config._anonymous) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
     return config;
@@ -13,45 +15,61 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+function logOutLocally() {
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
+  useAuthStore().setToLoggedOut();
+}
+
+async function refreshTokens() {
+  const refreshToken = localStorage.getItem('refresh_token');
+  if (!refreshToken) throw new Error('No refresh token');
+
+  const response = await axios.post('/api/v1/auth/token/refresh', {}, {
+    headers: { 'Authorization': `Bearer ${refreshToken}` }
+  });
+  const { access_token, refresh_token } = response.data;
+  localStorage.setItem('access_token', access_token);
+  localStorage.setItem('refresh_token', refresh_token);
+}
+
+// On 401:
+//   1. Try to refresh the tokens and replay the request.
+//   2. If that fails the session is over: log out locally and replay the request once more
+//      WITHOUT a token. The backend answers 401 to an expired token even on public endpoints,
+//      so a guest replay is what tells "public page, stale session" (works now) apart from
+//      "really needs a login" (401 again).
+//   3. Only a 401 for the guest request redirects to the login page.
 api.interceptors.response.use(
   (response) => response, // Pass through successful responses immediately
   async (error) => {
     const originalRequest = error.config;
+    if (!error.response || error.response.status !== 401 || !originalRequest) {
+      return Promise.reject(error);
+    }
 
-    // Check if the error is 401 (Unauthorized) and we haven't tried retrying yet
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; // Mark request so we don't enter an infinite loop if refresh fails
+    const sentToken = Boolean(originalRequest.headers?.['Authorization']);
+    if (originalRequest._anonymous || !sentToken) {
+      // Already a guest request: the endpoint really requires a login.
+      logOutLocally();
+      window.location.href = '/login';
+      return Promise.reject(error);
+    }
 
+    if (!originalRequest._retry) {
+      originalRequest._retry = true; // refresh at most once per request
       try {
-        const refreshToken = localStorage.getItem('refresh_token');
-        const response = await axios.post('/api/v1/auth/token/refresh', {}, {
-          headers: { 'Authorization': `Bearer ${refreshToken}` }
-        });
-
-        const { access_token, refresh_token } = response.data;
-
-        // Save them back to client storage
-        localStorage.setItem('access_token', access_token);
-        localStorage.setItem('refresh_token', refresh_token);
-
-        // Update the authorization header of the original, failed request
-        originalRequest.headers['Authorization'] = `Bearer ${access_token}`;
-
-        // Replay the original request with the new token and return its result
-        return api(originalRequest);
-        
-      } catch (refreshError) {
-        // If the refresh token itself is expired or invalid, log the user out completely
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        
-        // Redirect to login (or clear your Vue Pinia/Vuex store here)
-        window.location.href = '/login'; 
-        return Promise.reject(refreshError);
+        await refreshTokens();
+        return api(originalRequest); // the request interceptor attaches the new token
+      } catch {
+        // fall through to the guest replay
       }
     }
 
-    return Promise.reject(error);
+    logOutLocally();
+    originalRequest._anonymous = true;
+    delete originalRequest.headers['Authorization'];
+    return api(originalRequest);
   }
 );
 

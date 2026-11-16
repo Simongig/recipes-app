@@ -44,6 +44,12 @@ frontend/node
 frontend/target
 
 
+# keys & certificates
+*.jks
+*.p12
+*.pem
+*.key
+
 # local env files
 .env
 .env.local

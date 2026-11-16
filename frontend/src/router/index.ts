@@ -7,6 +7,7 @@ import RecipesPlp from '@/views/RecipesPlp.vue'
 import Impressum from '@/views/Impressum.vue'
 import Profile from '@/views/Profile.vue'
 import MealPlans from '@/views/MealPlans.vue'
+import Admin from '@/views/Admin.vue'
 
 const routes = [
   {
@@ -54,6 +55,11 @@ const routes = [
     path: '/profile',
     name: 'profile',
     component: Profile
+  },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: Admin
   },
   {
     path: '/mealplans',

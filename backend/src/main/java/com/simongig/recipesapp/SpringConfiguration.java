@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.stereotype.Component;
 
@@ -72,8 +73,7 @@ public class SpringConfiguration {
     public S3Client s3Client() {
         AwsBasicCredentials credentials = AwsBasicCredentials.create(r2AccessKey, r2SecretKey);
 
-        log.info("Creating S3Client for R2 with endpoint {}, access key {}, secret key {}",
-                r2Endpoint, r2AccessKey, r2SecretKey.replaceAll(".", "*"));
+        log.info("Creating S3Client for R2 with endpoint {}", r2Endpoint);
 
         return S3Client.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))
@@ -87,7 +87,9 @@ public class SpringConfiguration {
                 .build();
     }
 
+    // Not in tests: seeding the admin user and default meal plan needs a real database.
     @Component
+    @Profile("!test")
     public class DataInitializer implements CommandLineRunner {
 
         private final UserService userService;

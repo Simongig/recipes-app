@@ -1,0 +1,27 @@
+# Dummy configuration for tests that start the Spring context (profile "test").
+# Nothing here points at real infrastructure: the Mongo client connects lazily and no test
+# using this profile talks to the database, R2 or the ml-service.
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/recipes_test
+      database: recipes_test
+
+jwt:
+  secret: test-only-secret-at-least-32-bytes-long
+
+app:
+  admin:
+    username: test-admin
+    password: test-password
+
+ml-service:
+  api-key: test-ml-key
+
+cloudflare:
+  r2:
+    endpoint: http://localhost:9999
+    access-key: test-access-key
+    secret-key: test-secret-key
+    bucket: test-bucket
+    public-url: http://localhost:9999/public

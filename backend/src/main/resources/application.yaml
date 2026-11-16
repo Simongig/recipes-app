@@ -28,12 +28,7 @@ frontend:
   internal-url: ${FRONTEND_INTERNAL_URL:http://localhost:8081}
 
 server:
-  # ssl:
-  #   key-store: classpath:keystore.jks
-  #   key-store-password: Z*EhJDbgz6
-  #   key-store-type: JKS
-  #   key-alias: kochbuch.io
-  #   enabled: true
+  # TLS is terminated by nginx (certbot certificates), not by Spring Boot.
   port: 8080
 
 cloudflare:

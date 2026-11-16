@@ -19,6 +19,10 @@
         <!-- Spring Boot 3.3's Byte Buddy (1.14.x) refuses to mock on JDK 24+ ("Java 25 (69) is not
              supported"). Bumping it here fixes Mockito for `mvn test` and IDE test runs alike. -->
         <byte-buddy.version>1.18.14</byte-buddy.version>
+        <!-- Spring Boot 3.3's BOM pins Lombok 1.18.34, which can't run on JDK 25 ("Could not initialize
+             class lombok.javac.Javac"). One version for the dependency AND the annotation processor,
+             so IDEs that take Lombok from the classpath get the same, working version. -->
+        <lombok.version>1.18.46</lombok.version>
     </properties>
 
     <dependencies>
@@ -110,7 +114,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.46</version>
+                            <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

@@ -70,7 +70,6 @@
 
 <script setup>
 // import Button from '../components/Button.vue';
-import axios from 'axios'
 import api from '@/services/api'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { formatIngredientQuantity } from '../utils/ingredients'
@@ -111,7 +110,7 @@ function setMetaTag(attr, key, content) {
 }
 
 onMounted(() => {
-  axios
+  api
     .get('/api/v1/recipe/id/' + route.params.id)
     .then((response) => {
       recipe.value = response.data
@@ -164,7 +163,7 @@ function toggleAddToFavorites() {
     alertStore.addAlert({ title: 'Bitte melden Sie sich an', variant: 'destructive' })
     return
   }
-  api.patch('/api/v1/user/updateRecipe', { recipeId: recipe.value.id, add: !isFavorite.value })
+  api.patch('/api/v1/user/updateFavorite', { recipeId: recipe.value.id, add: !isFavorite.value })
     .then((response) => {
       if (200 != response.status) {
         alertStore.addAlert({ title: 'Fehler', message: 'Oh nein! Irgendwas ist beim Hinzufügen zu den Favoriten schiefgelaufen :( \n Code: ' + response.status, variant: 'destructive' })
