@@ -1,36 +1,27 @@
 package com.simongig.recipesapp.api;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.interfaces.JWTVerifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simongig.recipesapp.model.User;
 import com.simongig.recipesapp.model.UserRole;
+import com.simongig.recipesapp.security.JwtTokenService;
 import com.simongig.recipesapp.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -40,11 +31,11 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 
     private final UserService userService;
-    private final Algorithm algorithm;
+    private final JwtTokenService tokenService;
 
-    public UserController(UserService userService, Algorithm algorithm) {
+    public UserController(UserService userService, JwtTokenService tokenService) {
         this.userService = userService;
-        this.algorithm = algorithm;
+        this.tokenService = tokenService;
     }
 
     @GetMapping("/user/me")
@@ -80,51 +71,24 @@ public class UserController {
         userService.addRoleToUser(form.getUsername(), form.getRole());
     }
 
+    // Exchanges a refresh token (sent as Bearer) for a new token pair. This route is permitAll'd
+    // and reads the header itself: the resource server only accepts access tokens.
     @PostMapping("/auth/token/refresh")
-    public void generateRefreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public Map<String, String> refreshTokens(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        log.debug("Generate refresh_token");
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            try {
-                String token = authorizationHeader.substring("Bearer ".length());
-                JWTVerifier verifier = JWT.require(this.algorithm).build();
-                DecodedJWT decodedJWT = verifier.verify(token);
-                String username = decodedJWT.getSubject();
-                Optional<User> user_opt = userService.findByUsername(username);
-                if (user_opt.isPresent()) {
-                    User user = user_opt.get();
-                    String access_token = JWT.create()
-                            .withSubject(user.getUsername())
-                            .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
-                            .withIssuer(request.getRequestURL().toString())
-                            .withClaim("roles",
-                                    user.getRoles().stream().map(role -> role.getName().name()).collect(Collectors.toList()))
-                            .sign(algorithm);
-
-                    String refresh_token = JWT.create()
-                            .withSubject(user.getUsername())
-                            .withExpiresAt(new Date(System.currentTimeMillis() + 100 * 60 * 1000))
-                            .withIssuer(request.getRequestURL().toString())
-                            .sign(algorithm);
-
-                    // response.setHeader("access_token", access_token);
-                    // response.setHeader("refresh_token", refresh_token);
-
-                    Map<String, String> tokens = new HashMap<>();
-                    tokens.put("access_token", access_token);
-                    tokens.put("refresh_token", refresh_token);
-                    response.setContentType("application/json");
-                    new ObjectMapper().writeValue(response.getOutputStream(), tokens);
-                }
-            } catch (JWTCreationException | JWTVerificationException | IOException | IllegalArgumentException exception) {
-                log.error("Error loggin in: " + exception.getMessage());
-                response.setHeader("error", exception.getMessage());
-                response.sendError(FORBIDDEN.value());
-            }
-        } else
-
-        {
-            throw new RuntimeException("Refreshtoken missing");
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token missing");
+        }
+        try {
+            String username = tokenService.verifyRefreshToken(authorizationHeader.substring("Bearer ".length()));
+            // Roles are re-read from the database, and deleted users get no new tokens.
+            User user = userService.findByUsername(username)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid refresh token"));
+            return tokenService.issueTokens(user.getUsername(),
+                    user.getRoles().stream().map(role -> role.getName().name()).toList());
+        } catch (JWTVerificationException exception) {
+            log.debug("Rejected refresh token: {}", exception.getMessage());
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid refresh token");
         }
     }
 

@@ -5,7 +5,12 @@ on:
     branches: [main]
 
 jobs:
+  # Gate: the deployment only starts when backend and frontend tests pass.
+  tests:
+    uses: ./.github/workflows/test.yaml
+
   deploy:
+    needs: tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

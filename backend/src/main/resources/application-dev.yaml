@@ -10,7 +10,7 @@ spring:
       uri: mongodb://localhost:27017/kochbuch_dev?directConnection=true
       database: kochbuch_dev
 jwt:
-  secret: dev-only-not-a-real-secret
+  secret: dev-only-not-a-real-secret-0123456789abcdef
 
 ml-service:
   base-url: ${ML_SERVICE_URL:http://localhost:8000}
