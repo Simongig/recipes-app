@@ -8,12 +8,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.simongig.recipesapp.dao.RecipeDao;
 import com.simongig.recipesapp.dao.RecipeRepository;
@@ -27,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j 
 @Service
 public class RecipeService {
+
+    private static final String STOCK_IMAGE_PREFIX = "https://images.unsplash.com/";
 
     private final RecipeDao recipeDao;
     private final RecipeRepository recipeRepository;
@@ -44,6 +49,9 @@ public class RecipeService {
         String callerUsername = caller.username();
         boolean isAdmin = caller.admin();
 
+        // Never trust server-managed fields from the request body.
+        recipe.setId(new ObjectId().toString());
+        rejectForeignImageUrls(recipe.getImagePaths());
         recipe.setCreatedBy(callerUsername);
         if (!isAdmin) { // Curated recipes from the platform don't get a specific ownerId, only custom recipes
             recipe.setOwnerId(callerUsername);
@@ -97,11 +105,39 @@ public class RecipeService {
     } 
 
     public void deleteRecipe(String id) {
+        requireModifiable(id);
         this.recipeDao.deleteById(id);
     }
 
     public void updateRecipe(String id, Recipe newRecipe) {
+        requireModifiable(id);
         this.recipeDao.updateById(id, newRecipe);
+    }
+
+    /** Only the owner or an admin may change a recipe; curated recipes (no owner) are admin-only. */
+    private void requireModifiable(String id) {
+        RecipeViewer caller = currentViewer();
+        Recipe recipe = this.recipeDao.findById(id).filter(caller::canView)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found"));
+        boolean isOwner = caller.username() != null && caller.username().equals(recipe.getOwnerId());
+        if (!caller.admin() && !isOwner) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not your recipe");
+        }
+    }
+
+    // Image URLs end up in <img src> and in the Open Graph tags served to crawlers, so only
+    // our own bucket and the stock-photo CDN the recipe form offers are accepted.
+    private void rejectForeignImageUrls(List<String> imagePaths) {
+        if (imagePaths == null) {
+            return;
+        }
+        for (String url : imagePaths) {
+            boolean allowed = imageStorageService.isHostedUrl(url)
+                    || (url != null && url.startsWith(STOCK_IMAGE_PREFIX));
+            if (!allowed) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image URL not allowed: " + url);
+            }
+        }
     }
 
     public List<Recipe> findRecipeByIngredients(String[] ingredients) {

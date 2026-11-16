@@ -73,6 +73,11 @@ public class ImageStorageService {
         return keys.stream().map(key -> publicUrl + "/" + key).toList();
     }
 
+    /** Whether the URL points at an image in our own bucket (as returned by {@link #upload}). */
+    public boolean isHostedUrl(String url) {
+        return url != null && url.startsWith(publicUrl + "/");
+    }
+
     private String put(MultipartFile file) throws IOException {
         String key = "recipes/" + UUID.randomUUID() + "." + extensionFor(file);
         PutObjectRequest request = PutObjectRequest.builder()
