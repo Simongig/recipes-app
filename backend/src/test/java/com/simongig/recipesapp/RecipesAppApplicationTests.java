@@ -3,7 +3,7 @@ package com.simongig.recipesapp;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.mongodb.client.MongoClient;
@@ -19,7 +19,7 @@ class RecipesAppApplicationTests {
     // Replaces the real client from SpringConfiguration: a real one starts the driver's
     // background monitor, which keeps trying to reach localhost:27017 ("Connection refused").
     // Deep stubs because the DAOs call getDatabase(..).getCollection(..) in @PostConstruct.
-    @MockBean(answer = Answers.RETURNS_DEEP_STUBS)
+    @MockitoBean(answers = Answers.RETURNS_DEEP_STUBS)
     private MongoClient mongoClient;
 
     @Test
