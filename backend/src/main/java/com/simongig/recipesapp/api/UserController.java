@@ -44,8 +44,8 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<User> getAllRecipes() {
-        return userService.findAll();
+    public List<UserService.UserOverview> getAllUsers() {
+        return userService.listUsers();
     }
 
     @PostMapping("/user/add")

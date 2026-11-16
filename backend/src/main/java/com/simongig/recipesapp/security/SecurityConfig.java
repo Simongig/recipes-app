@@ -35,6 +35,11 @@ public class SecurityConfig {
 
     private static final String REFRESH_PATH = "/api/v1/auth/token/refresh";
 
+    // Listing users, creating accounts and granting roles, for every HTTP method.
+    private static final String[] ADMIN_PATHS = {
+        "/api/v1/users", "/api/v1/user/add", "/api/v1/user/addRole", "/api/v1/role/save"
+    };
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -42,8 +47,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
         return new ProviderManager(provider);
     }
@@ -59,6 +63,9 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // User administration. Must stay above the broader "/api/v1/user/**" rule below:
+                // the first matching rule wins.
+                .requestMatchers(ADMIN_PATHS).hasAuthority(ROLE_ADMIN.name())
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", REFRESH_PATH).permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/recipe/all", "/api/v1/recipe/id/*").permitAll()
@@ -70,8 +77,8 @@ public class SecurityConfig {
                 // so it's authenticated via a shared secret header instead (see MealPlannerController).
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/mealplans/jobs/*").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/mealplans/*").permitAll()
-                .requestMatchers(HttpMethod.GET,  "/api/v1/user**").hasAnyAuthority(ROLE_USER.name())
-                .requestMatchers(HttpMethod.POST, "/api/v1/user/save/**").hasAnyAuthority(ROLE_ADMIN.name())
+                // Own profile and favorites. Admins carry only ROLE_ADMIN, so it is listed too.
+                .requestMatchers("/api/v1/user/**").hasAnyAuthority(ROLE_USER.name(), ROLE_ADMIN.name())
                 .anyRequest().authenticated()
             )
             .addFilter(authFilter)

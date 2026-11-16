@@ -20,6 +20,9 @@ public class User {
     private String name;
     private String lastName;
     private String email;
+    // Accepted in request bodies, never written to JSON responses: this holds the bcrypt hash.
+    // MongoDB persists it through the POJO codec, which ignores Jackson annotations.
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private List<String> recipes;
     private List<String> favorites;
