@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.simongig.recipesapp.dao.RecipeDao;
 import com.simongig.recipesapp.dao.RecipeRepository;
 import com.simongig.recipesapp.dao.RecipeSummary;
+import com.simongig.recipesapp.dao.RecipeViewer;
 import com.simongig.recipesapp.model.Recipe;
 import com.simongig.recipesapp.model.UserRole;
 
@@ -36,11 +40,10 @@ public class RecipeService {
     }
 
     public void addRecipe(Recipe recipe, List<MultipartFile> images) throws IOException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String callerUsername = auth.getName(); // the JWT subject
-        boolean isAdmin = auth.getAuthorities().stream()
-            .anyMatch(a -> a.getAuthority().equals(UserRole.RoleName.ROLE_ADMIN.name()));
-        
+        RecipeViewer caller = currentViewer();
+        String callerUsername = caller.username();
+        boolean isAdmin = caller.admin();
+
         recipe.setCreatedBy(callerUsername);
         if (!isAdmin) { // Curated recipes from the platform don't get a specific ownerId, only custom recipes
             recipe.setOwnerId(callerUsername);
@@ -60,20 +63,37 @@ public class RecipeService {
         this.recipeDao.insert(recipe);
     }
 
-    public List<Recipe> getAllRecipes() {
-        return this.recipeDao.findAll();
+    /** The current caller as a recipe viewer; anonymous requests get {@link RecipeViewer#ANONYMOUS}. */
+    private RecipeViewer currentViewer() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            return RecipeViewer.ANONYMOUS;
+        }
+        boolean isAdmin = auth.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals(UserRole.RoleName.ROLE_ADMIN.name()));
+        return new RecipeViewer(auth.getName(), isAdmin); // name = the JWT subject
     }
 
+    public List<Recipe> getAllRecipes() {
+        return this.recipeDao.findAll(currentViewer());
+    }
+
+    /** Empty when the recipe doesn't exist or the caller may not see it (indistinguishable on purpose). */
     public Optional<Recipe> getRecipeById(String id) {
-        return this.recipeDao.findById(id);
+        RecipeViewer viewer = currentViewer();
+        return this.recipeDao.findById(id).filter(viewer::canView);
     }
 
     public List<RecipeSummary> getRecipeSummaryByIds(Collection<String> ids) {
-        return this.recipeRepository.findByIdIn(ids);
+        // The summary projection carries no ownerId/visibility, so resolve the visible ids first.
+        Set<String> visibleIds = this.recipeDao.findByIds(ids, currentViewer()).stream()
+            .map(Recipe::getId)
+            .collect(Collectors.toSet());
+        return visibleIds.isEmpty() ? List.of() : this.recipeRepository.findByIdIn(visibleIds);
     }
 
     public List<Recipe> search(String searchTerm){
-        return this.recipeDao.search(searchTerm);
+        return this.recipeDao.search(searchTerm, currentViewer());
     } 
 
     public void deleteRecipe(String id) {
@@ -85,7 +105,7 @@ public class RecipeService {
     }
 
     public List<Recipe> findRecipeByIngredients(String[] ingredients) {
-        return this.recipeDao.selectByIngredients(ingredients);
+        return this.recipeDao.selectByIngredients(ingredients, currentViewer());
     }
 
     public List<String> getDistinctIngredientNames() {

@@ -2,6 +2,7 @@ package com.simongig.recipesapp.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.bson.conversions.Bson;
 import org.springframework.context.annotation.Profile;
@@ -20,8 +21,9 @@ public class RecipeAccessService_Local extends RecipeAccessService_MongoAtlas {
     }
 
     @Override
-    public List<Recipe> search(String searchTerm) {
-        Bson filter = regex("title", searchTerm, "i"); // case-insensitive regex
-        return recipeCollection.find(filter).limit(20).into(new ArrayList<>());
+    public List<Recipe> search(String searchTerm, RecipeViewer viewer) {
+        // Pattern.quote: the term is user input and must not be interpreted as a regex (ReDoS).
+        Bson filter = regex("title", Pattern.quote(searchTerm), "i"); // case-insensitive
+        return recipeCollection.find(restrict(filter, viewer)).limit(20).into(new ArrayList<>());
     }
 }

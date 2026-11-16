@@ -36,6 +36,12 @@ function findSubmitButton(wrapper) {
   return wrapper.findAll('button').find((button) => button.text().includes('Rezept hochladen'))
 }
 
+// Value of a plain text field in a raw multipart/form-data body.
+function multipartField(body, name) {
+  const match = body?.match(new RegExp(`name="${name}"\\r\\n\\r\\n(.*?)\\r\\n--`, 's'))
+  return match ? match[1] : null
+}
+
 describe('CreateRecipeForm', () => {
   it('sends the filled-in recipe to /api/v1/recipe/add and shows a success alert', async () => {
     // Override the generic handler from src/mocks/handlers.js for this one
@@ -50,10 +56,14 @@ describe('CreateRecipeForm', () => {
     // (title/duration/portions, read directly off the form) are unaffected
     // and transport correctly, so we assert on those. See the "extending
     // these tests" notes below for how to get coverage on the JSON part too.
-    let receivedFormData = null
+    //
+    // The body is read as raw multipart text instead of request.formData():
+    // Node's built-in multipart parser (Node 26+) throws an assertion on that
+    // same Blob part under jsdom, which made the handler answer 500.
+    let receivedBody = null
     server.use(
       http.post('/api/v1/recipe/add', async ({ request }) => {
-        receivedFormData = await request.formData()
+        receivedBody = await request.text()
         return HttpResponse.json({ id: 'mock-recipe-id' }, { status: 200 })
       }),
     )
@@ -68,9 +78,9 @@ describe('CreateRecipeForm', () => {
     // sendForm() is async (awaits the API call) — flush the microtask queue
     await new Promise((resolve) => setTimeout(resolve, 0))
 
-    expect(receivedFormData.get('title')).toBe('Spaghetti Carbonara')
-    expect(receivedFormData.get('duration')).toBe('25')
-    expect(receivedFormData.get('portions')).toBe('2')
+    expect(multipartField(receivedBody, 'title')).toBe('Spaghetti Carbonara')
+    expect(multipartField(receivedBody, 'duration')).toBe('25')
+    expect(multipartField(receivedBody, 'portions')).toBe('2')
 
     const alertStore = useAlertStore()
     expect(alertStore.alerts.at(-1)).toMatchObject({ variant: 'success' })

@@ -10,19 +10,20 @@ public interface RecipeDao {
 
     void insert(Recipe recipe);
 
-    List<Recipe> findAll();
+    List<Recipe> findAll(RecipeViewer viewer);
 
+    // Unrestricted: callers must check RecipeViewer.canView themselves.
     Optional<Recipe> findById(String id);
 
-    List<Recipe> findByIds(Collection<String> ids);
+    List<Recipe> findByIds(Collection<String> ids, RecipeViewer viewer);
 
-    List<Recipe> search(String search_term);
+    List<Recipe> search(String search_term, RecipeViewer viewer);
 
     void deleteById(String id);
 
     void updateById(String id, Recipe recipe);
 
-    List<Recipe> selectByIngredients(String[] ingredients);
+    List<Recipe> selectByIngredients(String[] ingredients, RecipeViewer viewer);
 
     List<String> selectDistinctIngredientNames();
 }

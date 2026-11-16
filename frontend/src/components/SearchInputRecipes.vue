@@ -32,6 +32,7 @@
 <script>
 import { watchDebounced } from '@vueuse/core'
 import { ref } from 'vue';
+import api from '@/services/api'
 import { Search } from '@lucide/vue'
 
 export default {
@@ -48,13 +49,13 @@ export default {
           searchResults.value = []
           return
         }
-        fetch('/api/v1/recipe/search', {
-          method: 'POST',
-          body: searchInput.value.trim(),
-        })
-          .then((response) => response.json())
-          .then((results) => {
-            searchResults.value = results
+        // text/plain like the former fetch() call: the backend reads the raw body as the term.
+        api
+          .post('/api/v1/recipe/search', searchInput.value.trim(), {
+            headers: { 'Content-Type': 'text/plain' },
+          })
+          .then((response) => {
+            searchResults.value = response.data
           })
       },
       { debounce: 500, maxWait: 3000 }

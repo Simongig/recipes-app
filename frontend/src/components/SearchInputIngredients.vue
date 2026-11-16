@@ -50,7 +50,7 @@
 <script>
 import SearchChip from './SearchChip.vue'
 import RecipeCard from './RecipeCard-v2.vue'
-import axios from 'axios'
+import api from '@/services/api'
 import { Search } from '@lucide/vue'
 
 export default {
@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     sendSearchQuery() {
-      axios.get('/api/v1/recipe/all').then((response) => {
+      api.get('/api/v1/recipe/all').then((response) => {
         console.log(response)
       })
     },
@@ -77,7 +77,7 @@ export default {
       console.log(jsonString)
       const data = new Blob([jsonString], { type: 'application/json' })
       console.log(data)
-      axios
+      api
         .post('/api/v1/recipe/find', data, {
           headers: {
             'Content-Type': 'application/json',
@@ -109,7 +109,7 @@ export default {
         this.searchResults = []
         return
       }
-      axios.get('api/v1/ingredient/all').then((results) => {
+      api.get('/api/v1/ingredient/all').then((results) => {
         this.searchResults = results.data.filter((ingredient) => {
           return -1 < ingredient.toLowerCase().indexOf(this.searchInput.toLowerCase())
         })

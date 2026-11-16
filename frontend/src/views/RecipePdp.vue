@@ -70,7 +70,6 @@
 
 <script setup>
 // import Button from '../components/Button.vue';
-import axios from 'axios'
 import api from '@/services/api'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { formatIngredientQuantity } from '../utils/ingredients'
@@ -111,7 +110,7 @@ function setMetaTag(attr, key, content) {
 }
 
 onMounted(() => {
-  axios
+  api
     .get('/api/v1/recipe/id/' + route.params.id)
     .then((response) => {
       recipe.value = response.data
