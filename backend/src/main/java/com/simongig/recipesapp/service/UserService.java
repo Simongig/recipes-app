@@ -2,6 +2,7 @@ package com.simongig.recipesapp.service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -102,8 +103,17 @@ public class UserService {
         return Optional.ofNullable(userDTO);
     }
 
-    public List<User> findAll() {
-        return this.userDao.findAll();
+    /** What the admin user list exposes: identity and roles, never the password hash. */
+    public record UserOverview(String username, String name, String lastName, String email, List<RoleName> roles) {}
+
+    public List<UserOverview> listUsers() {
+        return this.userDao.findAll().stream()
+                .map(user -> new UserOverview(user.getUsername(), user.getName(), user.getLastName(), user.getEmail(),
+                        // Null for documents without a roles field, and for role names that
+                        // matched nothing in addRoleToUser.
+                        user.getRoles() == null ? List.of()
+                                : user.getRoles().stream().filter(Objects::nonNull).map(UserRole::getName).toList()))
+                .toList();
     }
 
     public Optional<User> findByUsername(String username) {
